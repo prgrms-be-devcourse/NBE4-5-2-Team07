@@ -22,12 +22,9 @@ bin/
 *.iws
 *.iml
 *.ipr
-*.yml
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-application-secret.yml
-resources/application-secret.yml
 
 ### NetBeans ###
 /nbproject/private/
@@ -38,3 +35,8 @@ resources/application-secret.yml
 
 ### VS Code ###
 .vscode/
+
+### custom ###
+application-secret.yml
+resources/application-secret.yml
+
