@@ -39,6 +39,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//mysql
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	// opencsv 의존성 추가 - csv to db 시 csv 파일 읽을 때 사용됨
+	implementation 'com.opencsv:opencsv:5.7.1'
 }
 
 tasks.named('test') {
