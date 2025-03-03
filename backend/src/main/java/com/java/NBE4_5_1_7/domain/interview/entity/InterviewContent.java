@@ -26,4 +26,7 @@ public class InterviewContent {
 
     @Column(name = "is_head")
     private boolean head;
+
+    @Column(name = "has_tail")
+    private boolean hasTail;
 }
