@@ -22,7 +22,7 @@ public class StudyContentDataInit {
     public void importCsvData() {
         try {
             // 프로젝트 상위 디렉토리의 data 폴더 내 CSV 파일 경로 (파일명은 실제 사용 파일명으로 수정)
-            File csvFile = new File("data/학습컨텐츠데이터-종합.csv");
+            File csvFile = new File("data/학습컨텐츠데이터-종합.csv");
             InputStreamReader streamReader = new InputStreamReader(new FileInputStream(csvFile), StandardCharsets.UTF_8);
             CSVReader csvReader = new CSVReader(streamReader);
 
