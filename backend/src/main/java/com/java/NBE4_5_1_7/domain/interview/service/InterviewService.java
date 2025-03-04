@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.interview.service;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.KeywordContentRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.RandomRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.RandomResponseDto;
@@ -120,8 +121,8 @@ public class InterviewService {
         return interviewRepository.findDistinctCategories();
     }
 
-
-
-
-
+    // 키워드 들을 받고, 해당 키워드 들의 헤더 질문 ID 리스트 반환
+    public List<Long> keywordHeadQuestion(KeywordContentRequestDto keywordContentRequestDto) {
+        return interviewRepository.findInterviewKeyword(keywordContentRequestDto.getKeywordList());
+    }
 }

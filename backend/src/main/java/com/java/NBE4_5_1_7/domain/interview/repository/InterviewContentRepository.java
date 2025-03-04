@@ -18,4 +18,7 @@ public interface InterviewContentRepository extends JpaRepository<InterviewConte
 
     @Query(value = "select distinct keyword from interview_content", nativeQuery = true)
     List<String> findDistinctCategories();
+
+    @Query("select ic.interview_content_id from InterviewContent ic where ic.keyword in :keywords and ic.head = true and ic.head_id is null")
+    List<Long> findInterviewKeyword(@Param("keywords") List<String> keywords);
 }

@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.interview.controller;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.KeywordContentRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.RandomRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.RandomResponseDto;
@@ -45,5 +46,11 @@ public class InterviewController {
     @GetMapping("/keyword")
     public ResponseEntity<List<String>> showKeywordList() {
         return ResponseEntity.ok(service.showKeywordList());
+    }
+
+    // Keyword 포함된 머리 질문들의 ID 값 리스트 반환
+    @PostMapping("/keyword/content")
+    public ResponseEntity<List<Long>> keywordContentId(@RequestBody KeywordContentRequestDto keywordContentRequestDto) {
+        return ResponseEntity.ok(service.keywordHeadQuestion(keywordContentRequestDto));
     }
 }
