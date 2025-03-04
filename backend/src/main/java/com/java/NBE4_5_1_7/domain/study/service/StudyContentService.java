@@ -18,4 +18,10 @@ public class StudyContentService {
                 .map(FirstCategory::getCategory)
                 .toList();
     }
+
+    public List<String> getSecondCategoryByFirstCategory(String firstCategory) {
+        FirstCategory category = FirstCategory.valueOf(firstCategory);
+        return studyContentRepository.findDistinctBySecondCategory(category);
+    }
+
 }
