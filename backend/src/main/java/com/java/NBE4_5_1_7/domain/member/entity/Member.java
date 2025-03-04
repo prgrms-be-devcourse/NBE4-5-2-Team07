@@ -38,7 +38,7 @@ public class Member extends BaseTime {
 
     public boolean isAdmin() {
         return username.equals("admin");
-    }
+    } // 어드민 설정
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

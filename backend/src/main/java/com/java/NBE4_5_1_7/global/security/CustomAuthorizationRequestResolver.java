@@ -33,7 +33,7 @@ public class CustomAuthorizationRequestResolver  implements OAuth2AuthorizationR
             return null;
         }
 
-        String customParam = request.getParameter("redirectUrl"); // 클라이언트가 전달한 값
+        String customParam = request.getParameter("redirectUrl"); // 클라이언트가 전달한 값, 세션저장
 
         if (customParam != null) {
 

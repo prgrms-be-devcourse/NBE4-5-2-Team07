@@ -30,9 +30,9 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Map<String, Object> propeties = (Map<String, Object>)attributes.get("properties");
 
-        String nickname = (String)propeties.get("nickname");
-        String profileImage = (String)propeties.get("profile_image");
-        String username = providerType + "__" + oauthId;
+        String nickname = (String)propeties.get("nickname");  // 카카오 닉네임
+        String profileImage = (String)propeties.get("profile_image"); // 카카오 프로필
+        String username = providerType + "__" + oauthId; // 구분 ID
 
         Optional<Member> opMember = memberService.findByUsername(username);
 
