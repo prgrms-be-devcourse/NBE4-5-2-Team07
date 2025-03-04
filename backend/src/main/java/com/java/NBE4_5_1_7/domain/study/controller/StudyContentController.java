@@ -1,8 +1,10 @@
 package com.java.NBE4_5_1_7.domain.study.controller;
 
+import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
 import com.java.NBE4_5_1_7.global.dto.RsData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +31,15 @@ public class StudyContentController {
         return new RsData<>("200-1",
                 "두 번째 카테고리 목록 조회 성공",
                 studyContentService.getSecondCategoryByFirstCategory(firstCategory));
+    }
+
+    @GetMapping("/{firstCategory}/{secondCategory}")
+    public RsData<List<StudyContentDetailDto>> getInitialStudyContent(
+            @PathVariable String firstCategory,
+            @PathVariable String secondCategory) {
+        return new RsData<>(
+                "200-1",
+                "학습 컨텐츠 목록 조회 성공",
+                studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
     }
 }
