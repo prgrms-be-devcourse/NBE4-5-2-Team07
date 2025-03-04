@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class InterviewContentDataInit {
     private final InterviewContentRepository repository;
 
-    @PostConstruct
+//    @PostConstruct
     public void dataInit() {
         importCsvData();
         updateHasTailField();
@@ -91,6 +91,7 @@ public class InterviewContentDataInit {
         repository.findAll().stream().filter(interview -> interview.getHead_id() != null).forEach(tail -> {
             InterviewContent head = repository.findById(tail.getHead_id()).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
             head.setHasTail(true);
+            head.setTail_id(tail.getInterview_content_id());
             repository.save(head);
         });
     }

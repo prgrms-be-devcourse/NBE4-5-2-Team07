@@ -12,6 +12,8 @@ public class InterviewContent {
 
     private Long head_id;
 
+    private Long tail_id;
+
     @Enumerated(EnumType.STRING)
     private InterviewCategory category;
 

@@ -50,6 +50,8 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	// opencsv 의존성 추가 - csv to db 시 csv 파일 읽을 때 사용됨
 	implementation 'com.opencsv:opencsv:5.7.1'
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
 }
 
 tasks.named('test') {
