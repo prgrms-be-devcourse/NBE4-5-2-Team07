@@ -2,7 +2,6 @@ package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
-import com.java.NBE4_5_1_7.global.dto.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,27 +18,20 @@ public class StudyContentController {
     private final StudyContentService studyContentService;
 
     @GetMapping
-    public RsData<List<String>> getStudyContent() {
-        return new RsData<>(
-                "200-1",
-                "첫 번째 카테고리 목록 조회 성공",
-                studyContentService.getFirstCategory());
+    public ResponseEntity<List<String>> getStudyContent() {
+        return ResponseEntity.ok(studyContentService.getFirstCategory());
     }
 
     @GetMapping("/{firstCategory}")
-    public RsData<List<String>> getInitialStudyContent(@PathVariable String firstCategory) {
-        return new RsData<>("200-1",
-                "두 번째 카테고리 목록 조회 성공",
-                studyContentService.getSecondCategoryByFirstCategory(firstCategory));
+    public ResponseEntity<List<String>> getInitialStudyContent(@PathVariable String firstCategory) {
+        return ResponseEntity.ok(studyContentService.getSecondCategoryByFirstCategory(firstCategory));
+
     }
 
     @GetMapping("/{firstCategory}/{secondCategory}")
-    public RsData<List<StudyContentDetailDto>> getInitialStudyContent(
+    public ResponseEntity<List<StudyContentDetailDto>> getInitialStudyContent(
             @PathVariable String firstCategory,
             @PathVariable String secondCategory) {
-        return new RsData<>(
-                "200-1",
-                "학습 컨텐츠 목록 조회 성공",
-                studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
+        return ResponseEntity.ok(studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
     }
 }
