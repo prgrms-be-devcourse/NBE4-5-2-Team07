@@ -34,7 +34,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Member member = rq.getActor();
         String accessToken = memberService.genAccessToken(member);
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"accessToken\": \"" + accessToken + "\", \"apiKey\": \"" + member.getApiKey() + "\"}");
+        rq.addCookie("accessToken", accessToken);
+        rq.addCookie("apiKey", member.getApiKey());
+
+        response.sendRedirect(redirectUrl);
     }
 }

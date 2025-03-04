@@ -15,14 +15,14 @@ public class SecurityUser extends User implements OAuth2User {
     private long id;
     @Getter
     private String nickname;
-    public SecurityUser(long id, String username, String password, String nickname, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public SecurityUser(long id, String username, String nickname, Collection<? extends GrantedAuthority> authorities) {
+        super(username, "", authorities);
         this.id = id;
         this.nickname = nickname;
     }
 
     public SecurityUser(Member member) {
-        this(member.getId(), member.getUsername(), member.getPassword(), member.getNickname(), member.getAuthorities());
+        this(member.getId(), member.getUsername(), member.getNickname(), member.getAuthorities());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.java.NBE4_5_1_7.domain.member.entity;
 
-import com.java.NBE4_5_1_7.global.entity.BaseTime;
+import com.java.NBE4_5_1_7.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -24,12 +24,10 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @EntityListeners(AuditingEntityListener.class)
-public class Member extends BaseTime {
+public class Member extends BaseEntity{
 
     @Column(length = 100, unique = true)
     private String username;
-    @Column(length = 100)
-    private String password;
     @Column(length = 100, unique = true)
     private String apiKey;
     @Column(length = 100)
@@ -38,7 +36,7 @@ public class Member extends BaseTime {
 
     public boolean isAdmin() {
         return username.equals("admin");
-    } // 어드민 설정
+    }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

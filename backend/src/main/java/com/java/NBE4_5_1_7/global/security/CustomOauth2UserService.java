@@ -32,7 +32,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         String nickname = (String)propeties.get("nickname");  // 카카오 닉네임
         String profileImage = (String)propeties.get("profile_image"); // 카카오 프로필
-        String username = providerType + "__" + oauthId; // 구분 ID
+        String username = providerType + "_" + oauthId; // 구분 ID
 
         Optional<Member> opMember = memberService.findByUsername(username);
 
@@ -43,7 +43,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
             return new SecurityUser(member);
         }
 
-        Member member = memberService.join(username, "", nickname, profileImage);
+        Member member = memberService.join(username, nickname, profileImage);
 
         return new SecurityUser(member);
     }

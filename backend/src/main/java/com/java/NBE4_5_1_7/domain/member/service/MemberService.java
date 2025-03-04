@@ -15,21 +15,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AuthTokenService authTokenService;
 
-    public Member join(String username, String password, String nickname, String profileImgUrl) {
+    public Member join(String username, String nickname, String profileImgUrl) {
 
         Member member = Member.builder()
                 .username(username)
-                .password(password)
                 .apiKey(username)
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
                 .build();
 
         return memberRepository.save(member);
-    }
-
-    public long count() {
-        return memberRepository.count();
     }
 
     public Optional<Member> findByUsername(String username) {
