@@ -23,11 +23,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authorizeHttpRequests) ->
-                        authorizeHttpRequests
-                                .anyRequest()
-                                .authenticated()
-                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/study/**").permitAll()  // 인증 없이 접근 허용
+                        .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .oauth2Login(oauth2 -> {
                     oauth2.authorizationEndpoint(
