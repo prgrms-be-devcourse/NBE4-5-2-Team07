@@ -1,0 +1,70 @@
+"use client";
+
+//import { components } from "@/lib/backend/apiV1/schema";
+import { createContext, useState } from "react";
+
+//type Member = components["schemas"]["MemberDto"];
+type Member = {
+  // 가짜 Member
+  id: number;
+  nickname: string;
+  profileImgUrl: string;
+};
+
+export const LoginMemberContext = createContext<{
+  loginMember: Member;
+  setLoginMember: (member: Member) => void;
+  removeLoginMember: () => void;
+  isLogin: boolean;
+  isLoginMemberPending: boolean;
+  isAdmin: boolean;
+  setNoLoginMember: () => void;
+}>({
+  loginMember: createEmptyMember(),
+  setLoginMember: () => {},
+  removeLoginMember: () => {},
+  isLogin: false,
+  isLoginMemberPending: true,
+  isAdmin: false,
+  setNoLoginMember: () => {},
+});
+
+function createEmptyMember(): Member {
+  return {
+    id: 0,
+    nickname: "",
+    profileImgUrl: "",
+  };
+}
+
+export function useLoginMember() {
+  const [isLoginMemberPending, setLoginMemberPending] = useState(true);
+  const [loginMember, _setLoginMember] = useState<Member>(createEmptyMember());
+
+  const removeLoginMember = () => {
+    _setLoginMember(createEmptyMember());
+    setLoginMemberPending(false);
+  };
+
+  const setLoginMember = (member: Member) => {
+    _setLoginMember(member);
+    setLoginMemberPending(false);
+  };
+
+  const setNoLoginMember = () => {
+    setLoginMemberPending(false);
+  };
+
+  const isLogin = loginMember.id !== 0;
+  const isAdmin = loginMember.id === 2;
+
+  return {
+    loginMember,
+    removeLoginMember,
+    isLogin,
+    isLoginMemberPending,
+    setLoginMember,
+    isAdmin,
+    setNoLoginMember,
+  };
+}
