@@ -4,6 +4,7 @@ import com.java.NBE4_5_1_7.global.app.AppConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,9 +26,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .anyRequest()
-                                .authenticated()
+                                .anyRequest().permitAll()
+//                                .authenticated()
                 )
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
 //                .oauth2Login(oauth2 -> {
 //                    oauth2.authorizationEndpoint(
@@ -50,7 +52,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
