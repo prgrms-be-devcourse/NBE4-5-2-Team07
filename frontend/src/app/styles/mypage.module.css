@@ -103,5 +103,29 @@
 }
 
 .dropdownItem:active {
-  background-color: #b0b0b0;
+  background-color: #e0e0e0;
+}
+
+.selected {
+  background: #e0e0e0;
+  font-weight: bold;
+}
+
+.listItem {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.listItem:hover {
+  background: #e0e0e0;
+}
+
+.noItems {
+  color: #777;
+  font-style: italic;
 }
