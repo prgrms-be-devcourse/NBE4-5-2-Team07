@@ -57,16 +57,20 @@ public class InterviewService {
     }
 
     //3. 모든 질문에 대해 순서 랜덤하게
-    public RandomResponseDto showRandomInterviewContent(RandomRequestDto randomRequestDto, Long id) {
-        InterviewContent interview = interviewRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 면접 컨텐츠를 찾을 수 없습니다."));
+    public RandomResponseDto showRandomInterviewContent(RandomRequestDto randomRequestDto) {
+
         List<Long> headList = randomRequestDto.getIndexList();
-        headList.remove(interview.getInterview_content_id());
         Long randomValue = null;
 
+        int randomIndex = 0;
         if (!headList.isEmpty()) {
-            int randomIndex = ThreadLocalRandom.current().nextInt(headList.size());
+            randomIndex = ThreadLocalRandom.current().nextInt(headList.size());
             randomValue = headList.get(randomIndex);
         }
+
+        Long randomId = headList.get(randomIndex);
+        headList.remove(randomId);
+        InterviewContent interview = interviewRepository.findById(randomId).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
         return new RandomResponseDto(
                 headList,
                 new InterviewResponseDto(

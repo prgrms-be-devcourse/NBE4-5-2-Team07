@@ -28,7 +28,55 @@
   color: black;
 }
 
+/* 기존 호버 효과 */
 .navList li a:hover {
   color: #2e56bc;
   font-weight: bold;
+}
+
+/* ------------------ 드롭다운 관련 스타일 ------------------ */
+
+/* (1) 드롭다운의 부모 li */
+.dropdown {
+  position: relative; /* 자식 .dropdownMenu를 절대 위치로 배치하기 위해 필요 */
+}
+
+/* (2) 실제 드롭다운 메뉴 */
+.dropdownMenu {
+  display: none; /* 기본적으로 숨김 */
+  position: absolute; /* 부모(.dropdown)를 기준으로 배치 */
+  top: 100%; /* 부모의 높이 바로 아래 (공백 없음) */
+  left: 0;
+  /* margin-top: 0.5rem;  <-- 이 간격이 마우스 이동 시 공백을 만들어서 제거 */
+  background-color: white;
+  list-style: none;
+  padding: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 180px; /* 드롭다운 메뉴 폭이 너무 좁지 않게 */
+  z-index: 999;
+}
+
+/* (3) 드롭다운 메뉴 내부 항목 스타일 */
+.dropdownMenu li {
+  padding: 0.5rem 1rem;
+  white-space: nowrap; /* 글자 줄바꿈 방지 */
+}
+
+/* (4) 드롭다운 메뉴 내 링크 스타일 (호버 전 기본 상태) */
+.dropdownMenu li a {
+  color: black;
+  font-weight: normal;
+  text-decoration: none;
+}
+
+/* (5) 드롭다운 메뉴에 마우스 올렸을 때 */
+.dropdownMenu li:hover a {
+  color: #2e56bc;
+  font-weight: bold;
+}
+
+/* (6) 부모 li(.dropdown)에 마우스를 올렸을 때, 서브 메뉴 표시 */
+.dropdown:hover .dropdownMenu {
+  display: block;
 }
