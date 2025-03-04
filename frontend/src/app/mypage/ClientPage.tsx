@@ -1,19 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "../styles/mypage.module.css";
 
 const ClientPage = () => {
+  const [note, setNote] = useState(""); // 내 노트
   const [memo, setMemo] = useState(""); // 학습 메모
   const [answer, setAnswer] = useState(""); // 기술 면접 답변
+  const [showNoteList, setShowNoteList] = useState(false);
   const [memoDropdownOpen, setMemoDropdownOpen] = useState(false);
   const [answerDropdownOpen, setAnswerDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedNoteCategory, setSelectedNoteCategory] = useState("");
+  const [selectedMemoCategory, setSelectedMemoCategory] = useState("");
+  const [selectedAnswerCategory, setSelectedAnswerCategory] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
+  const [selectedNote, setSelectedNote] = useState("");
   const [items, setItems] = useState([]);
   const [details, setDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const notes = ["노트1", "노트2", "노트3", "노트4", "노트5", "노트6"];
   const memos = [
     "Computer Architecture",
     "Data Structure",
@@ -52,28 +58,63 @@ const ClientPage = () => {
     Database: ["SQL", "NoSQL", "트랜잭션", "인덱스"],
     Network: ["TCP/IP", "라우팅", "DNS", "HTTP"],
     "Software Engineering": ["애자일", "TDD", "설계 패턴"],
+    언어: ["JavaScript", "Python", "Java", "C++"],
+    운영체제: ["멀티스레딩", "CPU 스케줄링", "가상 메모리"],
+    데이터베이스: ["정규화", "ACID", "조인"],
+    네트워크: ["UDP", "HTTP/2", "로드 밸런싱"],
+    웹: ["REST API", "GraphQL", "SSR vs CSR"],
   };
 
-  // 카테고리 선택 시 상태 변경
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    setSelectedItem(""); // 기존 선택 초기화
-    setDetails(""); // 기존 상세 내용 초기화
+  const handleNoteCategorySelect = (category: string) => {
+    setSelectedNoteCategory(category);
+    setSelectedAnswerCategory("");
+    setSelectedMemoCategory("");
+    setSelectedItem("");
+    setDetails("");
+    setSelectedNote(category);
   };
 
-  // 아이템 선택 시 상세 내용 변경
+  const handleMemoCategorySelect = (category: string) => {
+    setSelectedMemoCategory(category);
+    setSelectedNoteCategory("");
+    setSelectedAnswerCategory("");
+    setSelectedItem("");
+    setDetails("");
+    setShowNoteList(false);
+  };
+
+  const handleAnswerCategorySelect = (category: string) => {
+    setSelectedAnswerCategory(category);
+    setSelectedMemoCategory("");
+    setSelectedNoteCategory("");
+    setSelectedItem("");
+    setDetails("");
+    setShowNoteList(false);
+  };
+
   const handleItemSelect = (item: string) => {
     setSelectedItem(item);
-    setDetails(`${item}의 상세 설명`); // 임시 상세 내용
+    setDetails(`${item}의 상세 설명`);
   };
+
+  const selectedCategory =
+    selectedMemoCategory || selectedAnswerCategory || selectedNoteCategory;
 
   return (
     <div className={styles.container}>
       <div className={`${styles.card} ${styles.small}`}>
         {/* 내 노트 버튼 */}
-        <button className={styles.btn}>내 노트</button>
+        <button
+          className={styles.btn}
+          onClick={() => {
+            setShowNoteList((prevState) => !prevState);
+            setSelectedNoteCategory("");
+          }}
+        >
+          내 노트
+        </button>
 
-        {/* 학습 메모 드롭박스 */}
+        {/* 학습 메모 드롭다운 */}
         <button
           className={styles.btn}
           onClick={() => setMemoDropdownOpen((prevState) => !prevState)}
@@ -81,13 +122,13 @@ const ClientPage = () => {
           작성한 학습 메모 {memoDropdownOpen ? "▲" : "▼"}
         </button>
         {memoDropdownOpen && (
-          <ul className={styles.dropdownList}>
+          <ul className={`${styles.dropdownList} ${styles.small}`}>
             {memos.map((category, index) => (
               <li
                 key={index}
-                onClick={() => handleCategorySelect(category)}
+                onClick={() => handleMemoCategorySelect(category)}
                 className={`${styles.dropdownItem} ${
-                  selectedCategory === category ? styles.selected : ""
+                  selectedMemoCategory === category ? styles.selected : ""
                 }`}
               >
                 {category}
@@ -96,7 +137,7 @@ const ClientPage = () => {
           </ul>
         )}
 
-        {/* 기술 면접 답변 드롭박스 */}
+        {/* 기술 면접 답변 드롭다운 */}
         <button
           className={styles.btn}
           onClick={() => setAnswerDropdownOpen((prevState) => !prevState)}
@@ -104,24 +145,42 @@ const ClientPage = () => {
           작성한 기술 면접 답변 {answerDropdownOpen ? "▲" : "▼"}
         </button>
         {answerDropdownOpen && (
-          <ul className={styles.dropdownList}>
-            {answers.map((answerItem, index) => (
+          <ul className={`${styles.dropdownList} ${styles.small}`}>
+            {answers.map((category, index) => (
               <li
                 key={index}
-                onClick={() => setAnswer(answerItem)}
-                className={styles.dropdownItem}
+                onClick={() => handleAnswerCategorySelect(category)}
+                className={`${styles.dropdownItem} ${
+                  selectedAnswerCategory === category ? styles.selected : ""
+                }`}
               >
-                {answerItem}
+                {category}
               </li>
             ))}
           </ul>
         )}
       </div>
 
-      {/* 중앙 목록 (선택한 카테고리의 아이템 목록) */}
+      {/* 선택한 카테고리의 아이템 목록 */}
       <div className={`${styles.card} ${styles.small}`}>
         <ul>
-          {selectedCategory && categoryItems[selectedCategory] ? (
+          {/* 내 노트 목록 */}
+          {showNoteList ? (
+            <ul>
+              {notes.map((category, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleNoteCategorySelect(category)}
+                  className={`${styles.dropdownItem} ${
+                    selectedNoteCategory === category ? styles.selected : ""
+                  }`}
+                >
+                  {category}
+                </li>
+              ))}
+            </ul>
+          ) : // 선택한 카테고리의 아이템 목록
+          selectedCategory && categoryItems[selectedCategory] ? (
             categoryItems[selectedCategory].map((item, index) => (
               <li
                 key={index}
@@ -139,10 +198,9 @@ const ClientPage = () => {
         </ul>
       </div>
 
-      {/* 우측 상세 내용 (선택한 아이템) */}
+      {/* 상세 내용 */}
       <div className={`${styles.card} ${styles.large}`}>
-        <h3>{selectedItem || "항목을 선택하세요"}</h3>
-        <p>{details || "내용이 없습니다."}</p>
+        <p className={styles.noItems}>{selectedItem || "항목을 선택하세요."}</p>
       </div>
     </div>
   );
