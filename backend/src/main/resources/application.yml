@@ -16,3 +16,26 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  security:
+      oauth2:
+        client:
+          registration:
+            kakao:
+              client-id: ${security.kakao.client-id}
+              scope: profile_nickname, profile_image
+              client-name: Kakao
+              authorization-grant-type: authorization_code
+              redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+
+          provider:
+            kakao:
+              authorization-uri: https://kauth.kakao.com/oauth/authorize
+              token-uri: https://kauth.kakao.com/oauth/token
+              user-info-uri: https://kapi.kakao.com/v2/user/me
+              user-name-attribute: id
+
+custom:
+  jwt:
+    secret-key: ${security.jwt.secret-key}
+    expire-seconds: "#{60}"
