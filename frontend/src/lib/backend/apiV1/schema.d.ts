@@ -707,9 +707,7 @@ export interface operations {
     createComment: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
