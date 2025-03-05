@@ -72,7 +72,12 @@ export default function Header() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/interview/random">실전 면접 대비</Link>
+                    <Link href="/interview/random">랜덤으로 질문 보기</Link>
+                  </li>
+                  <li>
+                    <Link href="/api/techInterview">
+                      실전 면접 대비 : 가상 면접
+                    </Link>
                   </li>
                 </ul>
               </li>
