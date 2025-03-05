@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -22,32 +23,36 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final Rq rq;
     private final MemberService memberService;
 
-    // 단순히 쿠키에서 accessToken, apiKey 값을 읽어오기 위한 record
-    record AuthToken(String apiKey, String accessToken) { }
+    record TokenPair(String accessToken, String refreshToken, String apiKey) { }
 
-    // 쿠키에서 accessToken, apiKey 값을 읽어오는 메서드
-    private AuthToken getAuthTokenFromCookie() {
+    // 쿠키에서 accessToken, refreshToken, apiKey 값을 읽어오는 메서드
+    private TokenPair getTokensFromCookie() {
         String accessToken = rq.getValueFromCookie("accessToken");
+        String refreshToken = rq.getValueFromCookie("refreshToken");
         String apiKey = rq.getValueFromCookie("apiKey");
-
-        if (accessToken == null || apiKey == null) {
+        if (accessToken == null || refreshToken == null || apiKey == null) {
             return null;
         }
-
-        return new AuthToken(apiKey, accessToken);
+        return new TokenPair(accessToken, refreshToken, apiKey);
     }
 
     /**
-     * 토큰 검증 시, MemberService.getMemberByAccessToken의 결과가 Optional.empty()이면,
-     * apiKey를 이용해 회원을 조회하고 새 Access Token을 발급하여 쿠키에 저장하는 refresh 로직.
+     * Access Token을 이용해 회원 정보를 조회하고,
+     * 만료되었으면 Refresh Token을 검증하여 새 Access Token을 발급하는 로직.
      */
-    private Member getMemberByAccessTokenWithRefresh(String accessToken, String apiKey) {
-        // 우선, 토큰 검증 결과를 받아온다.
+    private Member getMemberByTokens(String accessToken, String refreshToken, String apiKey) {
+        // 우선, Access Token으로 회원 조회
         Optional<Member> opAccMember = memberService.getMemberByAccessToken(accessToken);
         if (opAccMember.isPresent()) {
             return opAccMember.get();
         }
-        // 토큰이 만료되었거나 유효하지 않으면, apiKey를 기준으로 회원을 조회하고 새 토큰 발급
+        // Access Token이 유효하지 않다면, Refresh Token을 검증합니다.
+        // Refresh Token의 경우, payload에 "type"이 "refresh"여야 합니다.
+        Map<String, Object> refreshPayload = memberService.getRefreshPayload(refreshToken); // 추가 메서드 (아래 MemberService에 설명)
+        if (refreshPayload == null) {
+            return null;
+        }
+        // Refresh Token이 유효하면, apiKey를 기준으로 회원 조회 후 새로운 Access Token 발급
         Optional<Member> opMember = memberService.findByApiKey(apiKey);
         if (opMember.isPresent()) {
             Member member = opMember.get();
@@ -61,24 +66,19 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         String url = request.getRequestURI();
-        // 특정 URL은 인증 필터를 우회합니다.
         if (List.of("/api/member/login", "/api/*/member/logout").contains(url)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        AuthToken tokens = getAuthTokenFromCookie();
+        TokenPair tokens = getTokensFromCookie();
         if (tokens == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String apiKey = tokens.apiKey;
-        String accessToken = tokens.accessToken;
-
-        Member actor = getMemberByAccessTokenWithRefresh(accessToken, apiKey);
+        Member actor = getMemberByTokens(tokens.accessToken, tokens.refreshToken, tokens.apiKey);
         if (actor == null) {
             filterChain.doFilter(request, response);
             return;
