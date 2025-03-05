@@ -91,7 +91,7 @@ export default function TechInterviewChat() {
   if (!interviewType) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-200">
-        <div className="bg-white rounded-xl shadow-md p-8 max-w-md text-center">
+        <div className="bg-white rounded-xl shadow-md p-8 max-w-xl text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             안녕하세요, 기술 면접을 담당하는 AI 면접관 입니다.
           </h1>
