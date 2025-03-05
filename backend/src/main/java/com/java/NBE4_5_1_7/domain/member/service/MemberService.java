@@ -1,15 +1,13 @@
 package com.java.NBE4_5_1_7.domain.member.service;
 
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
 import com.java.NBE4_5_1_7.global.Rq;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,61 +46,32 @@ public class MemberService {
     }
 
     public Optional<Member> getMemberByAccessToken(String accessToken) {
-        try {
-            Map<String, Object> payload = authTokenService.getPayload(accessToken);
-            if (payload == null) {
-                return Optional.empty();
-            }
-            Number idNo = (Number) payload.get("id");
-            long id = idNo.longValue();
-            String username = (String) payload.get("username");
-            String nickname = (String) payload.get("nickname");
-            Member member = Member.builder()
-                    .id(id)
-                    .username(username)
-                    .nickname(nickname)
-                    .build();
-            return Optional.of(member);
-        } catch (Exception e) {
+
+        Map<String, Object> payload = authTokenService.getPayload(accessToken);
+
+        if (payload == null) {
             return Optional.empty();
         }
-    }
 
-    // 아래 코드를 MemberService.java에 추가
-    public Map<String, Object> getRefreshPayload(String refreshToken) {
-        try {
-            Map<String, Object> payload = authTokenService.getRefreshPayload(refreshToken);
-            // 검증: payload의 "type"이 "refresh"인지 확인
-            if (payload != null && "refresh".equals(payload.get("type"))) {
-                return payload;
-            }
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+        long id = (long) payload.get("id");
+        String username = (String) payload.get("username");
+        String nickname = (String) payload.get("nickname");
 
+        return Optional.of(
+                Member.builder()
+                        .id(id)
+                        .username(username)
+                        .nickname(nickname)
+                        .build()
+        );
+    }
 
     public Long getIdFromRq() {
         Member member = rq.getActor();
         return member.getId();
     }
 
-    public Member getMemberFromRq() {
-        return rq.getActor();
-    }
-
-    public String genRefreshToken(Member member) {
-        return authTokenService.genRefreshToken(member);
-    }
-    public Long getIdFromMember(Optional<Member> optionalMember) {
-        Member member = optionalMember.orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
-        return member.getId();
-    }
-
     public String genAccessToken(Member member) {
         return authTokenService.genAccessToken(member);
     }
-
-
 }
