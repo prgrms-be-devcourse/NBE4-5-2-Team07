@@ -33,4 +33,8 @@ public class StudyContentService {
                 .map(StudyContentDetailDto::new)
                 .toList();
     }
+
+    public void deleteStudyContent(Long studyContentId) {
+        studyContentRepository.deleteById(studyContentId);
+    }
 }
