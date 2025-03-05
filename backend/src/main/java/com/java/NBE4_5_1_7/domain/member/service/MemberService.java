@@ -85,7 +85,7 @@ public class MemberService {
         Member member = rq.getActor();
         return member.getId();
     }
-    
+
 
     public String genRefreshToken(Member member) {
         return authTokenService.genRefreshToken(member);
@@ -93,5 +93,9 @@ public class MemberService {
 
     public String genAccessToken(Member member) {
         return authTokenService.genAccessToken(member);
+    }
+
+    public Member getMemberFromRq() {
+        return rq.getActor();
     }
 }
