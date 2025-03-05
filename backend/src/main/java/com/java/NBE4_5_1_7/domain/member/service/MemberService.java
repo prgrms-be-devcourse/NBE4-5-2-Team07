@@ -68,8 +68,7 @@ public class MemberService {
 
     public Long getIdFromRq() {
         Member member = rq.getActor();
-        return member.getId();
-    }
+
 
     public String genAccessToken(Member member) {
         return authTokenService.genAccessToken(member);

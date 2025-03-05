@@ -8,6 +8,7 @@ import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.RandomResponseDt
 import com.java.NBE4_5_1_7.domain.interview.service.InterviewService;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
