@@ -13,10 +13,10 @@ public class StudyMemoController {
 
     // 메모 생성
     @PostMapping("/create/{studyContentId}")
-    public ResponseEntity<String> create(
+    public ResponseEntity<String> createStudyMemo(
             @RequestBody String studyMemoContent,
             @PathVariable Long studyContentId) {
         studyMemoService.createStudyMemo(studyMemoContent, studyContentId);
-        return ResponseEntity.ok("메모 작성 성공!");
+        return ResponseEntity.ok("create success");
     }
 }

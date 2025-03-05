@@ -16,18 +16,18 @@ public class StudyContentController {
     private final StudyContentService studyContentService;
 
     @GetMapping
-    public ResponseEntity<List<String>> getStudyContent() {
+    public ResponseEntity<List<String>> getFirstCategory() {
         return ResponseEntity.ok(studyContentService.getFirstCategory());
     }
 
     @GetMapping("/{firstCategory}")
-    public ResponseEntity<List<String>> getInitialStudyContent(@PathVariable String firstCategory) {
+    public ResponseEntity<List<String>> getSecondCategory(@PathVariable String firstCategory) {
         return ResponseEntity.ok(studyContentService.getSecondCategoryByFirstCategory(firstCategory));
 
     }
 
     @GetMapping("/{firstCategory}/{secondCategory}")
-    public ResponseEntity<List<StudyContentDetailDto>> getInitialStudyContent(
+    public ResponseEntity<List<StudyContentDetailDto>> getStudyContents(
             @PathVariable String firstCategory,
             @PathVariable String secondCategory) {
         return ResponseEntity.ok(studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
