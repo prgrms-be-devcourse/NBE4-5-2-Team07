@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.java.NBE4_5_1_7.domain.interviewComment.dto.InterviewCommentDetailDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.InterviewCommentResponseDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.service.InterviewCommentService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,29 +28,31 @@ public class InterviewCommentController {
 	private final InterviewCommentService interviewCommentService;
 
 	@PostMapping
-	public ResponseEntity<InterviewCommentDetailDto> createComment(
-		@RequestBody InterviewCommentDetailDto newDto) {
-		InterviewCommentDetailDto createdComment = interviewCommentService.createComment(newDto);
+	public ResponseEntity<InterviewCommentResponseDto> createComment(
+		@RequestHeader("Authorization") String authorizationHeader,
+		@RequestBody InterviewCommentRequestDto newDto) {
+		String token = authorizationHeader.startsWith("Bearer ") ? authorizationHeader.substring(7) : authorizationHeader;
+		InterviewCommentResponseDto createdComment = interviewCommentService.createComment(token, newDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
 	}
 
 	@GetMapping
-	public ResponseEntity<List<InterviewCommentDetailDto>> all() {
-		List<InterviewCommentDetailDto> comments = interviewCommentService.getAllComments();
+	public ResponseEntity<List<InterviewCommentResponseDto>> all() {
+		List<InterviewCommentResponseDto> comments = interviewCommentService.getAllComments();
 		return ResponseEntity.ok(comments);
 	}
 
 	@GetMapping("/{commentId}")
-	public ResponseEntity<InterviewCommentDetailDto> getCommentById(@PathVariable Long commentId) {
-		InterviewCommentDetailDto comment = interviewCommentService.getCommentById(commentId);
+	public ResponseEntity<InterviewCommentResponseDto> getCommentById(@PathVariable Long commentId) {
+		InterviewCommentResponseDto comment = interviewCommentService.getCommentById(commentId);
 		return ResponseEntity.ok(comment);
 	}
 
 	@PatchMapping("/{commentId}")
-	public ResponseEntity<InterviewCommentDetailDto> updateComment(
+	public ResponseEntity<InterviewCommentResponseDto> updateComment(
 		@PathVariable("commentId") Long commentId,
-		@RequestBody InterviewCommentDetailDto updatedDto) {
-		InterviewCommentDetailDto updatedComment = interviewCommentService.updateComment(commentId, updatedDto);
+		@RequestBody InterviewCommentRequestDto updatedDto) {
+		InterviewCommentResponseDto updatedComment = interviewCommentService.updateComment(commentId, updatedDto);
 		return ResponseEntity.ok(updatedComment);
 	}
 

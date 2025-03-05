@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
-import com.java.NBE4_5_1_7.domain.interviewComment.dto.InterviewCommentDetailDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.InterviewCommentResponseDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.entity.InterviewContentComment;
 import com.java.NBE4_5_1_7.domain.interviewComment.repository.InterviewCommentRepository;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
+import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,73 +23,68 @@ public class InterviewCommentService {
 
 	private final InterviewCommentRepository interviewCommentRepository;
 	private final InterviewContentRepository interviewContentRepository;
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 
 	@Transactional
-	public InterviewCommentDetailDto createComment(InterviewCommentDetailDto newDto) {
-		InterviewContentComment newComment = new InterviewContentComment();
-
-		newComment.setAnswer(newDto.getComment());
-		newComment.setPublic(newDto.isPublic());
-
+	public InterviewCommentResponseDto createComment(String token, InterviewCommentRequestDto newDto) {
 		InterviewContent interviewContent = interviewContentRepository.findById(newDto.getInterviewContentId())
 			.orElseThrow(() -> new RuntimeException("해당 인터뷰 콘텐츠를 찾을 수 없습니다."));
-		newComment.setInterviewContent(interviewContent);
 
-		Member member = memberRepository.findById(newDto.getMemberId())
-			.orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
+		Member member = memberService.getMemberByAccessToken(token)
+			.orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+
+		InterviewContentComment newComment = new InterviewContentComment();
+		newComment.setAnswer(newDto.getComment());
+		newComment.setPublic(newDto.isPublic());
+		newComment.setInterviewContent(interviewContent);
 		newComment.setMember(member);
 
 		InterviewContentComment savedComment = interviewCommentRepository.save(newComment);
 
-		return new InterviewCommentDetailDto(
+		return new InterviewCommentResponseDto(
 			savedComment.getComment_id(),
 			savedComment.getAnswer(),
 			savedComment.isPublic(),
-			savedComment.getInterviewContent().getInterview_content_id(),
-			savedComment.getMember().getId()
+			savedComment.getInterviewContent().getInterview_content_id()
 		);
 	}
 
-	public List<InterviewCommentDetailDto> getAllComments() {
+	public List<InterviewCommentResponseDto> getAllComments() {
 		List<InterviewContentComment> comments = interviewCommentRepository.findAll();
 		return comments.stream()
-			.map(comment -> new InterviewCommentDetailDto(
+			.map(comment -> new InterviewCommentResponseDto(
 				comment.getComment_id(),
 				comment.getAnswer(),
 				comment.isPublic(),
-				comment.getInterviewContent().getInterview_content_id(),
-				comment.getMember().getId()
+				comment.getInterviewContent().getInterview_content_id()
 			))
 			.collect(Collectors.toList());
 	}
 
-	public InterviewCommentDetailDto getCommentById(Long commentId) {
+	public InterviewCommentResponseDto getCommentById(Long commentId) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
 			.orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
-		return new InterviewCommentDetailDto(
+		return new InterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
-			comment.getInterviewContent().getInterview_content_id(),
-			comment.getMember().getId()
+			comment.getInterviewContent().getInterview_content_id()
 			);
 	}
 
 	@Transactional
-	public InterviewCommentDetailDto updateComment(Long commentId, InterviewCommentDetailDto updatedDto) {
+	public InterviewCommentResponseDto updateComment(Long commentId, InterviewCommentRequestDto updatedDto) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
 			.orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
 
 		comment.setAnswer(updatedDto.getComment());
 		comment.setPublic(updatedDto.isPublic());
 
-		return new InterviewCommentDetailDto(
+		return new InterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
-			comment.getInterviewContent().getInterview_content_id(),
-			comment.getMember().getId()
+			comment.getInterviewContent().getInterview_content_id()
 			);
 	}
 

@@ -1,4 +1,4 @@
-package com.java.NBE4_5_1_7.domain.interviewComment.dto;
+package com.java.NBE4_5_1_7.domain.interviewComment.dto.request;
 
 import com.java.NBE4_5_1_7.domain.interviewComment.entity.InterviewContentComment;
 
@@ -11,18 +11,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InterviewCommentDetailDto {
-	private Long commentId;
+public class InterviewCommentRequestDto {
 	private String comment;
 	private boolean isPublic;
 	private Long interviewContentId;
-	private Long memberId;
 
-	public InterviewCommentDetailDto(InterviewContentComment comment) {
-		this.commentId = comment.getComment_id();
+	public InterviewCommentRequestDto(InterviewContentComment comment) {
 		this.interviewContentId = comment.getInterviewContent().getInterview_content_id();
 		this.comment = comment.getAnswer();
 		this.isPublic = comment.isPublic();
-		this.memberId = comment.getMember().getId();
 	}
 }
