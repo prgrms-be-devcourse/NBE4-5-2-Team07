@@ -8,6 +8,11 @@ db:
   url: jdbc:mysql://localhost:"포트번호"/"데이터베이스명"?serverTimezone=UTC&useSSL=false
   username: "사용자 이름"
   password: "비밀번호"
+security:
+  kakao:
+    client-id: 슬랙 캔버스 확인
+  jwt:
+    secret-key: 슬랙 캔버스 확인
 ```
 ## 커밋 컨벤션
 | 커밋 유형 | 코드 | 사용 설명 |

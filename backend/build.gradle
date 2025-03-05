@@ -25,6 +25,12 @@ repositories {
 
 dependencies {
 
+	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -44,6 +50,11 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	// opencsv 의존성 추가 - csv to db 시 csv 파일 읽을 때 사용됨
 	implementation 'com.opencsv:opencsv:5.7.1'
+	//swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+	//open ai
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 }
 
 tasks.named('test') {

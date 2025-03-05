@@ -7,6 +7,7 @@ import com.opencsv.CSVReader;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +15,18 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class InterviewContentDataInit {
     private final InterviewContentRepository repository;
 
     @PostConstruct
+    public void dataInit() {
+        importCsvData();
+        updateHasTailField();
+    }
+
+
     public void importCsvData() {
         try {
             // resources 폴더에 위치한 CSV 파일을 불러옴
@@ -76,5 +84,15 @@ public class InterviewContentDataInit {
         } catch (Exception e) {
             throw new RuntimeException("CSV 데이터를 DB에 저장하는데 실패했습니다.", e);
         }
+    }
+
+    @Transactional
+    public void updateHasTailField() {
+        repository.findAll().stream().filter(interview -> interview.getHead_id() != null).forEach(tail -> {
+            InterviewContent head = repository.findById(tail.getHead_id()).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
+            head.setHasTail(true);
+            head.setTail_id(tail.getInterview_content_id());
+            repository.save(head);
+        });
     }
 }

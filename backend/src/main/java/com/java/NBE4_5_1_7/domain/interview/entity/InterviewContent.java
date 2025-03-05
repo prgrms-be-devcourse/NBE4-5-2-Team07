@@ -12,6 +12,8 @@ public class InterviewContent {
 
     private Long head_id;
 
+    private Long tail_id;
+
     @Enumerated(EnumType.STRING)
     private InterviewCategory category;
 
@@ -26,4 +28,7 @@ public class InterviewContent {
 
     @Column(name = "is_head")
     private boolean head;
+
+    @Column(name = "has_tail")
+    private boolean hasTail;
 }

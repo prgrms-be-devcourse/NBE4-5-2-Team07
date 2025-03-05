@@ -33,7 +33,7 @@ public class StudyContentDataInit {
                 if (isFirstLine) {
                     isFirstLine = false;
                     continue;
-                }
+                }   
                 // CSV 컬럼 순서: study_content_id, first_category, second_category, title, body
                 // study_content_id는 auto-generated 필드이므로 사용하지 않습니다.
                 String firstCategoryStr = line[1].trim();
