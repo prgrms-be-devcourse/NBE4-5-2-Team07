@@ -1,8 +1,9 @@
-package com.example.next.global.security;
+package com.java.NBE4_5_1_7.global.security;
 
-import com.example.next.domain.member.member.entity.Member;
-import com.example.next.domain.member.member.service.MemberService;
-import com.example.next.global.Rq;
+
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.member.service.MemberService;
+import com.java.NBE4_5_1_7.global.Rq;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         String url = request.getRequestURI();
 
-        if(List.of("/api/v1/members/login", "/api/v1/members/join", "/api/*/members/logout").contains(url)) {
+        if(List.of("/api/member/login", "/api/*/member/logout").contains(url)) {
             filterChain.doFilter(request, response);
             return;
         }

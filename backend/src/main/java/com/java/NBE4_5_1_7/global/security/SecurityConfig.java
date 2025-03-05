@@ -26,18 +26,19 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().permitAll()
 //                                .authenticated()
                 )
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-//                .oauth2Login(oauth2 -> {
-//                    oauth2.authorizationEndpoint(
-//                            authorizationEndpoint -> authorizationEndpoint
-//                                    .authorizationRequestResolver(customAuthorizationRequestResolver)
-//                    );
-//                    oauth2.successHandler(customAuthenticationSuccessHandler);
-//                })
+                .oauth2Login(oauth2 -> {
+                    oauth2.authorizationEndpoint(
+                            authorizationEndpoint -> authorizationEndpoint
+                                    .authorizationRequestResolver(customAuthorizationRequestResolver)
+                    );
+                    oauth2.successHandler(customAuthenticationSuccessHandler);
+                })
         ;
 
         return http.build();

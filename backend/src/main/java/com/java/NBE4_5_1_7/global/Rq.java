@@ -24,7 +24,6 @@ public class Rq {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
-    private final MemberService memberService;
 
     public void setLogin(Member actor) {
 
@@ -79,10 +78,6 @@ public class Rq {
         return null;
     }
 
-    public void setHeader(String name, String value) {
-        response.setHeader(name, value);
-    }
-
     public void addCookie(String name, String value) {
         Cookie accsessTokenCookie = new Cookie(name, value);
 
@@ -93,10 +88,6 @@ public class Rq {
         accsessTokenCookie.setAttribute("SameSite", "Strict");
 
         response.addCookie(accsessTokenCookie);
-    }
-
-    public Member getRealActor(Member actor) {
-        return memberService.findById(actor.getId()).get();
     }
 
     public void removeCookie(String name) {

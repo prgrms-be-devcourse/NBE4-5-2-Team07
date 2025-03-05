@@ -1,4 +1,4 @@
-package com.team1.beanstore.global.init;
+package com.java.NBE4_5_1_7.global.init;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -68,7 +68,7 @@ public class DevInitData {
         }
     }
 
-    // ✅ OS에 따라 명령어 설정
+    // OS 호환성
     private static List<String> getTsGenCommand() {
         String os = System.getProperty("os.name").toLowerCase();
 

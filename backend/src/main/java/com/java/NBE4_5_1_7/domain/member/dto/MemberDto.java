@@ -6,17 +6,16 @@ import org.springframework.lang.NonNull;
 
 @Getter
 public class MemberDto {
-        @NonNull
-        private long id;
-        @NonNull
-        private String nickname;
-        @NonNull
-        private String profileImgUrl;
+    @NonNull
+    private long id;
+    @NonNull
+    private String nickname;
+    @NonNull
+    private String profileImgUrl;
 
-        public MemberDto(Member member) {
-            this.id = member.getId();
-            this.nickname = member.getNickname();
-            this.profileImgUrl = member.getProfileImgUrlOrDefaultUrl();
-        }
+    public MemberDto(Member member) {
+        this.id = member.getId();
+        this.nickname = member.getNickname();
+        this.profileImgUrl = member.getProfileImgUrlOrDefaultUrl();
     }
 }
