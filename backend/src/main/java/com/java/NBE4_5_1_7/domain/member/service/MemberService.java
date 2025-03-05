@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.member.service;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
+import com.java.NBE4_5_1_7.global.Rq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AuthTokenService authTokenService;
+    private final Rq rq;
 
     public Member join(String username, String nickname, String profileImgUrl) {
 
@@ -64,8 +66,8 @@ public class MemberService {
         );
     }
 
-    public Long getIdFromMember(String accessToken) {
-        Member member = getMemberByAccessToken(accessToken).orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
+    public Long getIdFromRq() {
+        Member member = rq.getActor();
         return member.getId();
     }
 
