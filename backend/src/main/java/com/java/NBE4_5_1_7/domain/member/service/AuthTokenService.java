@@ -17,7 +17,10 @@ public class AuthTokenService {
     private String keyString;
 
     @Value("${custom.jwt.expire-seconds}")
-    private int expireSeconds;
+    private int expireSeconds; // Access Token 만료시간 (예: 60초)
+
+    @Value("${custom.jwt.refresh-expire-seconds}")
+    private int refreshExpireSeconds; // Refresh Token 만료시간 (예: 3600초 = 1시간)
 
     public String genAccessToken(Member member) {
         return Ut.Jwt.createToken(
@@ -27,8 +30,19 @@ public class AuthTokenService {
         );
     }
 
+    public String genRefreshToken(Member member) {
+        return Ut.Jwt.createToken(
+                keyString,
+                refreshExpireSeconds,
+                Map.of("id", member.getId(), "type", "refresh")
+        );
+    }
+
     public Map<String, Object> getPayload(String token) {
-        // UT.Jwt.getPayload 내부에서 ExpiredJwtException은 catch되어 null을 반환함
+        return Ut.Jwt.getPayload(keyString, token);
+    }
+
+    public Map<String, Object> getRefreshPayload(String token) {
         return Ut.Jwt.getPayload(keyString, token);
     }
 }

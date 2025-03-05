@@ -65,3 +65,4 @@ custom:
   jwt:
     secret-key: ${security.jwt.secret-key}
     expire-seconds: "#{60}"
+    refresh-expire-seconds: "#{3600}"

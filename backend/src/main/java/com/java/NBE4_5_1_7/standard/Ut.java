@@ -29,21 +29,17 @@ public class Ut {
             SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
             Date issuedAt = new Date();
             Date expiration = new Date(issuedAt.getTime() + 1000L * expireSeconds);
-
-            String jwt = Jwts.builder()
+            return Jwts.builder()
                     .claims(claims)
                     .issuedAt(issuedAt)
                     .expiration(expiration)
                     .signWith(secretKey)
                     .compact();
-
-            return jwt;
         }
 
         public static boolean isValidToken(String keyString, String token) {
             try {
                 SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
-                // 만료된 토큰일 경우 예외가 발생하지만, 여기서 catch되어 false를 반환합니다.
                 Jwts.parser().verifyWith(secretKey).build().parse(token);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -56,14 +52,12 @@ public class Ut {
         public static Map<String, Object> getPayload(String keyString, String jwtStr) {
             SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
             try {
-                // 토큰을 파싱하여 payload를 반환합니다.
                 return (Map<String, Object>) Jwts.parser()
                         .verifyWith(secretKey)
                         .build()
                         .parse(jwtStr)
                         .getPayload();
             } catch (ExpiredJwtException e) {
-                // 토큰이 만료된 경우 null을 반환하여 상위 로직에서 refresh 처리를 하도록 함
                 return null;
             } catch (Exception e) {
                 e.printStackTrace();

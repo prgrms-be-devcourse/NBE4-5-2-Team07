@@ -66,9 +66,28 @@ public class MemberService {
         );
     }
 
+    // 아래 코드를 MemberService.java에 추가
+    public Map<String, Object> getRefreshPayload(String refreshToken) {
+        try {
+            Map<String, Object> payload = authTokenService.getRefreshPayload(refreshToken);
+            // 검증: payload의 "type"이 "refresh"인지 확인
+            if (payload != null && "refresh".equals(payload.get("type"))) {
+                return payload;
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
     public Long getIdFromRq() {
         Member member = rq.getActor();
         return member.getId();
+    }
+
+    public String genRefreshToken(Member member) {
+        return authTokenService.genRefreshToken(member);
     }
 
     public String genAccessToken(Member member) {
