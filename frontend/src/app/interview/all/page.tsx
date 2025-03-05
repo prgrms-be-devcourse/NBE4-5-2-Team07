@@ -36,7 +36,10 @@ export default function InterviewAllPage() {
   // 전체 ID 리스트 fetch (컴포넌트 마운트 시)
   useEffect(() => {
     setListLoading(true);
-    fetch("http://localhost:8080/interview/all")
+    fetch("http://localhost:8080/interview/all", {
+      method: "GET",
+      credentials: "include", // 쿠키 등 인증 정보를 함께 전송
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error("전체 질문 ID 리스트를 받아오는데 실패했습니다.");
@@ -64,7 +67,10 @@ export default function InterviewAllPage() {
         }
         return prev;
       });
-      const res = await fetch(`http://localhost:8080/interview/${id}`);
+      const res = await fetch(`http://localhost:8080/interview/${id}`, {
+        method: "GET",
+        credentials: "include", // 인증 정보를 함께 전송
+      });
       if (!res.ok) {
         throw new Error("면접 질문을 가져오는 데 실패했습니다.");
       }

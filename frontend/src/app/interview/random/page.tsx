@@ -192,7 +192,7 @@ export default function RandomInterviewPage() {
                 cursor: "pointer",
               }}
             >
-              실전 모드 시작
+              질문 순서 랜덤하게 생성하기
             </button>
           </div>
         )}
