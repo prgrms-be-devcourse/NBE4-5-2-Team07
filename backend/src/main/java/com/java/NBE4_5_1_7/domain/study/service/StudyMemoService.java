@@ -1,8 +1,13 @@
 package com.java.NBE4_5_1_7.domain.study.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoRequestDto;
+import com.java.NBE4_5_1_7.domain.study.dto.response.StudyMemoResponseDto;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyMemo;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
@@ -10,7 +15,6 @@ import com.java.NBE4_5_1_7.domain.study.repository.StudyMemoRepository;
 import com.java.NBE4_5_1_7.global.Rq;
 
 import lombok.RequiredArgsConstructor;
-
 
 @Service
 @RequiredArgsConstructor
