@@ -34,9 +34,9 @@ public class StudyMemo extends BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public StudyMemo(String memoContent, StudyContent studyContent) {
+    public StudyMemo(String memoContent, StudyContent studyContent, Member member) {
         this.memoContent = memoContent;
         this.studyContent = studyContent;
-//        this.member = member;
+        this.member = member;
     }
 }
