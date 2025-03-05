@@ -52,7 +52,7 @@ public class StudyContentDataInit {
                     case "데이터베이스":
                         firstCategory = FirstCategory.Database;
                         break;
-                    case "Network":
+                    case "NetWork":
                     case "네트워크":
                         firstCategory = FirstCategory.Network;
                         break;
@@ -60,7 +60,7 @@ public class StudyContentDataInit {
                     case "운영체제":
                         firstCategory = FirstCategory.OperatingSystem;
                         break;
-                    case "Software Engineering":
+                    case "SoftWare Engineering":
                     case "소프트웨어엔지니어링":
                         firstCategory = FirstCategory.SoftwareEngineering;
                         break;
