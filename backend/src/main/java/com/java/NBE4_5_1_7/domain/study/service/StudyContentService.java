@@ -8,12 +8,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class StudyContentService {
     private final StudyContentRepository studyContentRepository;
+
+    public Map<String, List<String>> getAllCategory() {
+        Map<String, List<String>> categories = new HashMap<>();
+        List<FirstCategory> firstCategories = studyContentRepository.findDistinctFirstCategories();
+        for(FirstCategory category : firstCategories) {
+            String firstCategory = String.valueOf(category);
+            List<String> second = getSecondCategoryByFirstCategory(firstCategory);
+            categories.put(String.valueOf(firstCategory),second);
+        }
+        return categories;
+    }
 
     public List<String> getFirstCategory() {
         List<FirstCategory> firstCategories = studyContentRepository.findDistinctFirstCategories();

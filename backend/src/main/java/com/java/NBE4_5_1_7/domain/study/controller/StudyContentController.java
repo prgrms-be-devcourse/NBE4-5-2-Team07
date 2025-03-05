@@ -2,12 +2,14 @@ package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
+import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,10 +22,14 @@ public class StudyContentController {
         return ResponseEntity.ok(studyContentService.getFirstCategory());
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, List<String>>> getAllCategory() {
+        return ResponseEntity.ok(studyContentService.getAllCategory());
+    }
+
     @GetMapping("/{firstCategory}")
     public ResponseEntity<List<String>> getSecondCategory(@PathVariable String firstCategory) {
         return ResponseEntity.ok(studyContentService.getSecondCategoryByFirstCategory(firstCategory));
-
     }
 
     @GetMapping("/{firstCategory}/{secondCategory}")
