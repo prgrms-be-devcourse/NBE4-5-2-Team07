@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/studyMemo/create/{studyContentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createStudyMemo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/interview-comments": {
         parameters: {
             query?: never;
@@ -130,6 +146,22 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/studyMemo/{studyMemoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getStudyMemoById"];
+        put?: never;
+        post?: never;
+        delete: operations["deleteStudyMemo"];
+        options?: never;
+        head?: never;
+        patch: operations["updateStudyMemo"];
         trace?: never;
     };
     "/api/v1/interview-comments/{commentId}": {
@@ -236,6 +268,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getFirstCategory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/studyMemo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllStudyMemos"];
         put?: never;
         post?: never;
         delete?: never;
@@ -424,6 +472,16 @@ export interface components {
             role?: string;
             content?: string;
         };
+        StudyMemoRequestDto: {
+            /** Format: int64 */
+            studyContentId?: number;
+            memoContent?: string;
+        };
+        StudyMemoResponseDto: {
+            /** Format: int64 */
+            studyContentId?: number;
+            memoContent?: string;
+        };
         StudyContentDetailDto: {
             /** Format: int64 */
             id?: number;
@@ -566,6 +624,41 @@ export interface operations {
                 };
                 content: {
                     "*/*": number[];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    createStudyMemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
                 };
             };
             /** @description Internal Server Error */
@@ -729,6 +822,103 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getStudyMemoById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyMemoId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyMemoResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    deleteStudyMemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyMemoId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    updateStudyMemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyMemoId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudyMemoRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyMemoResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1006,6 +1196,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": string[];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getAllStudyMemos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyMemoResponseDto"][];
                 };
             };
             /** @description Internal Server Error */
