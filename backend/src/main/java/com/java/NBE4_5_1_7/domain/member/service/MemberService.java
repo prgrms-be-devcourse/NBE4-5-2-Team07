@@ -85,6 +85,7 @@ public class MemberService {
         Member member = rq.getActor();
         return member.getId();
     }
+    
 
     public String genRefreshToken(Member member) {
         return authTokenService.genRefreshToken(member);
