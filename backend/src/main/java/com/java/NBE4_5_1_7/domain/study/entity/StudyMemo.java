@@ -1,7 +1,7 @@
 package com.java.NBE4_5_1_7.domain.study.entity;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.global.entity.BaseTime;
+import com.java.NBE4_5_1_7.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class StudyMemo extends BaseTime {
+public class StudyMemo extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studyContent_id")
