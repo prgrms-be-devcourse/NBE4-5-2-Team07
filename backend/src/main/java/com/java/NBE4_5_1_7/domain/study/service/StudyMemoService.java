@@ -13,6 +13,7 @@ import com.java.NBE4_5_1_7.domain.study.entity.StudyMemo;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyMemoRepository;
 import com.java.NBE4_5_1_7.global.Rq;
+import com.java.NBE4_5_1_7.global.exception.ServiceException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,25 +34,37 @@ public class StudyMemoService {
     }
 
     // 메모 다건 조회
-    public List<StudyMemoResponseDto> getAllStudyMemos() {
+    public List<StudyMemoResponseDto> getAllStudyMemos(Member member) {
         return studyMemoRepository.findAll().stream()
+            .filter(memo -> memo.getMember().equals(member))
             .map(memo -> new StudyMemoResponseDto(
                 memo.getStudyContent().getStudy_content_id(), memo.getMemoContent()))
             .collect(Collectors.toList());
     }
 
     // 메모 단건 조회
-    public StudyMemoResponseDto getStudyMemoById(Long studyMemoId) {
+    public StudyMemoResponseDto getStudyMemoById(Long studyMemoId, Member member) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
 
-        return new StudyMemoResponseDto(studyMemo.getStudyContent().getStudy_content_id(), studyMemo.getMemoContent());
+        if (!studyMemo.getMember().equals(member)) {
+            throw new ServiceException("403", "본인이 작성한 메모만 조회할 수 있습니다.");
+        }
+
+        return new StudyMemoResponseDto(
+            studyMemo.getStudyContent().getStudy_content_id(),
+            studyMemo.getMemoContent()
+        );
     }
 
     // 메모 수정
-    public StudyMemoResponseDto updateStudyMemo(Long studyMemoId, StudyMemoRequestDto updatedDto) {
+    public StudyMemoResponseDto updateStudyMemo(Long studyMemoId, StudyMemoRequestDto updatedDto, Member member) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
+
+        if (!studyMemo.getMember().equals(member)) {
+            throw new ServiceException("403", "본인이 작성한 메모만 수정할 수 있습니다.");
+        }
 
         studyMemo.setMemoContent(updatedDto.getMemoContent());
         StudyMemo updatedMemo = studyMemoRepository.save(studyMemo);
@@ -60,9 +73,13 @@ public class StudyMemoService {
     }
 
     // 메모 삭제
-    public void deleteStudyMemo(Long studyMemoId) {
+    public void deleteStudyMemo(Long studyMemoId, Member member) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
+
+        if (!studyMemo.getMember().equals(member)) {
+            throw new ServiceException("403", "본인이 작성한 댓글만 삭제할 수 있습니다.");
+        }
 
         studyMemoRepository.delete(studyMemo);
     }
