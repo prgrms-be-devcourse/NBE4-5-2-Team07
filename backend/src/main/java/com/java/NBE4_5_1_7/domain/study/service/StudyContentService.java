@@ -6,6 +6,7 @@ import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class StudyContentService {
         return studyContents.stream()
                 .map(StudyContentDetailDto::new)
                 .toList();
+    }
+
+    @Transactional
+    public void updateStudyContent(Long studyContentId, String updateContent) {
+        StudyContent studyContent = studyContentRepository.findById(studyContentId).orElse(null);
+        studyContent.setBody(updateContent);
     }
 
     public void deleteStudyContent(Long studyContentId) {

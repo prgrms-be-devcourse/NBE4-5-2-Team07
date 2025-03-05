@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,15 @@ public class StudyContentController {
             @PathVariable String secondCategory) {
         return ResponseEntity.ok(studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
     }
+
+    @PutMapping("/update/{studyContentId}")
+    public ResponseEntity<String> updateStudyContent(
+            @PathVariable("studyContentId") Long studyContentId,
+            @RequestBody StudyContentUpdateRequestDto requestDto) {
+        studyContentService.updateStudyContent(studyContentId, requestDto.getUpdateContent());
+        return ResponseEntity.ok("update success");
+    }
+
     @DeleteMapping("/delete/{studyContentId}")
     public ResponseEntity<String> deleteStudyContent(@PathVariable("studyContentId") Long studyContentId) {
         studyContentService.deleteStudyContent(studyContentId);
