@@ -1,6 +1,6 @@
-package com.java.NBE4_5_1_7.domain.interviewComment.dto;
+package com.java.NBE4_5_1_7.domain.interview.entity.dto.request;
 
-import com.java.NBE4_5_1_7.domain.interviewComment.entity.InterviewContentComment;
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentComment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

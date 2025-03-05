@@ -1,4 +1,4 @@
-package com.java.NBE4_5_1_7.domain.interviewComment.service;
+package com.java.NBE4_5_1_7.domain.interview.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
-import com.java.NBE4_5_1_7.domain.interviewComment.dto.InterviewCommentDetailDto;
-import com.java.NBE4_5_1_7.domain.interviewComment.entity.InterviewContentComment;
-import com.java.NBE4_5_1_7.domain.interviewComment.repository.InterviewCommentRepository;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.InterviewCommentDetailDto;
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentComment;
+import com.java.NBE4_5_1_7.domain.interview.repository.InterviewCommentRepository;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
 

@@ -1,6 +1,5 @@
-package com.java.NBE4_5_1_7.domain.interviewComment.entity;
+package com.java.NBE4_5_1_7.domain.interview.entity;
 
-import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
