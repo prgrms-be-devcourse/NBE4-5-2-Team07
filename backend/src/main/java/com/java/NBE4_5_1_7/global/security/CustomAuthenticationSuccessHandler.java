@@ -22,9 +22,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final MemberService memberService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         HttpSession session = request.getSession();
-
         String redirectUrl = (String) session.getAttribute("redirectUrl");
         if (redirectUrl == null) {
             redirectUrl = "http://localhost:3000";
@@ -33,8 +32,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Member member = rq.getActor();
         String accessToken = memberService.genAccessToken(member);
+        String refreshToken = memberService.genRefreshToken(member);
 
         rq.addCookie("accessToken", accessToken);
+        rq.addCookie("refreshToken", refreshToken);
         rq.addCookie("apiKey", member.getApiKey());
 
         response.sendRedirect(redirectUrl);

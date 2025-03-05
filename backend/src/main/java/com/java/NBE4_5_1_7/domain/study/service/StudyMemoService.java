@@ -27,9 +27,11 @@ public class StudyMemoService {
     // 멤버, 학습 컨텐츠 ID, 메모 내용 저장
     public void createStudyMemo(String studyMemoContent, Long studyContentId) {
         Member member = rq.getActor();
+
         StudyContent studyContent = studyContentRepository.findById(studyContentId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 학습 컨텐츠 입니다."));
         StudyMemo studyMemo = new StudyMemo(studyMemoContent, studyContent, member);
+
         studyMemoRepository.save(studyMemo);
     }
 

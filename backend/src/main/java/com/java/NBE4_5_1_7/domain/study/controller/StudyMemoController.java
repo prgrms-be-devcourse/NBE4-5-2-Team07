@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.study.controller;
 
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.response.StudyMemoResponseDto;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoCreateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyMemoService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,9 +32,9 @@ public class StudyMemoController {
     // 메모 생성
     @PostMapping("/create/{studyContentId}")
     public ResponseEntity<String> createStudyMemo(
-            @RequestBody String studyMemoContent,
+            @RequestBody StudyMemoCreateRequestDto requestDto,
             @PathVariable Long studyContentId) {
-        studyMemoService.createStudyMemo(studyMemoContent, studyContentId);
+        studyMemoService.createStudyMemo(requestDto.getContent(), studyContentId);
         return ResponseEntity.ok("create success");
     }
 
