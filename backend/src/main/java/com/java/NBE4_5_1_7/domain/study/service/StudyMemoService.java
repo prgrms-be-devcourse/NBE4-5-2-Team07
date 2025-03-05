@@ -32,6 +32,7 @@ public class StudyMemoService {
         studyMemoRepository.save(studyMemo);
     }
 
+    // 메모 다건 조회
     public List<StudyMemoResponseDto> getAllStudyMemos() {
         return studyMemoRepository.findAll().stream()
             .map(memo -> new StudyMemoResponseDto(
@@ -39,7 +40,7 @@ public class StudyMemoService {
             .collect(Collectors.toList());
     }
 
-    // 단건 조회
+    // 메모 단건 조회
     public StudyMemoResponseDto getStudyMemoById(Long studyMemoId) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
@@ -47,7 +48,7 @@ public class StudyMemoService {
         return new StudyMemoResponseDto(studyMemo.getStudyContent().getStudy_content_id(), studyMemo.getMemoContent());
     }
 
-    // 수정
+    // 메모 수정
     public StudyMemoResponseDto updateStudyMemo(Long studyMemoId, StudyMemoRequestDto updatedDto) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
@@ -58,7 +59,7 @@ public class StudyMemoService {
         return new StudyMemoResponseDto(updatedMemo.getStudyContent().getStudy_content_id(), updatedMemo.getMemoContent());
     }
 
-    // 삭제
+    // 메모 삭제
     public void deleteStudyMemo(Long studyMemoId) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
