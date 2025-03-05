@@ -1,12 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import client from "@/lib/backend/client";
 import styles from "../styles/header.module.css";
+import { LoginMemberContext } from "../login/loginMemberStore";
+import { use } from "react";
 
 export default function Header() {
+  const { isLogin, loginMember, removeLoginMember } = use(LoginMemberContext);
+  const router = useRouter();
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith("/admin");
+
+  async function handleLogout(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+    const response = await client.DELETE("/member/logout", {
+      credentials: "include",
+    });
+
+    if (response.error) {
+      alert(response.error.msg);
+      return;
+    }
+
+    removeLoginMember();
+    router.replace("/");
+  }
 
   return (
     <header className={styles.header}>
@@ -74,9 +94,18 @@ export default function Header() {
             </li>
           ) : (
             <>
-              <li>
-                <Link href="/login">로그인 / 회원가입</Link>
-              </li>
+              {!isLogin && (
+                <li>
+                  <Link href="/login">로그인 / 회원가입</Link>
+                </li>
+              )}
+              {isLogin && (
+                <li>
+                  <Link href="" onClick={handleLogout}>
+                    로그아웃
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href="/admin">⚙️</Link>
               </li>

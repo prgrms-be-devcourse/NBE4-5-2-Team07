@@ -42,3 +42,4 @@ next-env.d.ts
 
 # package-lock.json
 package-lock.json
+src/lib/backend/apiV1/schema.d.ts

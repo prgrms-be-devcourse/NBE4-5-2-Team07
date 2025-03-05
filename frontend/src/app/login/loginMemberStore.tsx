@@ -1,15 +1,9 @@
 "use client";
 
-//import { components } from "@/lib/backend/apiV1/schema";
+import { components } from "@/lib/backend/apiV1/schema";
 import { createContext, useState } from "react";
 
-//type Member = components["schemas"]["MemberDto"];
-type Member = {
-  // 가짜 Member
-  id: number;
-  nickname: string;
-  profileImgUrl: string;
-};
+type Member = components["schemas"]["MemberDto"];
 
 export const LoginMemberContext = createContext<{
   loginMember: Member;

@@ -1,0 +1,69 @@
+"use client";
+
+import client from "@/lib/backend/client";
+
+import { LoginMemberContext, useLoginMember } from "./loginMemberStore";
+import { useEffect } from "react";
+
+export default function ClinetLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const {
+    setLoginMember,
+    isLogin,
+    loginMember,
+    removeLoginMember,
+    isLoginMemberPending,
+    isAdmin,
+    setNoLoginMember,
+  } = useLoginMember();
+
+  const loginMemberContextValue = {
+    loginMember,
+    setLoginMember,
+    removeLoginMember,
+    isLogin,
+    isLoginMemberPending,
+    isAdmin,
+    setNoLoginMember,
+  };
+
+  async function fetchLoginMember() {
+    try {
+      const response = await client.GET("/info", {
+        credentials: "include",
+      });
+
+      if (response.data && Object.keys(response.data).length > 0) {
+        setLoginMember({
+          id: 1,
+          nickname: "사용자",
+          profileImgUrl: "",
+        });
+      } else {
+        setNoLoginMember();
+      }
+    } catch (error) {
+      setNoLoginMember();
+    }
+  }
+
+  useEffect(() => {
+    fetchLoginMember();
+  }, []);
+
+  return (
+    <>
+      <LoginMemberContext.Provider value={loginMemberContextValue}>
+        <div className="flex flex-col flex-grow justify-center items-center">
+          {children}
+        </div>
+        <footer className="flex justify-center gap-7 p-4">
+          @Copywrite 2025
+        </footer>
+      </LoginMemberContext.Provider>
+    </>
+  );
+}
