@@ -22,8 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final MemberService memberService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         HttpSession session = request.getSession();
         String redirectUrl = (String) session.getAttribute("redirectUrl");
         if (redirectUrl == null) {
