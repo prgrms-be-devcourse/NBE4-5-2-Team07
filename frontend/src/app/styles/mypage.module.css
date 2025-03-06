@@ -1,4 +1,5 @@
 .container {
+  width: 95%;
   display: flex;
   gap: 30px;
   margin: 20px;
@@ -22,6 +23,7 @@
 
 .card.large {
   flex-grow: 2;
+  overflow: hidden;
 }
 
 .card.small {
@@ -41,7 +43,7 @@
 }
 
 .card .btn:hover {
-  background-color: #bde1b9;
+  background-color: #5a72b0aa;
 }
 
 .dropdown {
@@ -128,4 +130,84 @@
 .noItems {
   color: #777;
   font-style: italic;
+}
+
+.updateButton {
+  background-color: #006aff;
+  color: white;
+  padding: 8px;
+  margin-right: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  border-radius: 15px;
+  margin-right: 40px;
+}
+
+.actionButtons {
+  display: inline-block;
+  float: inline-end;
+}
+
+.largeText {
+  font-size: 1.6rem;
+  margin: 15px;
+}
+
+.textarea {
+  width: 95%;
+  height: 200px;
+  padding: 10px;
+  border: 2px solid #cacaca;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 15px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: #2e56bc;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 128, 0, 0.3);
+}
+
+.label {
+  font-size: 1rem;
+  margin: 8px;
+}
+
+.checkbox {
+  margin-left: 15px;
+}
+
+.text {
+  font-size: 1.1rem;
+  margin-top: 20px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.large {
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  border-top: 1px solid #ddd;
 }

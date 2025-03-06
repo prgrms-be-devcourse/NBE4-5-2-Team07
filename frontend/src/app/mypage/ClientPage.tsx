@@ -1,23 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/mypage.module.css";
 
+interface Comment {
+  commentId: number;
+  comment: string;
+  interviewContentId: number;
+  interviewContentTitle: string;
+  category: string;
+  public: boolean;
+  modelAnswer: String;
+}
+
+interface InterviewData {
+  [category: string]: Comment[];
+}
+
 const ClientPage = () => {
-  const [note, setNote] = useState(""); // 내 노트
-  const [memo, setMemo] = useState(""); // 학습 메모
-  const [answer, setAnswer] = useState(""); // 기술 면접 답변
   const [showNoteList, setShowNoteList] = useState(false);
   const [memoDropdownOpen, setMemoDropdownOpen] = useState(false);
   const [answerDropdownOpen, setAnswerDropdownOpen] = useState(false);
   const [selectedNoteCategory, setSelectedNoteCategory] = useState("");
   const [selectedMemoCategory, setSelectedMemoCategory] = useState("");
   const [selectedAnswerCategory, setSelectedAnswerCategory] = useState("");
-  const [selectedItem, setSelectedItem] = useState("");
+  const [selectedItem, setSelectedItem] = useState<Comment | null>(null);
   const [selectedNote, setSelectedNote] = useState("");
-  const [items, setItems] = useState([]);
   const [details, setDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [interviewData, setInterviewData] = useState<InterviewData>({});
+  const [updatedComment, setUpdatedComment] = useState("");
+  const [isPublic, setIsPublic] = useState(false);
 
   const notes = ["노트1", "노트2", "노트3", "노트4", "노트5", "노트6"];
   const memos = [
@@ -28,48 +41,145 @@ const ClientPage = () => {
     "Network",
     "Software Engineering",
   ];
-  const answers = ["언어", "운영체제", "데이터베이스", "네트워크", "웹"];
+  const answerCategory = ["데이터베이스", "네트워크", "운영체제", "스프링"];
 
-  const categoryItems: Record<string, string[]> = {
-    "Computer Architecture": [
-      "캐시 메모리",
-      "파이프라이닝",
-      "명령어 집합 구조",
-    ],
-    "Data Structure": [
-      "배열",
-      "연결 리스트",
-      "스택",
-      "큐",
-      "트리",
-      "그래프",
-      "ㄱ",
-      "ㄴ",
-      "ㄷ",
-      "ㄹ",
-      "ㅁ",
-      "ㅂ",
-      "ㅅ",
-      "ㅇ",
-      "ㅈ",
-      "ㅊ",
-    ],
-    "Operating System": ["프로세스", "스레드", "메모리 관리", "파일 시스템"],
-    Database: ["SQL", "NoSQL", "트랜잭션", "인덱스"],
-    Network: ["TCP/IP", "라우팅", "DNS", "HTTP"],
-    "Software Engineering": ["애자일", "TDD", "설계 패턴"],
-    언어: ["JavaScript", "Python", "Java", "C++"],
-    운영체제: ["멀티스레딩", "CPU 스케줄링", "가상 메모리"],
-    데이터베이스: ["정규화", "ACID", "조인"],
-    네트워크: ["UDP", "HTTP/2", "로드 밸런싱"],
-    웹: ["REST API", "GraphQL", "SSR vs CSR"],
+  const fetchInterviewComment = async (category: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment?category=${category}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const responseData = await response.json();
+
+      console.log(responseData);
+
+      if (!responseData || responseData.length === 0) {
+        console.log("No comments available for this category.");
+      }
+
+      const updatedCategoryItems = responseData.reduce(
+        (acc: InterviewData, comment: Comment) => {
+          const commentCategory = comment.category;
+          if (!acc[commentCategory]) {
+            acc[commentCategory] = [];
+          }
+          acc[commentCategory].push(comment);
+          return acc;
+        },
+        {}
+      );
+
+      setInterviewData(updatedCategoryItems);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateComment = async () => {
+    if (!selectedItem) return;
+
+    const isConfirmed = window.confirm("해당 답변을 수정하시겠습니까?");
+    if (!isConfirmed) return;
+
+    const updatedDto = {
+      comment: updatedComment,
+      isPublic: isPublic,
+      interviewContentId: selectedItem.interviewContentId,
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment/${selectedItem.commentId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedDto),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const updatedData = await response.json();
+
+        setInterviewData((prevData) => {
+          const updatedInterviewData = { ...prevData };
+          const updatedCategory = selectedItem.category;
+
+          updatedInterviewData[updatedCategory] = updatedInterviewData[
+            updatedCategory
+          ].map((comment) =>
+            comment.commentId === selectedItem.commentId
+              ? {
+                  ...comment,
+                  comment: updatedData.comment,
+                  public: updatedData.isPublic,
+                }
+              : comment
+          );
+          return updatedInterviewData;
+        });
+
+        alert("댓글이 수정되었습니다.");
+        window.location.reload();
+      } else {
+        console.error("댓글 수정에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("댓글 수정 중 오류가 발생했습니다.", error);
+    }
+  };
+
+  const deleteComment = async () => {
+    if (!selectedItem) return;
+
+    const isConfirmed = window.confirm("해당 답변을 삭제하시겠습니까?");
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment/${selectedItem.commentId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        setInterviewData((prevData) => {
+          const updatedInterviewData = { ...prevData };
+          const updatedCategory = selectedItem.category;
+          updatedInterviewData[updatedCategory] = updatedInterviewData[
+            updatedCategory
+          ].filter((comment) => comment.commentId !== selectedItem.commentId);
+          return updatedInterviewData;
+        });
+
+        setSelectedItem(null);
+        setDetails("");
+        alert("댓글이 삭제되었습니다.");
+        window.location.reload();
+      } else {
+        console.error("댓글 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("댓글 삭제 중 오류가 발생했습니다.", error);
+    }
   };
 
   const handleNoteCategorySelect = (category: string) => {
     setSelectedNoteCategory(category);
     setSelectedAnswerCategory("");
     setSelectedMemoCategory("");
-    setSelectedItem("");
+    setSelectedItem(null);
     setDetails("");
     setSelectedNote(category);
   };
@@ -78,7 +188,7 @@ const ClientPage = () => {
     setSelectedMemoCategory(category);
     setSelectedNoteCategory("");
     setSelectedAnswerCategory("");
-    setSelectedItem("");
+    setSelectedItem(null);
     setDetails("");
     setShowNoteList(false);
   };
@@ -87,14 +197,28 @@ const ClientPage = () => {
     setSelectedAnswerCategory(category);
     setSelectedMemoCategory("");
     setSelectedNoteCategory("");
-    setSelectedItem("");
+    setSelectedItem(null);
     setDetails("");
     setShowNoteList(false);
+
+    fetchInterviewComment(category);
   };
 
-  const handleItemSelect = (item: string) => {
-    setSelectedItem(item);
-    setDetails(`${item}의 상세 설명`);
+  const handleItemSelect = (comment: Comment) => {
+    setSelectedItem(comment);
+    setDetails(
+      `Title: ${comment.interviewContentTitle} \nComment: ${comment.comment}`
+    );
+    setUpdatedComment(comment.comment);
+    setIsPublic(comment.public);
+  };
+
+  const handleUpdate = () => {
+    updateComment();
+  };
+
+  const handleDelete = () => {
+    deleteComment();
   };
 
   const selectedCategory =
@@ -146,7 +270,7 @@ const ClientPage = () => {
         </button>
         {answerDropdownOpen && (
           <ul className={`${styles.dropdownList} ${styles.small}`}>
-            {answers.map((category, index) => (
+            {answerCategory.map((category, index) => (
               <li
                 key={index}
                 onClick={() => handleAnswerCategorySelect(category)}
@@ -180,16 +304,18 @@ const ClientPage = () => {
               ))}
             </ul>
           ) : // 선택한 카테고리의 아이템 목록
-          selectedCategory && categoryItems[selectedCategory] ? (
-            categoryItems[selectedCategory].map((item, index) => (
+          selectedCategory && interviewData[selectedCategory] ? (
+            interviewData[selectedCategory].map((comment, index) => (
               <li
                 key={index}
-                onClick={() => handleItemSelect(item)}
+                onClick={() => handleItemSelect(comment)}
                 className={`${styles.listItem} ${
-                  selectedItem === item ? styles.selected : ""
+                  selectedItem?.commentId === comment.commentId
+                    ? styles.selected
+                    : ""
                 }`}
               >
-                {item}
+                {comment.interviewContentTitle}
               </li>
             ))
           ) : (
@@ -200,7 +326,54 @@ const ClientPage = () => {
 
       {/* 상세 내용 */}
       <div className={`${styles.card} ${styles.large}`}>
-        <p className={styles.noItems}>{selectedItem || "항목을 선택하세요."}</p>
+        <p>
+          {selectedItem ? (
+            <>
+              <strong className={styles.largeText}>
+                {selectedItem.interviewContentTitle}
+              </strong>
+              <br />
+              <p className={styles.text}>{selectedItem.modelAnswer}</p>
+              <br />
+              <div className={styles.bottom}>
+                <strong className={styles.text}>내 답변</strong>
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  className={styles.checkbox}
+                  onChange={() => setIsPublic((prev) => !prev)}
+                />
+                <label className={styles.label}>공개</label>
+                {/* 수정 삭제 버튼 */}
+                {selectedItem && (
+                  <span className={styles.actionButtons}>
+                    <button
+                      className={styles.updateButton}
+                      onClick={handleUpdate}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={handleDelete}
+                    >
+                      삭제
+                    </button>
+                  </span>
+                )}
+                <textarea
+                  value={updatedComment}
+                  onChange={(e) => setUpdatedComment(e.target.value)}
+                  rows={5}
+                  className={styles.textarea}
+                />
+              </div>
+              <br />
+            </>
+          ) : (
+            <p className={styles.noItems}>항목이 없습니다.</p>
+          )}
+        </p>
       </div>
     </div>
   );

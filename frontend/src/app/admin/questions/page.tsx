@@ -46,6 +46,11 @@ export default function QuestionsPage() {
     setEditAnswer(answer);
   };
 
+  // 삭제 버튼 클릭 시 해당 질문 삭제
+  const handleDeleteClick = (id: number) => {
+    setQuestions((prevQuestions) => prevQuestions.filter((item) => item.id !== id));
+  };
+
   // 수정 완료 시 데이터 반영 후 편집 모드 종료
   const handleSave = () => {
     setQuestions((prevQuestions) =>
@@ -148,8 +153,11 @@ export default function QuestionsPage() {
                   </div>
                 </div>
               ) : (
-                <>
-                  <span>{question.question}</span>
+                <><div className={ styles.titleContainer}>
+                    <span>{question.question}</span>
+                    <span className={styles.subTitle}>{question.keyword}</span>
+                    </div>
+                  <div className={ styles.buttonContainer}>
                   <button
                     className={styles.editBtn}
                     onClick={() =>
@@ -163,7 +171,9 @@ export default function QuestionsPage() {
                     }
                   >
                     수정
-                  </button>
+                      </button>
+                  <button className={styles.deleteBtn} onClick={() =>handleDeleteClick(question.id)}>삭제</button>
+                    </div>
                 </>
               )}
             </li>

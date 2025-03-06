@@ -1,15 +1,22 @@
 package com.java.NBE4_5_1_7.domain.study.entity;
 
-import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.global.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.global.entity.BaseEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data

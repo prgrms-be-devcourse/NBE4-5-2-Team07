@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.member.service;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.standard.Ut;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class AuthTokenService {
     private String keyString;
 
     @Value("${custom.jwt.expire-seconds}")
-    private int expireSeconds;
+    private int expireSeconds; // Access Token 만료시간 (예: 60초)
 
-    String genAccessToken(Member member) {
+    @Value("${custom.jwt.refresh-expire-seconds}")
+    private int refreshExpireSeconds; // Refresh Token 만료시간 (예: 3600초 = 1시간)
 
+    public String genAccessToken(Member member) {
         return Ut.Jwt.createToken(
                 keyString,
                 expireSeconds,
@@ -27,16 +30,19 @@ public class AuthTokenService {
         );
     }
 
-    Map<String, Object> getPayload(String token) {
+    public String genRefreshToken(Member member) {
+        return Ut.Jwt.createToken(
+                keyString,
+                refreshExpireSeconds,
+                Map.of("id", member.getId(), "type", "refresh")
+        );
+    }
 
-        if(!Ut.Jwt.isValidToken(keyString, token)) return null;
+    public Map<String, Object> getPayload(String token) {
+        return Ut.Jwt.getPayload(keyString, token);
+    }
 
-        Map<String, Object> payload = Ut.Jwt.getPayload(keyString, token);
-        Number idNo = (Number)payload.get("id");
-        long id = idNo.longValue();
-        String username = (String)payload.get("username");
-        String nickname = (String)payload.get("nickname");
-
-        return Map.of("id", id, "username", username, "nickname", nickname);
+    public Map<String, Object> getRefreshPayload(String token) {
+        return Ut.Jwt.getPayload(keyString, token);
     }
 }

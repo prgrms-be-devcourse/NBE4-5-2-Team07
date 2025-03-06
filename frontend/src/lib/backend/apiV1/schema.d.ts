@@ -84,14 +84,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/interview-comments": {
+    "/api/v1/interview/comment": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["all"];
+        get: operations["getCommentsByMemberAndCategory"];
         put?: never;
         post: operations["createComment"];
         delete?: never;
@@ -148,20 +148,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/interview-comments/{commentId}": {
+    "/api/v1/studyMemo/{studyMemoId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getCommentById"];
+        get: operations["getStudyMemoById"];
+        put?: never;
+        post?: never;
+        delete: operations["deleteStudyMemo"];
+        options?: never;
+        head?: never;
+        patch: operations["updateStudyMemo"];
+        trace?: never;
+    };
+    "/api/v1/interview/comment/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
         put?: never;
         post?: never;
         delete: operations["deleteComment"];
         options?: never;
         head?: never;
         patch: operations["updateComment"];
+        trace?: never;
+    };
+    "/member/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["changeRoleToAdmin"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/member/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/interview/{id}": {
@@ -260,6 +308,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/studyMemo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllStudyMemos"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/study/{firstCategory}": {
         parameters: {
             query?: never;
@@ -300,6 +364,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getAllCategory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/interview/comment/public/{interviewContentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPublicComments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/interview/comment/my/{interviewContentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMyComments"];
         put?: never;
         post?: never;
         delete?: never;
@@ -412,18 +508,24 @@ export interface components {
         KeywordContentRequestDto: {
             keywordList?: string[];
         };
+        StudyMemoCreateRequestDto: {
+            content?: string;
+        };
         InterviewCommentRequestDto: {
             comment?: string;
             /** Format: int64 */
             interviewContentId?: number;
-            public?: boolean;
+            isPublic?: boolean;
         };
-        InterviewCommentResponseDto: {
+        MyPageInterviewCommentResponseDto: {
             /** Format: int64 */
             commentId?: number;
             comment?: string;
             /** Format: int64 */
             interviewContentId?: number;
+            interviewContentTitle?: string;
+            category?: string;
+            modelAnswer?: string;
             public?: boolean;
         };
         InterviewStartDto: {
@@ -440,11 +542,34 @@ export interface components {
             role?: string;
             content?: string;
         };
+        StudyMemoRequestDto: {
+            /** Format: int64 */
+            studyContentId?: number;
+            memoContent?: string;
+        };
+        StudyMemoResponseDto: {
+            /** Format: int64 */
+            studyContentId?: number;
+            memoContent?: string;
+        };
+        RsDataMemberDto: {
+            code: string;
+            msg: string;
+            data: components["schemas"]["MemberDto"];
+        };
         StudyContentDetailDto: {
             /** Format: int64 */
             id?: number;
             title?: string;
             body?: string;
+        };
+        InterviewCommentResponseDto: {
+            /** Format: int64 */
+            commentId?: number;
+            comment?: string;
+            /** Format: int64 */
+            interviewContentId?: number;
+            public?: boolean;
         };
         Empty: Record<string, never>;
         RsDataEmpty: {
@@ -606,7 +731,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": string;
+                "application/json": components["schemas"]["StudyMemoCreateRequestDto"];
             };
         };
         responses: {
@@ -630,9 +755,11 @@ export interface operations {
             };
         };
     };
-    all: {
+    getCommentsByMemberAndCategory: {
         parameters: {
-            query?: never;
+            query: {
+                category: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -645,7 +772,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"][];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"][];
                 };
             };
             /** @description Internal Server Error */
@@ -662,9 +789,7 @@ export interface operations {
     createComment: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -680,7 +805,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -793,12 +918,12 @@ export interface operations {
             };
         };
     };
-    getCommentById: {
+    getStudyMemoById: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                commentId: number;
+                studyMemoId: number;
             };
             cookie?: never;
         };
@@ -810,7 +935,73 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
+                    "*/*": components["schemas"]["StudyMemoResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    deleteStudyMemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyMemoId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    updateStudyMemo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyMemoId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudyMemoRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyMemoResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -876,7 +1067,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    changeRoleToAdmin: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataMemberDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1070,6 +1321,35 @@ export interface operations {
             };
         };
     };
+    getAllStudyMemos: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyMemoResponseDto"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
     getSecondCategory: {
         parameters: {
             query?: never;
@@ -1151,6 +1431,68 @@ export interface operations {
                     "*/*": {
                         [key: string]: string[];
                     };
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getPublicComments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interviewContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InterviewCommentResponseDto"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getMyComments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interviewContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InterviewCommentResponseDto"][];
                 };
             };
             /** @description Internal Server Error */

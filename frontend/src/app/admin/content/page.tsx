@@ -45,6 +45,11 @@ export default function ContentPage() {
     setEditBody(body);
   };
 
+  // 삭제 버튼 클릭 시 해당 콘텐츠 삭제
+  const handleDeleteClick = (id: number) => {
+    setContents((prevContents) => prevContents.filter((item) => item.id !== id));
+  };
+
   // 수정 완료 시 데이터 반영 후 편집 모드 종료
   const handleSave = () => {
     setContents((prevContents) =>
@@ -145,22 +150,25 @@ export default function ContentPage() {
                   </div>
                 </div>
               ) : (
-                <>
-                  <span>{content.title}</span>
-                  <button
-                    className={styles.editBtn}
-                    onClick={() =>
-                      handleEditClick(
-                        content.id,
-                        content.first_category,
-                        content.second_category,
-                        content.title,
-                        content.body
-                      )
-                    }
-                  >
-                    수정
-                  </button>
+                <><div className={ styles.titleContainer}>
+                    <span>{content.title}</span>
+                    <span className={styles.subTitle}>{content.second_category}</span>
+                  </div>
+                  <div className={ styles.buttonContainer}>
+                    <button
+                      className={styles.editBtn}
+                      onClick={() =>
+                        handleEditClick(
+                          content.id,
+                          content.first_category,
+                          content.second_category,
+                          content.title,
+                          content.body
+                        )
+                      }>수정</button>
+
+                    <button className={styles.deleteBtn} onClick={() =>handleDeleteClick(content.id)}>삭제</button>
+                  </div>
                 </>
               )}
             </li>

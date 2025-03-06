@@ -14,6 +14,13 @@ interface InterviewResponseDto {
   next_id: number | null;
 }
 
+interface InterviewCommentResponseDto {
+  commentId: number;
+  comment: string;
+  isPublic: boolean;
+  interviewContentId: number;
+}
+
 export default function KeywordStudyPage() {
   // 1. 키워드 목록 관련 상태 (GET /interview/keyword)
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -44,10 +51,26 @@ export default function KeywordStudyPage() {
   // **추가 상태**: 마지막 머리 질문 ID (headIds에 있는 값)
   const [currentHeadId, setCurrentHeadId] = useState<number | null>(null);
 
+  // **추가 상태**: 메모(댓글) 입력 및 공개/비공개 상태
+  const [commentText, setCommentText] = useState<string>("");
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+
+  // **추가 상태**: 메모(댓글) 조회 관련 상태
+  const [myMemos, setMyMemos] = useState<InterviewCommentResponseDto[]>([]);
+  const [publicMemos, setPublicMemos] = useState<InterviewCommentResponseDto[]>(
+    []
+  );
+  const [loadingMemos, setLoadingMemos] = useState<boolean>(false);
+  const [memosError, setMemosError] = useState<string | null>(null);
+  // "my" 또는 "public" 탭 활성 상태
+  const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
+
   // (A) 키워드 목록 불러오기
   useEffect(() => {
     setKeywordsLoading(true);
-    fetch("http://localhost:8080/interview/keyword")
+    fetch("http://localhost:8080/interview/keyword", {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error("키워드 목록을 불러오는데 실패했습니다.");
@@ -81,6 +104,7 @@ export default function KeywordStudyPage() {
     setHeadIdsLoading(true);
     fetch("http://localhost:8080/interview/keyword/content", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ keywordList: selectedKeywords }),
     })
@@ -120,7 +144,9 @@ export default function KeywordStudyPage() {
         }
         return prev;
       });
-      const res = await fetch(`http://localhost:8080/interview/${id}`);
+      const res = await fetch(`http://localhost:8080/interview/${id}`, {
+        credentials: "include",
+      });
       if (!res.ok) {
         throw new Error("면접 질문 상세 정보를 불러오는데 실패했습니다.");
       }
@@ -133,6 +159,8 @@ export default function KeywordStudyPage() {
       if (headIds.includes(data.id)) {
         setCurrentHeadId(data.id);
       }
+      // 질문 변경 시 메모 탭 초기화
+      setActiveTab(null);
     } catch (err: any) {
       setDetailError(err.message);
       setDetailLoading(false);
@@ -165,13 +193,13 @@ export default function KeywordStudyPage() {
       setCurrentHeadId(prevInterview.id);
     }
     setShowAnswer(false);
+    setActiveTab(null);
   };
 
   // (G) 상위 질문 보기
   const handleHeadQuestion = () => {
     if (currentInterview?.head_id) {
       fetchInterview(currentInterview.head_id);
-      // 상위 질문은 머리 질문이므로 업데이트
       setCurrentHeadId(currentInterview.head_id);
     }
   };
@@ -180,7 +208,6 @@ export default function KeywordStudyPage() {
   const handleTailQuestion = () => {
     if (currentInterview?.tail_id) {
       fetchInterview(currentInterview.tail_id);
-      // currentHeadId는 변경하지 않음
     }
   };
 
@@ -189,217 +216,469 @@ export default function KeywordStudyPage() {
     setShowAnswer((prev) => !prev);
   };
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        padding: "1rem",
-        fontFamily: "Arial, sans-serif",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "0.5rem",
-          justifyContent: "center",
-          marginBottom: "1rem",
-          maxWidth: "800px",
-        }}
-      >
-        {keywordsLoading && <p>키워드 로딩중...</p>}
-        {keywordsError && <p style={{ color: "red" }}>{keywordsError}</p>}
-        {!keywordsLoading &&
-          keywords.map((kw) => (
-            <button
-              key={kw}
-              onClick={() => toggleKeywordSelection(kw)}
-              style={{
-                padding: "0.5rem 1rem",
-                fontSize: "1rem",
-                borderRadius: "6px",
-                border: selectedKeywords.includes(kw)
-                  ? "2px solid #2e56bc"
-                  : "1px solid #ccc",
-                backgroundColor: selectedKeywords.includes(kw)
-                  ? "#e8e8e8"
-                  : "#fff",
-                cursor: "pointer",
-              }}
-            >
-              {kw}
-            </button>
-          ))}
-      </div>
+  // (J) 메모(댓글) 저장 함수
+  const handleCommentSubmit = async () => {
+    if (!currentInterview) return;
+    if (commentText.trim() === "") {
+      alert("댓글을 입력하세요.");
+      return;
+    }
+    try {
+      const res = await fetch(
+        "http://localhost:8080/api/v1/interview-comments",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            comment: commentText,
+            isPublic: isPublic,
+            interviewContentId: currentInterview.id,
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error("댓글 저장에 실패했습니다.");
+      }
+      setCommentText("");
+      alert("댓글이 저장되었습니다.");
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
-      {/* "면접 질문 생성하기" 버튼 */}
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-        <button
-          onClick={generateQuestions}
-          disabled={selectedKeywords.length === 0 || headIdsLoading}
+  // (K) 내 메모 보기 함수
+  const fetchMyMemos = async () => {
+    if (!currentInterview) return;
+    setLoadingMemos(true);
+    setMemosError(null);
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/v1/interview-comments/my/${currentInterview.id}`,
+        { credentials: "include" }
+      );
+      if (!res.ok) {
+        throw new Error("내 메모를 가져오는데 실패했습니다.");
+      }
+      const data: InterviewCommentResponseDto[] = await res.json();
+      setMyMemos(data);
+      setActiveTab("my");
+    } catch (err: any) {
+      setMemosError(err.message);
+    } finally {
+      setLoadingMemos(false);
+    }
+  };
+
+  // (L) 다른 사람 메모 보기 함수
+  const fetchPublicMemos = async () => {
+    if (!currentInterview) return;
+    setLoadingMemos(true);
+    setMemosError(null);
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/v1/interview-comments/public/${currentInterview.id}`,
+        { credentials: "include" }
+      );
+      if (!res.ok) {
+        throw new Error("공개 메모를 가져오는데 실패했습니다.");
+      }
+      const data: InterviewCommentResponseDto[] = await res.json();
+      setPublicMemos(data);
+      setActiveTab("public");
+    } catch (err: any) {
+      setMemosError(err.message);
+    } finally {
+      setLoadingMemos(false);
+    }
+  };
+
+  // 스타일 객체들
+  const containerStyle: React.CSSProperties = {
+    padding: "1rem",
+    fontFamily: "Arial, sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
+
+  // 고정 폭(예: 800px)으로 중앙 정렬
+  const mainBoxStyle: React.CSSProperties = {
+    width: "800px",
+    margin: "0 auto",
+  };
+
+  const questionBoxStyle: React.CSSProperties = {
+    border: "1px solid #ccc",
+    padding: "1.5rem",
+    borderRadius: "10px",
+    backgroundColor: "#f9f9f9",
+  };
+
+  const commentContainerStyle: React.CSSProperties = {
+    backgroundColor: "#fff",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    padding: "1rem",
+    marginTop: "1.5rem",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+  };
+
+  const tabButtonStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1,
+    padding: "0.5rem",
+    cursor: "pointer",
+    border: active ? "2px solid #2e56bc" : "1px solid #ccc",
+    backgroundColor: active ? "#e8e8e8" : "#fff",
+    textAlign: "center",
+    borderRadius: "6px",
+  });
+
+  return (
+    <div style={containerStyle}>
+      <div style={mainBoxStyle}>
+        {/* 키워드 목록 */}
+        <div
           style={{
-            padding: "0.7rem 1.2rem",
-            fontSize: "1rem",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#2e56bc",
-            color: "white",
-            cursor: "pointer",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+            justifyContent: "center",
+            marginBottom: "1rem",
           }}
         >
-          면접 질문 생성하기
-        </button>
-      </div>
-
-      {/* 학습 모드: 질문 상세 영역 */}
-      {isStudyMode && currentInterview && (
-        <div style={{ width: "100%", maxWidth: "700px" }}>
-          {detailLoading && <p>질문 로딩중...</p>}
-          {detailError && <p style={{ color: "red" }}>{detailError}</p>}
-          {!detailLoading && !detailError && (
-            <div
-              style={{
-                border: "1px solid #ccc",
-                padding: "1.5rem",
-                borderRadius: "10px",
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              {/* 카테고리/키워드 박스 */}
-              <div
+          {keywordsLoading && <p>키워드 로딩중...</p>}
+          {keywordsError && <p style={{ color: "red" }}>{keywordsError}</p>}
+          {!keywordsLoading &&
+            keywords.map((kw) => (
+              <button
+                key={kw}
+                onClick={() => toggleKeywordSelection(kw)}
                 style={{
                   padding: "0.5rem 1rem",
-                  backgroundColor: "#e8e8e8",
+                  fontSize: "1rem",
                   borderRadius: "6px",
-                  marginBottom: "1rem",
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                  textAlign: "center",
+                  border: selectedKeywords.includes(kw)
+                    ? "2px solid #2e56bc"
+                    : "1px solid #ccc",
+                  backgroundColor: selectedKeywords.includes(kw)
+                    ? "#e8e8e8"
+                    : "#fff",
+                  cursor: "pointer",
                 }}
               >
-                {currentInterview.category.toUpperCase()} &gt;{" "}
-                {currentInterview.keyword}
-              </div>
+                {kw}
+              </button>
+            ))}
+        </div>
 
-              {/* 질문 내용 */}
-              <p
-                style={{
-                  fontSize: "1.2rem",
-                  marginBottom: "0.8rem",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>질문:</strong> {currentInterview.question}
-              </p>
+        {/* "면접 질문 생성하기" 버튼 */}
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <button
+            onClick={generateQuestions}
+            disabled={selectedKeywords.length === 0 || headIdsLoading}
+            style={{
+              padding: "0.7rem 1.2rem",
+              fontSize: "1rem",
+              borderRadius: "8px",
+              border: "none",
+              backgroundColor: "#2e56bc",
+              color: "white",
+              cursor: "pointer",
+            }}
+          >
+            면접 질문 생성하기
+          </button>
+        </div>
 
-              {/* 정답 보기 토글 버튼 그룹 */}
-              <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-                <button
-                  onClick={toggleAnswer}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    backgroundColor: showAnswer ? "#d9534f" : "#5cb85c",
-                    color: "white",
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                  }}
-                >
-                  {showAnswer ? "정답 가리기" : "정답 보기"}
-                </button>
-              </div>
-
-              {/* 정답 내용 */}
-              {showAnswer && (
+        {/* 학습 모드: 질문 상세 영역 */}
+        {isStudyMode && currentInterview && (
+          <div style={{ marginTop: "2rem" }}>
+            {detailLoading && <p>질문 로딩중...</p>}
+            {detailError && <p style={{ color: "red" }}>{detailError}</p>}
+            {!detailLoading && !detailError && (
+              <div style={questionBoxStyle}>
+                {/* 질문 정보 */}
                 <div
                   style={{
-                    opacity: showAnswer ? 1 : 0,
-                    transition: "opacity 0.3s ease-in-out",
-                    marginBottom: "0.8rem",
-                  }}
-                >
-                  <p style={{ fontSize: "1.2rem", lineHeight: "1.4" }}>
-                    <strong>모범 답안:</strong> {currentInterview.model_answer}
-                  </p>
-                </div>
-              )}
-
-              {/* 하단 탐색 버튼 그룹 */}
-              <div
-                style={{
-                  marginTop: "1.5rem",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "0.5rem",
-                  justifyContent: "center",
-                }}
-              >
-                {currentInterview.head_id && (
-                  <button
-                    onClick={handleHeadQuestion}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "1px solid #2e56bc",
-                      backgroundColor: "#fff",
-                      color: "#2e56bc",
-                      cursor: "pointer",
-                    }}
-                  >
-                    상위 질문 보기
-                  </button>
-                )}
-                {currentInterview.tail_id && (
-                  <button
-                    onClick={handleTailQuestion}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "1px solid #2e56bc",
-                      backgroundColor: "#fff",
-                      color: "#2e56bc",
-                      cursor: "pointer",
-                    }}
-                  >
-                    꼬리 질문
-                  </button>
-                )}
-                {history.length > 0 && (
-                  <button
-                    onClick={handlePreviousQuestion}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "1px solid #2e56bc",
-                      backgroundColor: "#fff",
-                      color: "#2e56bc",
-                      cursor: "pointer",
-                    }}
-                  >
-                    이전 질문 다시보기
-                  </button>
-                )}
-                <button
-                  onClick={handleNextQuestion}
-                  style={{
                     padding: "0.5rem 1rem",
+                    backgroundColor: "#e8e8e8",
                     borderRadius: "6px",
-                    border: "1px solid #2e56bc",
-                    backgroundColor: "#fff",
-                    color: "#2e56bc",
-                    cursor: "pointer",
+                    marginBottom: "1rem",
+                    fontSize: "1.1rem",
+                    fontWeight: "bold",
+                    textAlign: "center",
                   }}
                 >
-                  다음 질문
-                </button>
+                  {currentInterview.category.toUpperCase()} &gt;{" "}
+                  {currentInterview.keyword}
+                </div>
+                <p
+                  style={{
+                    fontSize: "1.2rem",
+                    marginBottom: "0.8rem",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  <strong>질문:</strong> {currentInterview.question}
+                </p>
+
+                {/* 정답 보기 토글 */}
+                <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+                  <button
+                    onClick={toggleAnswer}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: showAnswer ? "#d9534f" : "#5cb85c",
+                      color: "white",
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {showAnswer ? "정답 가리기" : "정답 보기"}
+                  </button>
+                </div>
+                {showAnswer && (
+                  <div
+                    style={{
+                      opacity: showAnswer ? 1 : 0,
+                      transition: "opacity 0.3s ease-in-out",
+                      marginBottom: "0.8rem",
+                    }}
+                  >
+                    <p style={{ fontSize: "1.2rem", lineHeight: "1.4" }}>
+                      <strong>모범 답안:</strong>{" "}
+                      {currentInterview.model_answer}
+                    </p>
+                  </div>
+                )}
+
+                {/* 탐색 버튼 그룹 */}
+                <div
+                  style={{
+                    marginTop: "1.5rem",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "0.5rem",
+                    justifyContent: "center",
+                  }}
+                >
+                  {currentInterview.head_id && (
+                    <button
+                      onClick={handleHeadQuestion}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "1px solid #2e56bc",
+                        backgroundColor: "#fff",
+                        color: "#2e56bc",
+                        cursor: "pointer",
+                      }}
+                    >
+                      상위 질문 보기
+                    </button>
+                  )}
+                  {currentInterview.tail_id && (
+                    <button
+                      onClick={handleTailQuestion}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "1px solid #2e56bc",
+                        backgroundColor: "#fff",
+                        color: "#2e56bc",
+                        cursor: "pointer",
+                      }}
+                    >
+                      꼬리 질문
+                    </button>
+                  )}
+                  {history.length > 0 && (
+                    <button
+                      onClick={handlePreviousQuestion}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "1px solid #2e56bc",
+                        backgroundColor: "#fff",
+                        color: "#2e56bc",
+                        cursor: "pointer",
+                      }}
+                    >
+                      이전 질문 다시보기
+                    </button>
+                  )}
+                  <button
+                    onClick={handleNextQuestion}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "1px solid #2e56bc",
+                      backgroundColor: "#fff",
+                      color: "#2e56bc",
+                      cursor: "pointer",
+                    }}
+                  >
+                    다음 질문
+                  </button>
+                </div>
+
+                {/* 댓글 입력 영역 */}
+                <div
+                  style={{
+                    marginTop: "1.5rem",
+                    padding: "1rem",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <h3 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
+                    MEMO
+                  </h3>
+                  <textarea
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="질문에 대한 메모를 남겨보세요..."
+                    style={{
+                      width: "100%",
+                      minHeight: "80px",
+                      padding: "0.5rem",
+                      fontSize: "1rem",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                      resize: "vertical",
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: "0.5rem",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    <label style={{ fontSize: "1rem" }}>
+                      공개
+                      <input
+                        type="checkbox"
+                        checked={isPublic}
+                        onChange={() => setIsPublic((prev) => !prev)}
+                        style={{
+                          marginLeft: "0.5rem",
+                          marginRight: "1rem",
+                          transform: "scale(1.5)",
+                        }}
+                      />
+                    </label>
+                    <button
+                      onClick={handleCommentSubmit}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        fontSize: "1rem",
+                        borderRadius: "6px",
+                        border: "none",
+                        backgroundColor: "#2e56bc",
+                        color: "white",
+                        cursor: "pointer",
+                      }}
+                    >
+                      SAVE
+                    </button>
+                  </div>
+                </div>
+
+                {/* 댓글(메모) 조회 영역 */}
+                <div
+                  style={{
+                    marginTop: "1.5rem",
+                    padding: "1rem",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "1rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <button
+                      onClick={fetchMyMemos}
+                      style={tabButtonStyle(activeTab === "my")}
+                    >
+                      내 메모 보기
+                    </button>
+                    <button
+                      onClick={fetchPublicMemos}
+                      style={tabButtonStyle(activeTab === "public")}
+                    >
+                      다른 사람 메모 보기
+                    </button>
+                  </div>
+                  {loadingMemos && <p>메모 로딩중...</p>}
+                  {memosError && (
+                    <p style={{ color: "red", textAlign: "center" }}>
+                      {memosError}
+                    </p>
+                  )}
+                  {activeTab === "my" && !loadingMemos && (
+                    <>
+                      {myMemos.length > 0 ? (
+                        <ul style={{ listStyle: "none", padding: 0 }}>
+                          {myMemos.map((memo) => (
+                            <li
+                              key={memo.commentId}
+                              style={{
+                                padding: "0.6rem",
+                                borderBottom: "1px solid #eee",
+                              }}
+                            >
+                              {memo.comment}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p style={{ textAlign: "center" }}>
+                          내 메모가 없습니다.
+                        </p>
+                      )}
+                    </>
+                  )}
+                  {activeTab === "public" && !loadingMemos && (
+                    <>
+                      {publicMemos.length > 0 ? (
+                        <ul style={{ listStyle: "none", padding: 0 }}>
+                          {publicMemos.map((memo) => (
+                            <li
+                              key={memo.commentId}
+                              style={{
+                                padding: "0.6rem",
+                                borderBottom: "1px solid #eee",
+                              }}
+                            >
+                              {memo.comment}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p style={{ textAlign: "center" }}>
+                          공개 메모가 없습니다.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

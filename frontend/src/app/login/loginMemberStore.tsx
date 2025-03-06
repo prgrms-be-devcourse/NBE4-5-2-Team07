@@ -1,7 +1,6 @@
 "use client";
-
+import { createContext, useState, useContext } from "react";
 import { components } from "@/lib/backend/apiV1/schema";
-import { createContext, useState } from "react";
 
 type Member = components["schemas"]["MemberDto"];
 
@@ -50,7 +49,7 @@ export function useLoginMember() {
   };
 
   const isLogin = loginMember.id !== 0;
-  const isAdmin = loginMember.id === 2;
+  const isAdmin = loginMember.id === 1;
 
   return {
     loginMember,
@@ -61,4 +60,8 @@ export function useLoginMember() {
     isAdmin,
     setNoLoginMember,
   };
+}
+
+export function useLoginMemberContext() {
+  return useContext(LoginMemberContext);
 }
