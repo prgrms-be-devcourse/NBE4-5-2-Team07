@@ -98,8 +98,8 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     return (
         <div className={styles.content}>
             <div className={styles.categoryInfo}>
-                <p className={styles.categoryText}>{category.firstCategory}</p>
-                <p className={styles.categoryText}> - {category.secondCategory}</p>
+                <p className={styles.firstCategory}>{category.firstCategory}</p>
+                <p className={styles.secondCategory}>{category.secondCategory}</p>
             </div>
 
             <div className={styles.studyContents}>
