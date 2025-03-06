@@ -477,6 +477,7 @@ export interface components {
             interviewContentId?: number;
             interviewContentTitle?: string;
             category?: string;
+            modelAnswer?: string;
             public?: boolean;
         };
         InterviewStartDto: {

@@ -46,7 +46,8 @@ public class InterviewCommentService {
 			savedComment.isPublic(),
 			savedComment.getInterviewContent().getInterview_content_id(),
 			savedComment.getInterviewContent().getQuestion(),
-			category
+			category,
+			savedComment.getInterviewContent().getModelAnswer()
 		);
 	}
 
@@ -60,7 +61,8 @@ public class InterviewCommentService {
 				comment.isPublic(),
 				comment.getInterviewContent().getInterview_content_id(),
 				comment.getInterviewContent().getQuestion(),
-				comment.getInterviewContent().getCategory().getCategory()
+				comment.getInterviewContent().getCategory().getCategory(),
+				comment.getInterviewContent().getModelAnswer()
 			))
 			.collect(Collectors.toList());
 	}
@@ -81,7 +83,8 @@ public class InterviewCommentService {
 			comment.isPublic(),
 			comment.getInterviewContent().getInterview_content_id(),
 			comment.getInterviewContent().getQuestion(),
-			category
+			category,
+			comment.getInterviewContent().getModelAnswer()
 			);
 	}
 
@@ -105,7 +108,8 @@ public class InterviewCommentService {
 			comment.isPublic(),
 			comment.getInterviewContent().getInterview_content_id(),
 			comment.getInterviewContent().getQuestion(),
-			category
+			category,
+			comment.getInterviewContent().getModelAnswer()
 			);
 	}
 

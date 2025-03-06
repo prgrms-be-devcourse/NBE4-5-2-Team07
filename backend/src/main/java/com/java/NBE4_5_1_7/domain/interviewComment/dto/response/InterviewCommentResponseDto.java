@@ -16,4 +16,5 @@ public class InterviewCommentResponseDto {
 	private Long interviewContentId;
 	private String interviewContentTitle;
 	private String category;
+	private String modelAnswer;
 }

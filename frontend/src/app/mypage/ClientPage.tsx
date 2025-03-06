@@ -10,6 +10,7 @@ interface Comment {
   interviewContentTitle: string;
   category: string;
   public: boolean;
+  modelAnswer: String;
 }
 
 interface InterviewData {
@@ -54,6 +55,8 @@ const ClientPage = () => {
       );
 
       const responseData = await response.json();
+
+      console.log(responseData);
 
       if (!responseData || responseData.length === 0) {
         console.log("No comments available for this category.");
@@ -171,10 +174,6 @@ const ClientPage = () => {
       console.error("댓글 삭제 중 오류가 발생했습니다.", error);
     }
   };
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
 
   const handleNoteCategorySelect = (category: string) => {
     setSelectedNoteCategory(category);
@@ -327,44 +326,54 @@ const ClientPage = () => {
 
       {/* 상세 내용 */}
       <div className={`${styles.card} ${styles.large}`}>
-        <p className={styles.noItems}>
+        <p>
           {selectedItem ? (
             <>
-              <strong>Title:</strong> {selectedItem.interviewContentTitle}
+              <strong className={styles.largeText}>
+                {selectedItem.interviewContentTitle}
+              </strong>
               <br />
-              <strong>Comment:</strong>
-              <textarea
-                value={updatedComment}
-                onChange={(e) => setUpdatedComment(e.target.value)}
-                rows={4}
-                className={styles.textarea}
-              />
+              <p className={styles.text}>{selectedItem.modelAnswer}</p>
               <br />
-              <label>
-                공개 여부:
+              <div className={styles.bottom}>
+                <strong className={styles.text}>내 답변</strong>
                 <input
                   type="checkbox"
                   checked={isPublic}
+                  className={styles.checkbox}
                   onChange={() => setIsPublic((prev) => !prev)}
                 />
-              </label>
+                <label className={styles.label}>공개</label>
+                {/* 수정 삭제 버튼 */}
+                {selectedItem && (
+                  <span className={styles.actionButtons}>
+                    <button
+                      className={styles.updateButton}
+                      onClick={handleUpdate}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={handleDelete}
+                    >
+                      삭제
+                    </button>
+                  </span>
+                )}
+                <textarea
+                  value={updatedComment}
+                  onChange={(e) => setUpdatedComment(e.target.value)}
+                  rows={5}
+                  className={styles.textarea}
+                />
+              </div>
+              <br />
             </>
           ) : (
-            "항목을 선택하세요."
+            <p className={styles.noItems}>항목이 없습니다.</p>
           )}
         </p>
-
-        {/* 수정 삭제 버튼 */}
-        {selectedItem && (
-          <div className={styles.actionButtons}>
-            <button className={styles.updateButton} onClick={handleUpdate}>
-              수정
-            </button>
-            <button className={styles.deleteButton} onClick={handleDelete}>
-              삭제
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
