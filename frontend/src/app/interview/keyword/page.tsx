@@ -65,12 +65,13 @@ export default function KeywordStudyPage() {
   // "my" 또는 "public" 탭 활성 상태
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
+  // **추가 상태**: 북마크 응답 메시지 상태
+  const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
+
   // (A) 키워드 목록 불러오기
   useEffect(() => {
     setKeywordsLoading(true);
-    fetch("http://localhost:8080/interview/keyword", {
-      credentials: "include",
-    })
+    fetch("http://localhost:8080/interview/keyword")
       .then((res) => {
         if (!res.ok) {
           throw new Error("키워드 목록을 불러오는데 실패했습니다.");
@@ -104,7 +105,6 @@ export default function KeywordStudyPage() {
     setHeadIdsLoading(true);
     fetch("http://localhost:8080/interview/keyword/content", {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ keywordList: selectedKeywords }),
     })
@@ -144,9 +144,7 @@ export default function KeywordStudyPage() {
         }
         return prev;
       });
-      const res = await fetch(`http://localhost:8080/interview/${id}`, {
-        credentials: "include",
-      });
+      const res = await fetch(`http://localhost:8080/interview/${id}`);
       if (!res.ok) {
         throw new Error("면접 질문 상세 정보를 불러오는데 실패했습니다.");
       }
@@ -159,15 +157,16 @@ export default function KeywordStudyPage() {
       if (headIds.includes(data.id)) {
         setCurrentHeadId(data.id);
       }
-      // 질문 변경 시 메모 탭 초기화
+      // 질문 변경 시 메모 탭 초기화 및 북마크 메시지 초기화
       setActiveTab(null);
+      setBookmarkMessage("");
     } catch (err: any) {
       setDetailError(err.message);
       setDetailLoading(false);
     }
   };
 
-  // (E) "다음 질문" 버튼: 현재 머리 질문(currentHeadId)를 기준으로 headIds 배열에서 다음 질문 ID를 가져옴
+  // (E) "다음 질문" 버튼
   const handleNextQuestion = () => {
     if (currentHeadId === null) return;
     const currentIndex = headIds.indexOf(currentHeadId);
@@ -188,7 +187,6 @@ export default function KeywordStudyPage() {
     const prevInterview = history[history.length - 1];
     setHistory(history.slice(0, history.length - 1));
     setCurrentInterview(prevInterview);
-    // 만약 이전 질문이 머리 질문이면 currentHeadId 업데이트
     if (headIds.includes(prevInterview.id)) {
       setCurrentHeadId(prevInterview.id);
     }
@@ -225,7 +223,7 @@ export default function KeywordStudyPage() {
     }
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/interview-comments",
+        "http://localhost:8080/api/v1/interview/comment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -254,7 +252,7 @@ export default function KeywordStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/my/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -277,7 +275,7 @@ export default function KeywordStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/public/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -333,6 +331,28 @@ export default function KeywordStudyPage() {
     textAlign: "center",
     borderRadius: "6px",
   });
+
+  // **추가 함수**: 북마크 토글 기능
+  const handleBookmark = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("북마크 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      setBookmarkMessage(message);
+      alert(message);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div style={containerStyle}>
@@ -398,21 +418,44 @@ export default function KeywordStudyPage() {
             {detailError && <p style={{ color: "red" }}>{detailError}</p>}
             {!detailLoading && !detailError && (
               <div style={questionBoxStyle}>
-                {/* 질문 정보 */}
+                {/* 상단 헤더 영역: 질문 정보와 북마크 버튼 */}
                 <div
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#e8e8e8",
-                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: "1rem",
-                    fontSize: "1.1rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
                   }}
                 >
-                  {currentInterview.category.toUpperCase()} &gt;{" "}
-                  {currentInterview.keyword}
+                  <div
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#e8e8e8",
+                      borderRadius: "6px",
+                      fontSize: "1.1rem",
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    {currentInterview.category.toUpperCase()} &gt;{" "}
+                    {currentInterview.keyword}
+                  </div>
+                  <button
+                    onClick={handleBookmark}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: "#5cb85c",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                  >
+                    내 노트에 추가
+                  </button>
                 </div>
+
+                {/* 질문 내용 */}
                 <p
                   style={{
                     fontSize: "1.2rem",
@@ -525,7 +568,7 @@ export default function KeywordStudyPage() {
                   </button>
                 </div>
 
-                {/* 댓글 입력 영역 */}
+                {/* 댓글(메모) 입력 영역 */}
                 <div
                   style={{
                     marginTop: "1.5rem",
@@ -556,9 +599,7 @@ export default function KeywordStudyPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "0.5rem",
-                      gap: "0.5rem",
+                      justifyContent: "space-between",
                     }}
                   >
                     <label style={{ fontSize: "1rem" }}>

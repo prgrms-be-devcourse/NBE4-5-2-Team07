@@ -62,6 +62,9 @@ export default function RandomInterviewPage() {
   const [memosError, setMemosError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
+  // **추가 상태**: 북마크 응답 메시지 상태
+  const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
+
   // 스타일 객체들
   const containerStyle: React.CSSProperties = {
     padding: "1rem",
@@ -104,9 +107,7 @@ export default function RandomInterviewPage() {
 
   // (1) 컴포넌트 마운트 시 전체 머리 질문 ID 가져오기
   useEffect(() => {
-    fetch("http://localhost:8080/interview/all", {
-      credentials: "include",
-    })
+    fetch("http://localhost:8080/interview/all")
       .then((res) => {
         if (!res.ok) {
           throw new Error("전체 질문 ID 리스트를 가져오는데 실패했습니다.");
@@ -150,7 +151,6 @@ export default function RandomInterviewPage() {
       const requestBody: RandomRequestDto = { indexList: indices };
       const res = await fetch("http://localhost:8080/interview/random", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
@@ -165,6 +165,8 @@ export default function RandomInterviewPage() {
       setShowAnswer(false);
       setActiveTab(null);
       setLoading(false);
+      // 북마크 메시지 초기화
+      setBookmarkMessage("");
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
@@ -197,9 +199,7 @@ export default function RandomInterviewPage() {
       if (currentInterview) {
         setHistory((prev) => [...prev, currentInterview]);
       }
-      const res = await fetch(`http://localhost:8080/interview/${id}`, {
-        credentials: "include",
-      });
+      const res = await fetch(`http://localhost:8080/interview/${id}`);
       if (!res.ok) {
         throw new Error("면접 질문을 가져오는데 실패했습니다.");
       }
@@ -208,6 +208,8 @@ export default function RandomInterviewPage() {
       setLoading(false);
       setShowAnswer(false);
       setActiveTab(null);
+      // 북마크 메시지 초기화
+      setBookmarkMessage("");
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
@@ -239,7 +241,7 @@ export default function RandomInterviewPage() {
     }
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/interview-comments",
+        "http://localhost:8080/api/v1/interview/comment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -268,7 +270,7 @@ export default function RandomInterviewPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/my/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -291,7 +293,7 @@ export default function RandomInterviewPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/public/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -304,6 +306,28 @@ export default function RandomInterviewPage() {
       setMemosError(err.message);
     } finally {
       setLoadingMemos(false);
+    }
+  };
+
+  // **(A-2) 북마크 토글 함수**
+  const handleBookmark = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("북마크 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      setBookmarkMessage(message);
+      alert(message);
+    } catch (err: any) {
+      alert(err.message);
     }
   };
 
@@ -336,20 +360,41 @@ export default function RandomInterviewPage() {
             {loading && <p>로딩중...</p>}
             {!loading && (
               <div style={questionBoxStyle}>
-                {/* 카테고리/키워드 박스 */}
+                {/* 상단 헤더 영역: 카테고리/키워드 박스와 북마크 버튼 */}
                 <div
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#e8e8e8",
-                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: "1rem",
-                    fontSize: "1.1rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
                   }}
                 >
-                  {currentInterview.category.toUpperCase()} &gt;{" "}
-                  {currentInterview.keyword}
+                  <div
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#e8e8e8",
+                      borderRadius: "6px",
+                      fontSize: "1.1rem",
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    {currentInterview.category.toUpperCase()} &gt;{" "}
+                    {currentInterview.keyword}
+                  </div>
+                  <button
+                    onClick={handleBookmark}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: "#5cb85c",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                  >
+                    내 노트에 추가
+                  </button>
                 </div>
 
                 {/* 질문 내용 */}
@@ -488,9 +533,7 @@ export default function RandomInterviewPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "0.5rem",
-                      gap: "0.5rem",
+                      justifyContent: "space-between",
                     }}
                   >
                     <label style={{ fontSize: "1rem" }}>

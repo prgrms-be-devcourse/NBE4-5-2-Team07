@@ -1,17 +1,17 @@
 "use client";
-import { useContext } from "react";
 import { LoginMemberContext } from "./loginMemberStore";
+import { use } from "react";
 
 export default function Login() {
-  const { isLogin, loginMember } = useContext(LoginMemberContext);
+  const { isLogin, loginMember } = use(LoginMemberContext);
 
   return (
     <>
       {!isLogin && (
         <div className="flex flex-grow justify-center items-center">
-          <button className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-bold py-2 px-6 rounded-full shadow-lg transition-colors">
+          <button>
             <a href="http://localhost:8080/oauth2/authorization/kakao?redirectUrl=http://localhost:3000">
-              카카오톡 간편 로그인으로 시작하기
+              <img src="/kakao_login_medium_narrow.png" alt="카카오 로그인" />
             </a>
           </button>
         </div>

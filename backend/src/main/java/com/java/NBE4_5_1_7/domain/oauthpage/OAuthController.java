@@ -1,4 +1,4 @@
-package com.java.NBE4_5_1_7.domain.testlogin;
+package com.java.NBE4_5_1_7.domain.oauthpage;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class TestController {
+public class OAuthController {
 
   @GetMapping(value = "/", produces = "text/plain;charset=UTF-8")
     @ResponseBody

@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
     // Spring 백엔드의 시작 엔드포인트 호출 (환경에 맞게 URL 수정)
     const response = await fetch("http://localhost:8080/api/interview/start", {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ interviewType }),
     });

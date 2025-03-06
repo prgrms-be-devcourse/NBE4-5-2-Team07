@@ -2,15 +2,21 @@ package com.java.NBE4_5_1_7.domain.interview.service;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentBookmark;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.KeywordContentRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.RandomRequestDto;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.BookmarkResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.RandomResponseDto;
+import com.java.NBE4_5_1_7.domain.interview.repository.BookmarkRepository;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,6 +26,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class InterviewService {
     private final InterviewContentRepository interviewRepository;
+    private final MemberRepository memberRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     // 1. 면접 컨텐츠 ID -> 면접 컨텐츠 DTO
     public InterviewResponseDto showOneInterviewContent(Long id) {
@@ -128,5 +136,45 @@ public class InterviewService {
     // 키워드 들을 받고, 해당 키워드 들의 헤더 질문 ID 리스트 반환
     public List<Long> keywordHeadQuestion(KeywordContentRequestDto keywordContentRequestDto) {
         return interviewRepository.findInterviewKeyword(keywordContentRequestDto.getKeywordList());
+    }
+
+    public String bookmark(Long memberId, Long contentId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        InterviewContent interviewContent = interviewRepository.findById(contentId).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
+        if (bookmarkRepository.existsByMemberAndInterviewContent(member, interviewContent)) {
+            InterviewContentBookmark bookmark = bookmarkRepository.findByMemberAndInterviewContent(member, interviewContent);
+            member.getBookmarks().remove(bookmark);
+            interviewContent.getBookmarks().remove(bookmark);
+
+            // 북마크 삭제
+            bookmarkRepository.delete(bookmark);
+
+            return "내 노트에서 삭제하였습니다.";
+        }
+
+        InterviewContentBookmark bookmark = InterviewContentBookmark.builder()
+                .member(member)
+                .interviewContent(interviewContent)
+                .build();
+
+        bookmarkRepository.save(bookmark);
+
+        member.getBookmarks().add(bookmark);
+        interviewContent.getBookmarks().add(bookmark);
+
+        return "내 노트에 등록하였습니다.";
+
+    }
+
+    public List<BookmarkResponseDto> showMyBookmark(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        List<InterviewContentBookmark> bookmarks = member.getBookmarks();
+        List<BookmarkResponseDto> result = new ArrayList<>();
+
+        for (InterviewContentBookmark bookmark : bookmarks) {
+            result.add(new BookmarkResponseDto(bookmark.getId(), bookmark.getInterviewContent().getQuestion(), bookmark.getInterviewContent().getModelAnswer()));
+        }
+
+        return result;
     }
 }

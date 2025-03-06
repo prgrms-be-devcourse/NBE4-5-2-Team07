@@ -4,7 +4,7 @@ const DEFAULT_CATEGORY = { firstCategory: "OperatingSystem", secondCategory: "�
 
 const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     const [memo, setMemo] = useState<string | "">("");
-    const [selectedContentId, setSelectedContentId] = useState<string | null>(null); // 선택된 content.id 상태
+    const [selectedContentId, setSelectedContentId] = useState<bigint | null>(null); // 선택된 content.id 상태
     const [category, setCategory] = useState(selectedCategory || DEFAULT_CATEGORY);
     const [studyContents, setStudyContents] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -15,8 +15,10 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     useEffect(() => {
         if (selectedCategory) {
             setCategory(selectedCategory); // selectedCategory가 있으면 설정
+            setPage(0); // 페이지를 1로 초기화 (0부터 시작)
         } else {
             setCategory(DEFAULT_CATEGORY);
+            setPage(0); // 기본 카테고리일 때 페이지를 1로 초기화
         }
     }, [selectedCategory]); // selectedCategory가 변경될 때만 실행
 
@@ -31,6 +33,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                 );
                 const data = await response.json();
                 setStudyContents(data.content); // 받은 데이터 설정
+                setSelectedContentId(data.id);
                 setTotalPages(data.totalPages); // 전체 페이지 수 설정
             } catch (err) {
                 setError("데이터를 불러오는 데 실패했습니다.");
@@ -53,9 +56,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
 
     // 메모 내용 변경 시 상태 업데이트
     const handleMemoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-
         setMemo(event.target.value);
-        console.log(memo);
     };
 
     // 저장 버튼 클릭 시 호출되는 함수
@@ -98,21 +99,14 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     return (
         <div className={styles.content}>
             <div className={styles.categoryInfo}>
-                <p className={styles.categoryText}>{category.firstCategory}</p>
-                <p className={styles.categoryText}> - {category.secondCategory}</p>
+                <p className={styles.firstCategory}>{category.firstCategory}</p>
+                <p className={styles.secondCategory}>{category.secondCategory}</p>
             </div>
 
             <div className={styles.studyContents}>
                 {studyContents.length > 0 ? (
                     studyContents.map((content: any, index: number) => (
-                        <div
-                            key={index}
-                            className={styles.studyContent}
-                            onClick={() => {
-                                console.log("Clicked content id:", content.id); // 클릭 시 id가 제대로 전달되는지 확인
-                                setSelectedContentId(content.id); // 콘텐츠 클릭 시 선택된 id 설정
-                            }} // 콘텐츠 클릭 시 선택된 id 설정
-                        >
+                        <div>
                             <input type="hidden" value={content.id}/>
                             <h4 className={styles.contentTitle}>{content.title}</h4>
                             <p className={styles.contentBody}>{content.body}</p>
@@ -146,7 +140,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                     value={memo} // textarea와 memo 상태 연결
                     onChange={handleMemoChange} // 텍스트 변경 시 상태 업데이트
                 />
-                <button onClick={handleMemoCreate} className={styles.paginationButton}>
+                <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
                     저장
                 </button>
             </div>

@@ -24,7 +24,6 @@ public class InterviewAIController {
     @PostMapping("/start")
     public ResponseEntity<String> startInterview(@RequestBody InterviewStartDto dto) {
         String response = openAiService.askStartInterview(dto.getInterviewType());
-        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 
@@ -35,14 +34,12 @@ public class InterviewAIController {
     @PostMapping("/next")
     public ResponseEntity<String> nextInterview(@RequestBody InterviewNextDto dto) {
         String response = openAiService.askNextInterview(dto.getInterviewType(), dto.getAnswer());
-        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/evaluation")
     public ResponseEntity<String> evaluateInterview(@RequestBody InterviewEvaluationDto dto) {
         String evaluation = openAiService.evaluateInterview(dto.getConversation());
-        System.out.println(evaluation);
         return ResponseEntity.ok(evaluation);
     }
 

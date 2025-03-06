@@ -1,4 +1,5 @@
 .container {
+    width: 100%;
     display: flex;
     gap: 30px;
     margin: 20px;
@@ -140,17 +141,21 @@
     height: 100%;
 }
 
-.categoryInfo {
-    display: flex;
-    justify-content: flex-start;
-    font-size: 1.2rem;
-    margin-bottom: 15px;
+.firstCategory {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    text-transform: uppercase;
 }
 
-.categoryText {
-    font-weight: bold;
-    color: #333;
+.secondCategory {
+    font-size: 18px;
+    color: #7f8c8d;
+    margin-left: 10px;
+    font-style: italic;
 }
+
 
 .studyContents {
     margin-bottom: 20px;
@@ -242,7 +247,7 @@
 /* 메모 입력 필드 */
 .memoInput {
     width: 100%;
-    height: 100%;
+    height: 90%;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -260,3 +265,26 @@
     border-color: #3498db;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
+
+.memoSaveBtn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.memoSaveBtn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+.memoSaveBtn:active {
+    background-color: #16a085; /* 클릭 시 배경 색상 */
+    transform: scale(0.98); /* 클릭 시 버튼 크기 살짝 줄어들기 */
+}
+

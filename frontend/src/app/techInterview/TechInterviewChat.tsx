@@ -1,12 +1,11 @@
 "use client"; // 클라이언트 컴포넌트임을 명시
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Message 인터페이스의 필드명을 "text"에서 "content"로 변경
 interface Message {
   role: "user" | "bot";
-  content: string;
+  text: string;
 }
 
 export default function TechInterviewChat() {
@@ -26,17 +25,16 @@ export default function TechInterviewChat() {
     try {
       const res = await fetch("/api/techInterview/start", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interviewType: type }),
       });
       const data = await res.json();
-      const botMessage: Message = { role: "bot", content: data.response };
+      const botMessage: Message = { role: "bot", text: data.response };
       setMessages([botMessage]);
     } catch (error) {
       console.error("Error starting interview:", error);
       setMessages([
-        { role: "bot", content: "인터뷰 시작 중 오류가 발생했습니다." },
+        { role: "bot", text: "인터뷰 시작 중 오류가 발생했습니다." },
       ]);
     }
   };
@@ -44,23 +42,22 @@ export default function TechInterviewChat() {
   // 답변 전송 및 후속 질문 받기
   const sendAnswer = async () => {
     if (!input.trim()) return;
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = { role: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
     try {
       const res = await fetch("/api/techInterview/next", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answer: input, interviewType }),
       });
       const data = await res.json();
-      const botMessage: Message = { role: "bot", content: data.response };
+      const botMessage: Message = { role: "bot", text: data.response };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error fetching response:", error);
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "오류가 발생했습니다. 다시 시도해주세요." },
+        { role: "bot", text: "오류가 발생했습니다. 다시 시도해주세요." },
       ]);
     }
     setInput("");
@@ -76,7 +73,6 @@ export default function TechInterviewChat() {
     try {
       const res = await fetch("/api/techInterview/evaluation", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation: messages }),
       });
@@ -94,8 +90,9 @@ export default function TechInterviewChat() {
   // 주제 선택 전 화면: 두 개의 버튼 제공
   if (!interviewType) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-200">
-        <div className="bg-white rounded-xl shadow-md p-8 max-w-xl text-center">
+      <div className="flex items-center justify-center min-h-screen">
+        {/* 폭을 50vw로 고정하고 중앙 정렬 */}
+        <div className="bg-white rounded-xl shadow-md p-8 w-[50vw] text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             안녕하세요, 기술 면접을 담당하는 AI 면접관 입니다.
           </h1>
@@ -123,8 +120,9 @@ export default function TechInterviewChat() {
 
   // 인터뷰 진행 중 화면: 채팅 UI + 평가 버튼 추가
   return (
-    <div className="min-h-screen bg-gray-200 flex flex-col items-center py-10">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-2xl p-6">
+    <div className="min-h-screen flex flex-col items-center py-10">
+      {/* 폭을 50vw로 고정 */}
+      <div className="bg-white rounded-lg shadow-md w-[50vw] p-6">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
           기술 면접 챗봇
         </h1>
@@ -146,7 +144,7 @@ export default function TechInterviewChat() {
                 <span className="font-bold">
                   {msg.role === "bot" ? "면접관" : "지원자"}:
                 </span>{" "}
-                {msg.content}
+                {msg.text}
               </div>
             </div>
           ))}

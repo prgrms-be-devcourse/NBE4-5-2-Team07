@@ -31,7 +31,7 @@ export default function EvaluationPage() {
           <pre className="whitespace-pre-wrap text-gray-700">{evaluation}</pre>
         </div>
         <button
-          onClick={() => router.push("/api/techInterview")}
+          onClick={() => router.push("/techInterview")}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md mx-auto mt-4"
         >
           다시 면접하기

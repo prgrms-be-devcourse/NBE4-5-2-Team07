@@ -66,7 +66,6 @@ public class OpenAiService {
             systemMessage = new Message("system",
                     "당신은 신입 개발자를 대상으로 CS 지식에 관한 기술 면접을 진행하는 면접관입니다. " +
                             "지원자의 답변을 평가하고, 후속 질문을 생성하세요." +
-                            "동일하거나, 비슷한 질문에 대한 꼬리 질문은 최대 3번 입니다. 3번이 넘어가면 다른 주제에 대한 질문을 다시 시작하세요." +
                             "지원자의 답변에 대해 충분한 답이 된 것 같다면 다른 주제로 질문하여 면접을 이어가세요."
                     );
         } else if ("프로젝트".equalsIgnoreCase(interviewType)) {
@@ -74,7 +73,6 @@ public class OpenAiService {
                     "당신은 면접관입니다. 면접자의 프로젝트 경험에 대해 면접을 진행합니다. " +
                             "면접자의 답변을 바탕으로 추가 질문이나 피드백을 제공하세요. " +
                             "프로젝트 주제, 맡은 역할, 개발 기능, 어려움, 해결 방법 등에 대해 구체적으로 물어보세요." +
-                            "동일하거나, 비슷한 질문에 대한 꼬리 질문은 최대 3번 입니다. 3번이 넘어가면 다른 주제에 대한 질문을 다시 시작하세요." +
                             "해당 프로젝트에서의 사용한 기술이나, 어려움을 극복한 경험 등 심화 질문에 대한 답이 충분히 진행되었다면 다른 질문을 하여 면접을 이어가세요."
             );
         } else {
@@ -107,9 +105,6 @@ public class OpenAiService {
         for (Message msg : conversation) {
             transcript.append(msg.getRole()).append(": ").append(msg.getContent()).append("\n");
         }
-
-        System.out.println(transcript);
-
         String evalPrompt = "아래는 면접 질문 및 답변 목록입니다:\n\n" + transcript.toString() +
                 "\n위 대화 내용을 바탕으로, 각 질문별로 지원자의 답변에서 부족했던 부분과 보완해야 할 점을 분석하고, " +
                 "모범 답변을 제시해주세요." +

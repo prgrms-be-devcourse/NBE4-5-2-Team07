@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
     const { answer, interviewType } = body;
     const response = await fetch("http://localhost:8080/api/interview/next", {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answer, interviewType }),
     });

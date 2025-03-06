@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
       "http://localhost:8080/api/interview/evaluation",
       {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       }

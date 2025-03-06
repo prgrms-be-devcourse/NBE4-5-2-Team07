@@ -32,7 +32,6 @@ public class InterviewCommentController {
 	private final InterviewCommentService interviewCommentService;
 	private final MemberService memberService;
 
-	///  댓글 생성
 	@PostMapping
 	public ResponseEntity<MyPageInterviewCommentResponseDto> createComment(
 		@RequestBody InterviewCommentRequestDto newDto) {
@@ -52,7 +51,7 @@ public class InterviewCommentController {
 		return ResponseEntity.ok(comments);
 	}
 
-	///  댓글 수정
+	/// 댓글 수정
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<MyPageInterviewCommentResponseDto> updateComment(
 		@PathVariable("commentId") Long commentId,
@@ -63,7 +62,7 @@ public class InterviewCommentController {
 		return ResponseEntity.ok(updatedComment);
 	}
 
-	///  댓글 삭제
+	/// 댓글 삭제
 	@DeleteMapping("/{commentId}")
 	public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
 		Member member = memberService.getMemberFromRq();

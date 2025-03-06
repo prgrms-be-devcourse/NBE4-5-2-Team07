@@ -3,6 +3,9 @@ package com.java.NBE4_5_1_7.domain.interview.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class InterviewContent {
@@ -31,4 +34,7 @@ public class InterviewContent {
 
     @Column(name = "has_tail")
     private boolean hasTail;
+
+    @OneToMany(mappedBy = "interviewContent", cascade = CascadeType.ALL)
+    private List<InterviewContentBookmark> bookmarks = new ArrayList<>();
 }
