@@ -12,10 +12,14 @@ public class StudyContentDetailDto {
     private Long id;
     private String title;
     private String body;
+    private String firstCategory;
+    private String secondCategory;
 
     public StudyContentDetailDto(StudyContent studyContent) {
         this.id = studyContent.getStudy_content_id();
         this.title = studyContent.getTitle();
         this.body = studyContent.getBody();
+        this.firstCategory = studyContent.getFirstCategory().name();
+        this.secondCategory = studyContent.getSecondCategory();
     }
 }
