@@ -90,8 +90,4 @@ public class Rq {
     public Member getRealActor(Member actor) {
         return memberService.findById(actor.getId()).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
     }
-
-    public Member getRealActor(Member actor) {
-        return memberService.findById(actor.getId()).get();
-    }
 }
