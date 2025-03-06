@@ -32,7 +32,7 @@ public class InterviewCommentService {
 
 		InterviewContentComment newComment = new InterviewContentComment();
 		newComment.setAnswer(newDto.getComment());
-		newComment.setPublic(newDto.isPublic());
+		newComment.setPublic(newDto.getIsPublic());
 		newComment.setInterviewContent(interviewContent);
 		newComment.setMember(member);
 
@@ -95,7 +95,7 @@ public class InterviewCommentService {
 		}
 
 		comment.setAnswer(updatedDto.getComment());
-		comment.setPublic(updatedDto.isPublic());
+		comment.setPublic(updatedDto.getIsPublic());
 
 		String category = comment.getInterviewContent().getCategory().getCategory();
 

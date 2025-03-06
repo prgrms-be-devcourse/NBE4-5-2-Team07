@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InterviewCommentRequestDto {
 	private String comment;
-	private boolean isPublic;
+	private Boolean isPublic;
 	private Long interviewContentId;
 
 	public InterviewCommentRequestDto(InterviewContentComment comment) {

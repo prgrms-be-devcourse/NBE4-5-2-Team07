@@ -465,9 +465,9 @@ export interface components {
         };
         InterviewCommentRequestDto: {
             comment?: string;
+            isPublic?: boolean;
             /** Format: int64 */
             interviewContentId?: number;
-            public?: boolean;
         };
         InterviewCommentResponseDto: {
             /** Format: int64 */
