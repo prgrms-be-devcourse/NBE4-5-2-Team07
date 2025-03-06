@@ -6,7 +6,7 @@ import StudyContentBody from "./studyContentBody";
 import styles from "../styles/studyContent.module.css";
 
 // 기본 카테고리 설정
-const DEFAULT_CATEGORY = { firstCategory: "OperatingSystem", secondCategory: "운영체제란?" };
+const DEFAULT_CATEGORY = { firstCategory: "OperatingSystem", secondCategory: "운영체제" };
 
 export default function Page() {
     const [selectedCategory, setSelectedCategory] = useState<{ firstCategory: string; secondCategory: string } | null>(null);
