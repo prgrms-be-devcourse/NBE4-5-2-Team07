@@ -4,7 +4,7 @@ const DEFAULT_CATEGORY = { firstCategory: "OperatingSystem", secondCategory: "�
 
 const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     const [memo, setMemo] = useState<string | "">("");
-    const [selectedContentId, setSelectedContentId] = useState<string | null>(null); // 선택된 content.id 상태
+    const [selectedContentId, setSelectedContentId] = useState<bigint | null>(null); // 선택된 content.id 상태
     const [category, setCategory] = useState(selectedCategory || DEFAULT_CATEGORY);
     const [studyContents, setStudyContents] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -33,6 +33,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                 );
                 const data = await response.json();
                 setStudyContents(data.content); // 받은 데이터 설정
+                setSelectedContentId(data.id);
                 setTotalPages(data.totalPages); // 전체 페이지 수 설정
             } catch (err) {
                 setError("데이터를 불러오는 데 실패했습니다.");
@@ -55,9 +56,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
 
     // 메모 내용 변경 시 상태 업데이트
     const handleMemoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-
         setMemo(event.target.value);
-        console.log(memo);
     };
 
     // 저장 버튼 클릭 시 호출되는 함수
@@ -107,14 +106,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
             <div className={styles.studyContents}>
                 {studyContents.length > 0 ? (
                     studyContents.map((content: any, index: number) => (
-                        <div
-                            key={index}
-                            className={styles.studyContent}
-                            onClick={() => {
-                                console.log("Clicked content id:", content.id); // 클릭 시 id가 제대로 전달되는지 확인
-                                setSelectedContentId(content.id); // 콘텐츠 클릭 시 선택된 id 설정
-                            }} // 콘텐츠 클릭 시 선택된 id 설정
-                        >
+                        <div>
                             <input type="hidden" value={content.id}/>
                             <h4 className={styles.contentTitle}>{content.title}</h4>
                             <p className={styles.contentBody}>{content.body}</p>
