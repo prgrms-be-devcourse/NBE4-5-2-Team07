@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import client from "@/lib/backend/client";
 import styles from "../styles/header.module.css";
 import { useLoginMemberContext } from "../login/loginMemberStore";
+import { useEffect } from "react";
 
 export default function Header() {
   const { isLogin, removeLoginMember } = useLoginMemberContext();
@@ -24,6 +25,13 @@ export default function Header() {
     removeLoginMember();
     router.replace("/");
   }
+
+  useEffect(() => {
+    if (pathname === "/mypage" && !isLogin) {
+      alert("로그인 후 이용 가능합니다.");
+      router.replace("/login");
+    }
+  }, [pathname, isLogin, router]);
 
   return (
     <header className={styles.header}>
