@@ -47,11 +47,10 @@ export default function Header() {
           ) : (
             <>
               <li>
-                <Link href="/studyContent">CS 전공지식 학습하기</Link>
                 <Link href="/">MAIN</Link>
               </li>
               <li>
-                <Link href="/">CS 전공지식 학습하기</Link>
+                <Link href="/studyContent">CS 전공지식 학습하기</Link>
               </li>
               {/* 드롭다운 메뉴 시작 */}
               <li className={styles.dropdown}>
