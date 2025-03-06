@@ -19,4 +19,7 @@ public interface StudyContentRepository extends JpaRepository<StudyContent, Long
 
     Page<StudyContent> findByFirstCategoryAndSecondCategory(
             FirstCategory firstCategory, String secondCategory, Pageable pageable);
+
+    List<StudyContent> findByFirstCategory(FirstCategory firstCategory);
+
 }
