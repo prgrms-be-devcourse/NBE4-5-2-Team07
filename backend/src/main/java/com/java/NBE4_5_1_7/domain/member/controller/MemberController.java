@@ -7,6 +7,7 @@ import com.java.NBE4_5_1_7.global.Rq;
 import com.java.NBE4_5_1_7.global.dto.Empty;
 import com.java.NBE4_5_1_7.global.dto.RsData;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -57,6 +58,19 @@ public class MemberController {
         rq.removeCookie("apiKey");
 
         return new RsData<>("200-1", "로그아웃 되었습니다.");
+    }
+
+    @GetMapping("/me")
+    public RsData<MemberDto> me() {
+
+        Member actor = rq.getActor();
+        Member realActor = rq.getRealActor(actor);
+
+        return new RsData<>(
+                "200-1",
+                "내 정보 조회가 완료되었습니다.",
+                new MemberDto(realActor)
+        );
     }
 
 }

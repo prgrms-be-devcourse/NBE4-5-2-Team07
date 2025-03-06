@@ -5,10 +5,10 @@ import { useRouter, usePathname } from "next/navigation";
 import client from "@/lib/backend/client";
 import styles from "../styles/header.module.css";
 import { LoginMemberContext } from "../login/loginMemberStore";
-import { use } from "react";
+import { useContext } from "react";
 
 export default function Header() {
-  const { isLogin, loginMember, removeLoginMember } = use(LoginMemberContext);
+  const { isLogin, removeLoginMember } = useContext(LoginMemberContext);
   const router = useRouter();
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith("/admin");
@@ -32,7 +32,6 @@ export default function Header() {
     <header className={styles.header}>
       <nav className={styles.nav}>
         <ul className={styles.navList}>
-
           {isAdminPage ? (
             <>
               <li>

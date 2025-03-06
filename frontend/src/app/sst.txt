@@ -2,7 +2,7 @@
 
 import client from "@/lib/backend/client";
 
-import { LoginMemberContext, useLoginMember } from "./loginMemberStore";
+import { LoginMemberContext, useLoginMember } from "./login/loginMemberStore";
 import { useEffect } from "react";
 
 export default function ClinetLayout({
