@@ -113,6 +113,7 @@ public class InterviewCommentService {
 			);
 	}
 
+	@Transactional
 	public void deleteComment(Long commentId, Member member) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
 			.orElseThrow(() -> new ServiceException("404", "댓글을 찾을 수 없습니다."));
@@ -122,6 +123,36 @@ public class InterviewCommentService {
 		}
 
 		interviewCommentRepository.deleteById(commentId);
+	}
+
+	@Transactional
+	public List<InterviewCommentResponseDto> getMyComments(Long interviewContentId, Member member) {
+		List<InterviewContentComment> comments = interviewCommentRepository
+				.findByInterviewContentId(interviewContentId);
+		return comments.stream()
+				.filter(comment -> comment.getMember().equals(member))
+				.map(comment -> new InterviewCommentResponseDto(
+						comment.getComment_id(),
+						comment.getAnswer(),
+						comment.isPublic(),
+						comment.getInterviewContent().getInterview_content_id()
+				))
+				.collect(Collectors.toList());
+	}
+
+	@Transactional
+	public List<InterviewCommentResponseDto> getPublicComments(Long interviewContentId, Member member) {
+		List<InterviewContentComment> comments = interviewCommentRepository
+				.findByInterviewContentId(interviewContentId);
+		return comments.stream()
+				.filter(comment -> !comment.getMember().equals(member) && comment.isPublic())
+				.map(comment -> new InterviewCommentResponseDto(
+						comment.getComment_id(),
+						comment.getAnswer(),
+						comment.isPublic(),
+						comment.getInterviewContent().getInterview_content_id()
+				))
+				.collect(Collectors.toList());
 	}
 }
 

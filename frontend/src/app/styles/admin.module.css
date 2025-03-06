@@ -3,15 +3,17 @@
   display: flex;
   gap: 20px;
   padding: 20px;
+  width: 80%;
   color: black;
 }
 
 /* 사이드바 스타일 */
 .sidebar {
-  width: 200px;
+  width: 300px;
   background: #f4f4f4;
   padding: 10px;
   border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
 .sidebar ul {
@@ -21,8 +23,10 @@
 
 .sidebar li {
   padding: 8px;
+  margin: 3px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 20px;
   border-radius: 5px;
 }
 
@@ -56,21 +60,30 @@
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  margin: 10px 0;
   border-bottom: 1px solid #eee;
+  background-color: white;
+  font-size: 20px;
+  border-radius: 12px;
+  box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* 수정 버튼 */
-.editBtn {
-  background: #2e56bc;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
+/* 제목, 키워드 컨테이너 */
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
 }
 
-.editBtn:hover {
-  background: #1a3b8c;
+/* 카테고리, 키워드 스타일 */
+.subTitle {
+  background-color: #e0e0e0; /* 연한 회색 */
+  color: #333; /* 어두운 회색 글씨 */
+  font-size: 14px; /* 제목보다 작은 글씨 */
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 8px;
 }
 
 /* 페이징 */
@@ -99,7 +112,6 @@
   flex-direction: column;
   gap: 10px;
   width: 80%;
-  max-width: 1000px;
   margin: auto;
   background: #fff;
   padding: 20px;
@@ -129,8 +141,10 @@
 /* 버튼 컨테이너 */
 .buttonContainer {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
 }
 
 /* 저장 버튼 */
@@ -161,4 +175,36 @@
 
 .cancelBtn:hover {
   background: #888;
+}
+
+/* 수정 버튼 */
+.editBtn {
+  background: #2e56bc;
+  color: #eee;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.editBtn:hover {
+  background: #1a3b8c;
+}
+
+/* 삭제 버튼 */
+.deleteBtn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.deleteBtn:hover {
+  background: #c82333;
 }

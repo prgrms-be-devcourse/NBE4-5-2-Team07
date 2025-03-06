@@ -71,4 +71,22 @@ public class InterviewCommentController {
 		interviewCommentService.deleteComment(commentId, member);
 		return ResponseEntity.ok("답변이 삭제되었습니다.");
 	}
+
+	// 내 메모 보기: 해당 질문(interviewContentId)에 대해 현재 사용자가 작성한 메모 조회
+	@GetMapping("/my/{interviewContentId}")
+	public ResponseEntity<List<InterviewCommentResponseDto>> getMyComments(
+			@PathVariable Long interviewContentId) {
+		Member member = memberService.getMemberFromRq();
+		List<InterviewCommentResponseDto> myComments = interviewCommentService.getMyComments(interviewContentId, member);
+		return ResponseEntity.ok(myComments);
+	}
+
+	// 다른 사람 메모 보기: 해당 질문(interviewContentId)에 대해 다른 사용자가 작성한 공개 메모 조회
+	@GetMapping("/public/{interviewContentId}")
+	public ResponseEntity<List<InterviewCommentResponseDto>> getPublicComments(
+			@PathVariable Long interviewContentId) {
+		Member member = memberService.getMemberFromRq();
+		List<InterviewCommentResponseDto> publicComments = interviewCommentService.getPublicComments(interviewContentId, member);
+		return ResponseEntity.ok(publicComments);
+	}
 }
