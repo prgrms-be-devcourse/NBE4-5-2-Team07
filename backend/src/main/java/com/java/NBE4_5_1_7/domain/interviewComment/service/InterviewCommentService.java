@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
@@ -49,7 +50,7 @@ public class InterviewCommentService {
 		);
 	}
 
-	public List<InterviewCommentResponseDto> getCommentsByMemberAndCategory(Member member, String category) {
+	public List<InterviewCommentResponseDto> getCommentsByMemberAndCategory(Member member, InterviewCategory category) {
 		List<InterviewContentComment> comments = interviewCommentRepository.findByMemberAndInterviewContentCategory(member, category);
 
 		return comments.stream()

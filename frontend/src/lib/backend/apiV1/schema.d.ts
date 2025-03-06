@@ -84,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/interview-comments": {
+    "/api/v1/interview/comment": {
         parameters: {
             query?: never;
             header?: never;
@@ -164,7 +164,7 @@ export interface paths {
         patch: operations["updateStudyMemo"];
         trace?: never;
     };
-    "/api/v1/interview-comments/{commentId}": {
+    "/api/v1/interview/comment/{commentId}": {
         parameters: {
             query?: never;
             header?: never;

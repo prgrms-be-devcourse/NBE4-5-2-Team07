@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/mypage.module.css";
+
+// Define types for interview data
+interface InterviewData {
+  [category: string]: string[];
+}
 
 const ClientPage = () => {
   const [note, setNote] = useState(""); // 내 노트
@@ -15,9 +20,9 @@ const ClientPage = () => {
   const [selectedAnswerCategory, setSelectedAnswerCategory] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
   const [selectedNote, setSelectedNote] = useState("");
-  const [items, setItems] = useState([]);
   const [details, setDetails] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [interviewData, setInterviewData] = useState<InterviewData>({});
 
   const notes = ["노트1", "노트2", "노트3", "노트4", "노트5", "노트6"];
   const memos = [
@@ -28,41 +33,47 @@ const ClientPage = () => {
     "Network",
     "Software Engineering",
   ];
-  const answers = ["언어", "운영체제", "데이터베이스", "네트워크", "웹"];
+  const answerCategory = ["데이터베이스", "네트워크", "운영체제", "스프링"];
 
-  const categoryItems: Record<string, string[]> = {
-    "Computer Architecture": [
-      "캐시 메모리",
-      "파이프라이닝",
-      "명령어 집합 구조",
-    ],
-    "Data Structure": [
-      "배열",
-      "연결 리스트",
-      "스택",
-      "큐",
-      "트리",
-      "그래프",
-      "ㄱ",
-      "ㄴ",
-      "ㄷ",
-      "ㄹ",
-      "ㅁ",
-      "ㅂ",
-      "ㅅ",
-      "ㅇ",
-      "ㅈ",
-      "ㅊ",
-    ],
-    "Operating System": ["프로세스", "스레드", "메모리 관리", "파일 시스템"],
-    Database: ["SQL", "NoSQL", "트랜잭션", "인덱스"],
-    Network: ["TCP/IP", "라우팅", "DNS", "HTTP"],
-    "Software Engineering": ["애자일", "TDD", "설계 패턴"],
-    언어: ["JavaScript", "Python", "Java", "C++"],
-    운영체제: ["멀티스레딩", "CPU 스케줄링", "가상 메모리"],
-    데이터베이스: ["정규화", "ACID", "조인"],
-    네트워크: ["UDP", "HTTP/2", "로드 밸런싱"],
-    웹: ["REST API", "GraphQL", "SSR vs CSR"],
+  const fetchInterviewComment = async (category: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment?category=${category}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const text = await response.json();
+      const data = text?.data || [];
+
+      // 데이터가 없을 경우 처리
+      if (data.length === 0) {
+        console.log("No comments available for this category.");
+      }
+
+      console.log(data);
+
+      const updatedCategoryItems = data.reduce(
+        (acc: InterviewData, comment: any) => {
+          const category = comment.category;
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(comment.item);
+          return acc;
+        },
+        {}
+      );
+
+      setInterviewData(updatedCategoryItems); // Correct usage of setInterviewData
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleNoteCategorySelect = (category: string) => {
@@ -90,6 +101,8 @@ const ClientPage = () => {
     setSelectedItem("");
     setDetails("");
     setShowNoteList(false);
+
+    fetchInterviewComment(category);
   };
 
   const handleItemSelect = (item: string) => {
@@ -146,7 +159,7 @@ const ClientPage = () => {
         </button>
         {answerDropdownOpen && (
           <ul className={`${styles.dropdownList} ${styles.small}`}>
-            {answers.map((category, index) => (
+            {answerCategory.map((category, index) => (
               <li
                 key={index}
                 onClick={() => handleAnswerCategorySelect(category)}
@@ -180,8 +193,8 @@ const ClientPage = () => {
               ))}
             </ul>
           ) : // 선택한 카테고리의 아이템 목록
-          selectedCategory && categoryItems[selectedCategory] ? (
-            categoryItems[selectedCategory].map((item, index) => (
+          selectedCategory && interviewData[selectedCategory] ? (
+            interviewData[selectedCategory].map((item, index) => (
               <li
                 key={index}
                 onClick={() => handleItemSelect(item)}
