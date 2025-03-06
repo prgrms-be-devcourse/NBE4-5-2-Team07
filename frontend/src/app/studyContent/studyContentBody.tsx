@@ -148,7 +148,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                     value={memo} // textarea와 memo 상태 연결
                     onChange={handleMemoChange} // 텍스트 변경 시 상태 업데이트
                 />
-                <button onClick={handleMemoCreate} className={styles.paginationButton}>
+                <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
                     저장
                 </button>
             </div>
