@@ -1,0 +1,262 @@
+.container {
+    display: flex;
+    gap: 30px;
+    margin: 20px;
+    height: calc(100vh - 150px);
+    align-items: stretch;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 18%;
+    overflow: auto;
+}
+
+.card h2 {
+    font-size: 1.5rem;  /* 폰트 크기 */
+    font-weight: bold;  /* 글씨 두껍게 */
+    color: #333;        /* 어두운 색상 */
+    padding-bottom: 10px; /* 아래 여백 */
+    border-bottom: 2px solid #ddd;  /* 아래에 밑줄 */
+    margin-bottom: 20px;  /* 제목과 내용 사이 간격 */
+    text-align: left;    /* 왼쪽 정렬 */
+    font-family: 'Arial', sans-serif;  /* 폰트 설정 */
+}
+
+.card .btn {
+    margin: 8px 0;
+    padding: 10px;
+    color: black;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+}
+
+.dropdownButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    transition: background 0.2s;
+}
+
+.dropdownButton:hover {
+    background: #eaeaea;
+}
+
+.arrowIcon {
+    display: inline-block;
+    font-size: 15px;
+    margin-left: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* 드롭다운 리스트 (초기 상태) */
+.dropdownList {
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+    opacity: 0;
+    transform: translateY(-5px);
+    max-height: 0;
+}
+
+/* 드롭다운이 열릴 때 */
+.show {
+    max-height: 300px; /* 펼쳐질 최대 높이 */
+    opacity: 1;
+    transform: translateY(0);
+    overflow-y: auto; /* 세로 스크롤 허용 */
+    scrollbar-width: none;
+    cursor: grab; /* 마우스로 드래그 가능 */
+}
+
+/* 드롭다운 아이템 */
+.dropdownItem {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.dropdownItem:last-child {
+    border-bottom: none;
+}
+
+.dropdownItem:hover {
+    background-color: #e9ecef;
+}
+
+.dropdownList::-webkit-scrollbar {
+    display: none;
+}
+
+.dragging {
+    cursor: grabbing;
+}
+
+.body {
+    width: 82%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+    width: 100%;
+    margin: 20px auto;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.categoryInfo {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.categoryText {
+    font-weight: bold;
+    color: #333;
+}
+
+.studyContents {
+    margin-bottom: 20px;
+    flex-grow: 1;  /* 나머지 공간을 차지하게 설정 */
+    max-height: 400px; /* 고정된 높이 */
+    overflow-y: auto;  /* 스크롤 가능하게 설정 */
+}
+
+.studyContent {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.contentTitle {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.contentBody {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+.noResults {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+/* 페이지네이션 */
+.paginationWrapper {
+    display: flex;
+    justify-content: flex-end; /* 버튼 오른쪽 정렬 */
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.paginationButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.paginationButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.paginationButton:hover:not(:disabled) {
+    background-color: #2980b9;
+}
+
+.pageNumber {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 메모 입력 */
+.memoContainer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.memoContainer p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* 메모 입력 필드 */
+.memoInput {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.memoInput::placeholder {
+    color: #aaa;
+}
+
+.memoInput:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
