@@ -57,7 +57,7 @@ export default function ClientLayout({
             {children}
           </div>
           <footer className="flex justify-center gap-7 p-4">
-            @Copywrite 2025
+            @Copywrite Programmers Devcourse BE4-5 Chill Team project
           </footer>
         </LoginMemberContext.Provider>
       </body>

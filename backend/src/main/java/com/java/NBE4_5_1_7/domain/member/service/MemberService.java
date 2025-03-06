@@ -1,16 +1,17 @@
 package com.java.NBE4_5_1_7.domain.member.service;
 
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.member.entity.Role;
+import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
+import com.java.NBE4_5_1_7.global.Rq;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
-import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
-import com.java.NBE4_5_1_7.global.Rq;
-
-import lombok.RequiredArgsConstructor;
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -26,6 +27,7 @@ public class MemberService {
                 .apiKey(username)
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
+                .role(Role.USER)
                 .build();
 
         return memberRepository.save(member);
@@ -88,10 +90,7 @@ public class MemberService {
         return member.getId();
     }
 
-    public Member getMemberFromRq() {
-        return rq.getActor();
-    }
-  
+
     public String genRefreshToken(Member member) {
         return authTokenService.genRefreshToken(member);
     }
@@ -100,5 +99,21 @@ public class MemberService {
         return authTokenService.genAccessToken(member);
     }
 
+    public Member getMemberFromRq() {
+        return rq.getActor();
+    }
 
+    public String changeRole(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        if (!member.isAdmin()) {
+            throw new RuntimeException("권한 변경 요청은 관리자만 가능합니다.");
+        }
+        if (member.isAdmin()) {
+            member.setRole(Role.USER);
+            return "Member [" + id + "] 의 권한을 USER 로 변경하였습니다.";
+        } else {
+            member.setRole(Role.ADMIN);
+            return "Member [" + id + "] 의 권한을 ADMIN 으로 변경하였습니다.";
+        }
+    }
 }

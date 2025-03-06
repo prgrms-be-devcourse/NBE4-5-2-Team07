@@ -1,9 +1,7 @@
 package com.java.NBE4_5_1_7.domain.member.entity;
 
 import com.java.NBE4_5_1_7.global.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +32,11 @@ public class Member extends BaseEntity{
     private String nickname;
     private String profileImgUrl;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public boolean isAdmin() {
-        return username.equals("admin");
+        return Role.ADMIN.equals(role);
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {

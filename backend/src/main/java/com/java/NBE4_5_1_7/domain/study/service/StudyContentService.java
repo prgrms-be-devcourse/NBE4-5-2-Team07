@@ -5,6 +5,8 @@ import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +22,10 @@ public class StudyContentService {
     public Map<String, List<String>> getAllCategory() {
         Map<String, List<String>> categories = new HashMap<>();
         List<FirstCategory> firstCategories = studyContentRepository.findDistinctFirstCategories();
-        for(FirstCategory category : firstCategories) {
+        for (FirstCategory category : firstCategories) {
             String firstCategory = String.valueOf(category);
             List<String> second = getSecondCategoryByFirstCategory(firstCategory);
-            categories.put(String.valueOf(firstCategory),second);
+            categories.put(String.valueOf(firstCategory), second);
         }
         return categories;
     }
@@ -40,12 +42,13 @@ public class StudyContentService {
         return studyContentRepository.findDistinctBySecondCategory(category);
     }
 
-    public List<StudyContentDetailDto> getStudyContentByCategory(String firstCategory, String secondCategory) {
+    // 다건 조회 (페이징 처리 추가)
+    public Page<StudyContentDetailDto> getStudyContentsByCategory(String firstCategory, String secondCategory, Pageable pageable) {
         FirstCategory category = FirstCategory.valueOf(firstCategory);
-        List<StudyContent> studyContents = studyContentRepository.findByFirstCategoryAndSecondCategory(category, secondCategory);
-        return studyContents.stream()
-                .map(StudyContentDetailDto::new)
-                .toList();
+        Page<StudyContent> studyContentsPage = studyContentRepository
+                .findByFirstCategoryAndSecondCategory(category, secondCategory, pageable);
+
+        return studyContentsPage.map(StudyContentDetailDto::new);
     }
 
     @Transactional

@@ -14,20 +14,19 @@ spring:
   profiles:
     active: dev
 
-  application:
-    name: csvToDB
   datasource:
     url: ${db.url}
     username: ${db.username}
     password: ${db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   config:
     import:
       - "classpath:application-secret.yml"
   jpa:
     hibernate:
-      ddl-auto: create
-    show-sql: false
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -35,7 +34,6 @@ spring:
         highlight_sql: true
         use_sql_comments: true
         default_batch_fetch_size: 10
-      open-in-view: false
 
   security:
       oauth2:

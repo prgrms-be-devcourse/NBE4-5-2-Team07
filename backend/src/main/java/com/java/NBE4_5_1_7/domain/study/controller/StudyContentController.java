@@ -2,9 +2,10 @@ package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
-import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +33,18 @@ public class StudyContentController {
         return ResponseEntity.ok(studyContentService.getSecondCategoryByFirstCategory(firstCategory));
     }
 
+    // 다건 조회
     @GetMapping("/{firstCategory}/{secondCategory}")
-    public ResponseEntity<List<StudyContentDetailDto>> getStudyContents(
+    public ResponseEntity<Page<StudyContentDetailDto>> getStudyContentByCategory(
             @PathVariable String firstCategory,
-            @PathVariable String secondCategory) {
-        return ResponseEntity.ok(studyContentService.getStudyContentByCategory(firstCategory, secondCategory));
+            @PathVariable String secondCategory,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int size) {
+
+        Page<StudyContentDetailDto> studyContents = studyContentService
+                .getStudyContentsByCategory(firstCategory, secondCategory, PageRequest.of(page, size));
+
+        return ResponseEntity.ok(studyContents);
     }
 
     @PutMapping("/update/{studyContentId}")
