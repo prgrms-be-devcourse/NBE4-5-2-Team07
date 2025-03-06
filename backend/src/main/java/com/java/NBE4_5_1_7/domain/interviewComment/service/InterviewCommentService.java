@@ -10,6 +10,7 @@ import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.InterviewCommentResponseDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.MyPageInterviewCommentResponseDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.entity.InterviewContentComment;
 import com.java.NBE4_5_1_7.domain.interviewComment.repository.InterviewCommentRepository;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
@@ -26,7 +27,7 @@ public class InterviewCommentService {
 	private final InterviewContentRepository interviewContentRepository;
 
 	@Transactional
-	public InterviewCommentResponseDto createComment(InterviewCommentRequestDto newDto, Member member) {
+	public MyPageInterviewCommentResponseDto createComment(InterviewCommentRequestDto newDto, Member member) {
 		InterviewContent interviewContent = interviewContentRepository.findById(newDto.getInterviewContentId())
 			.orElseThrow(() -> new ServiceException("404", "해당 인터뷰 콘텐츠를 찾을 수 없습니다."));
 
@@ -40,7 +41,7 @@ public class InterviewCommentService {
 
 		String category = savedComment.getInterviewContent().getCategory().getCategory();
 
-		return new InterviewCommentResponseDto(
+		return new MyPageInterviewCommentResponseDto(
 			savedComment.getComment_id(),
 			savedComment.getAnswer(),
 			savedComment.isPublic(),
@@ -51,11 +52,11 @@ public class InterviewCommentService {
 		);
 	}
 
-	public List<InterviewCommentResponseDto> getCommentsByMemberAndCategory(Member member, InterviewCategory category) {
+	public List<MyPageInterviewCommentResponseDto> getCommentsByMemberAndCategory(Member member, InterviewCategory category) {
 		List<InterviewContentComment> comments = interviewCommentRepository.findByMemberAndInterviewContentCategory(member, category);
 
 		return comments.stream()
-			.map(comment -> new InterviewCommentResponseDto(
+			.map(comment -> new MyPageInterviewCommentResponseDto(
 				comment.getComment_id(),
 				comment.getAnswer(),
 				comment.isPublic(),
@@ -67,7 +68,7 @@ public class InterviewCommentService {
 			.collect(Collectors.toList());
 	}
 
-	public InterviewCommentResponseDto getCommentById(Long commentId, Member member) {
+	public MyPageInterviewCommentResponseDto getCommentById(Long commentId, Member member) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
 			.orElseThrow(() -> new ServiceException("404", "해당 댓글을 찾을 수 없습니다."));
 
@@ -77,7 +78,7 @@ public class InterviewCommentService {
 
 		String category = comment.getInterviewContent().getCategory().getCategory();
 
-		return new InterviewCommentResponseDto(
+		return new MyPageInterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
@@ -89,7 +90,7 @@ public class InterviewCommentService {
 	}
 
 	@Transactional
-	public InterviewCommentResponseDto updateComment(Long commentId, InterviewCommentRequestDto updatedDto, Member member) {
+	public MyPageInterviewCommentResponseDto updateComment(Long commentId, InterviewCommentRequestDto updatedDto, Member member) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
 			.orElseThrow(() -> new ServiceException("404", "해당 댓글을 찾을 수 없습니다."));
 
@@ -102,7 +103,7 @@ public class InterviewCommentService {
 
 		String category = comment.getInterviewContent().getCategory().getCategory();
 
-		return new InterviewCommentResponseDto(
+		return new MyPageInterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),

@@ -16,7 +16,7 @@ public class InterviewCommentRequestDto {
 	private String comment;
 
 	@JsonProperty("isPublic")
-	private boolean isPublic;
+	private Boolean isPublic;
 
 	private Long interviewContentId;
 

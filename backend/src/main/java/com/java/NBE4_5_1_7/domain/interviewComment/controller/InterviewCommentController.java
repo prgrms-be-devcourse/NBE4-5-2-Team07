@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.InterviewCommentResponseDto;
+import com.java.NBE4_5_1_7.domain.interviewComment.dto.response.MyPageInterviewCommentResponseDto;
 import com.java.NBE4_5_1_7.domain.interviewComment.service.InterviewCommentService;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
@@ -33,33 +34,33 @@ public class InterviewCommentController {
 
 	///  댓글 생성
 	@PostMapping
-	public ResponseEntity<InterviewCommentResponseDto> createComment(
+	public ResponseEntity<MyPageInterviewCommentResponseDto> createComment(
 		@RequestBody InterviewCommentRequestDto newDto) {
 		Member member = memberService.getMemberFromRq();
 
-		InterviewCommentResponseDto createdComment = interviewCommentService.createComment(newDto, member);
+		MyPageInterviewCommentResponseDto createdComment = interviewCommentService.createComment(newDto, member);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
 	}
 
 
 	/// 사용자 + 카테고리별 댓글 및 컨텐츠 조회
 	@GetMapping
-	public ResponseEntity<List<InterviewCommentResponseDto>> getCommentsByMemberAndCategory(@RequestParam String category) {
+	public ResponseEntity<List<MyPageInterviewCommentResponseDto>> getCommentsByMemberAndCategory(@RequestParam String category) {
 		Member member = memberService.getMemberFromRq();
 
 		InterviewCategory categoryEnum = InterviewCategory.fromString(category);
-		List<InterviewCommentResponseDto> comments = interviewCommentService.getCommentsByMemberAndCategory(member, categoryEnum);
+		List<MyPageInterviewCommentResponseDto> comments = interviewCommentService.getCommentsByMemberAndCategory(member, categoryEnum);
 		return ResponseEntity.ok(comments);
 	}
 
 	///  댓글 수정
 	@PatchMapping("/{commentId}")
-	public ResponseEntity<InterviewCommentResponseDto> updateComment(
+	public ResponseEntity<MyPageInterviewCommentResponseDto> updateComment(
 		@PathVariable("commentId") Long commentId,
 		@RequestBody InterviewCommentRequestDto updatedDto) {
 		Member member = memberService.getMemberFromRq();
 
-		InterviewCommentResponseDto updatedComment = interviewCommentService.updateComment(commentId, updatedDto, member);
+		MyPageInterviewCommentResponseDto updatedComment = interviewCommentService.updateComment(commentId, updatedDto, member);
 		return ResponseEntity.ok(updatedComment);
 	}
 

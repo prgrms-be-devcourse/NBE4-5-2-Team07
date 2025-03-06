@@ -372,7 +372,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/interview-comments/public/{interviewContentId}": {
+    "/api/v1/interview/comment/public/{interviewContentId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -388,7 +388,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/interview-comments/my/{interviewContentId}": {
+    "/api/v1/interview/comment/my/{interviewContentId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -513,11 +513,11 @@ export interface components {
         };
         InterviewCommentRequestDto: {
             comment?: string;
-            isPublic?: boolean;
             /** Format: int64 */
             interviewContentId?: number;
+            isPublic?: boolean;
         };
-        InterviewCommentResponseDto: {
+        MyPageInterviewCommentResponseDto: {
             /** Format: int64 */
             commentId?: number;
             comment?: string;
@@ -562,6 +562,14 @@ export interface components {
             id?: number;
             title?: string;
             body?: string;
+        };
+        InterviewCommentResponseDto: {
+            /** Format: int64 */
+            commentId?: number;
+            comment?: string;
+            /** Format: int64 */
+            interviewContentId?: number;
+            public?: boolean;
         };
         Empty: Record<string, never>;
         RsDataEmpty: {
@@ -764,7 +772,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"][];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"][];
                 };
             };
             /** @description Internal Server Error */
@@ -797,7 +805,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1059,7 +1067,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
+                    "*/*": components["schemas"]["MyPageInterviewCommentResponseDto"];
                 };
             };
             /** @description Internal Server Error */

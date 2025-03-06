@@ -1,4 +1,20 @@
 package com.java.NBE4_5_1_7.domain.interviewComment.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MyPageInterviewCommentResponseDto {
+	private Long commentId;
+	private String comment;
+	private boolean isPublic;
+	private Long interviewContentId;
+	private String interviewContentTitle;
+	private String category;
+	private String modelAnswer;
 }
