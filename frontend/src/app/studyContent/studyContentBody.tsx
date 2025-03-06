@@ -15,8 +15,10 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
     useEffect(() => {
         if (selectedCategory) {
             setCategory(selectedCategory); // selectedCategory가 있으면 설정
+            setPage(0); // 페이지를 1로 초기화 (0부터 시작)
         } else {
             setCategory(DEFAULT_CATEGORY);
+            setPage(0); // 기본 카테고리일 때 페이지를 1로 초기화
         }
     }, [selectedCategory]); // selectedCategory가 변경될 때만 실행
 
