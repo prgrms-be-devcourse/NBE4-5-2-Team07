@@ -20,22 +20,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/member/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/interview/random": {
         parameters: {
             query?: never;
@@ -416,26 +400,6 @@ export interface components {
         StudyContentUpdateRequestDto: {
             updateContent?: string;
         };
-        LoginReqBody: {
-            username: string;
-            password: string;
-        };
-        LoginResBody: {
-            item: components["schemas"]["MemberDto"];
-            apiKey: string;
-            accessToken: string;
-        };
-        MemberDto: {
-            /** Format: int64 */
-            id: number;
-            nickname: string;
-            profileImgUrl: string;
-        };
-        RsDataLoginResBody: {
-            code: string;
-            msg: string;
-            data: components["schemas"]["LoginResBody"];
-        };
         RandomRequestDto: {
             indexList?: number[];
         };
@@ -501,6 +465,12 @@ export interface components {
             studyContentId?: number;
             memoContent?: string;
         };
+        MemberDto: {
+            /** Format: int64 */
+            id: number;
+            nickname: string;
+            profileImgUrl: string;
+        };
         RsDataMemberDto: {
             code: string;
             msg: string;
@@ -549,39 +519,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginReqBody"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataLoginResBody"];
                 };
             };
             /** @description Internal Server Error */

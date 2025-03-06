@@ -11,7 +11,7 @@ export default function Login() {
         <div className="flex flex-grow justify-center items-center">
           <button>
             <a href="http://localhost:8080/oauth2/authorization/kakao?redirectUrl=http://localhost:3000">
-              카카오 로그인
+              <img src="/kakao_login_medium_narrow.png" alt="카카오 로그인" />
             </a>
           </button>
         </div>
