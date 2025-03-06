@@ -50,7 +50,7 @@ export function useLoginMember() {
   };
 
   const isLogin = loginMember.id !== 0;
-  const isAdmin = loginMember.id === 2;
+  const isAdmin = loginMember.id === 1;
 
   return {
     loginMember,
