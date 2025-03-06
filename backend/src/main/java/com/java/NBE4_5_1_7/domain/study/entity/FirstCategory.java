@@ -17,4 +17,13 @@ public enum FirstCategory {
     FirstCategory(String category) {
         this.category = category;
     }
+
+    public static FirstCategory fromString(String category) {
+        for (FirstCategory c : FirstCategory.values()) {
+            if (c.category.equals(category)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException("Unknown category: " + category);
+    }
 }

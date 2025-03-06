@@ -155,7 +155,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getStudyMemoById"];
+        get?: never;
         put?: never;
         post?: never;
         delete: operations["deleteStudyMemo"];
@@ -315,7 +315,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getAllStudyMemos"];
+        get: operations["getStudyMemosByMemberAndCategory"];
         put?: never;
         post?: never;
         delete?: never;
@@ -347,7 +347,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getStudyContents"];
+        get: operations["getStudyContentByCategory"];
         put?: never;
         post?: never;
         delete?: never;
@@ -544,18 +544,57 @@ export interface components {
         };
         StudyMemoRequestDto: {
             /** Format: int64 */
-            studyContentId?: number;
+            memoId?: number;
             memoContent?: string;
         };
         StudyMemoResponseDto: {
             /** Format: int64 */
-            studyContentId?: number;
+            memoId?: number;
             memoContent?: string;
+            /** Format: int64 */
+            studyContentId?: number;
+            firstCategory?: string;
+            title?: string;
+            body?: string;
         };
         RsDataMemberDto: {
             code: string;
             msg: string;
             data: components["schemas"]["MemberDto"];
+        };
+        PageStudyContentDetailDto: {
+            /** Format: int32 */
+            totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["StudyContentDetailDto"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            empty?: boolean;
+        };
+        PageableObject: {
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
+            unpaged?: boolean;
+            paged?: boolean;
+            /** Format: int32 */
+            pageNumber?: number;
+            /** Format: int32 */
+            pageSize?: number;
+        };
+        SortObject: {
+            empty?: boolean;
+            sorted?: boolean;
+            unsorted?: boolean;
         };
         StudyContentDetailDto: {
             /** Format: int64 */
@@ -905,37 +944,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    getStudyMemoById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                studyMemoId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["StudyMemoResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1321,9 +1329,11 @@ export interface operations {
             };
         };
     };
-    getAllStudyMemos: {
+    getStudyMemosByMemberAndCategory: {
         parameters: {
-            query?: never;
+            query: {
+                category: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1381,9 +1391,12 @@ export interface operations {
             };
         };
     };
-    getStudyContents: {
+    getStudyContentByCategory: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                size?: number;
+            };
             header?: never;
             path: {
                 firstCategory: string;
@@ -1399,7 +1412,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["StudyContentDetailDto"][];
+                    "*/*": components["schemas"]["PageStudyContentDetailDto"];
                 };
             };
             /** @description Internal Server Error */

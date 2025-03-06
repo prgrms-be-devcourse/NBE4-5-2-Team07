@@ -10,6 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyMemoResponseDto {
-	private Long studyContentId;
+	private Long memoId;
 	private String memoContent;
+	private Long studyContentId;
+	private String firstCategory;
+	private String title;
+	private String body;
 }
