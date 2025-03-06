@@ -42,7 +42,6 @@ public class InterviewCommentController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
 	}
 
-
 	/// 사용자 + 카테고리별 댓글 및 컨텐츠 조회
 	@GetMapping
 	public ResponseEntity<List<MyPageInterviewCommentResponseDto>> getCommentsByMemberAndCategory(@RequestParam String category) {

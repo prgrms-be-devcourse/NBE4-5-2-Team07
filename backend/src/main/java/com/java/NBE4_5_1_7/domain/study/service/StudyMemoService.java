@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.response.StudyMemoResponseDto;
+import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyMemo;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
@@ -35,31 +36,21 @@ public class StudyMemoService {
         studyMemoRepository.save(studyMemo);
     }
 
-    // 메모 다건 조회
-    public List<StudyMemoResponseDto> getAllStudyMemos(Member member) {
-        return studyMemoRepository.findAll().stream()
-            .filter(memo -> memo.getMember().equals(member))
+    public List<StudyMemoResponseDto> getStudyMemosByMemberAndCategory(Member member, FirstCategory category) {
+        List<StudyMemo> memos = studyMemoRepository.findByMemberAndStudyContentCategory(member, category);
+
+        return memos.stream()
             .map(memo -> new StudyMemoResponseDto(
-                memo.getStudyContent().getStudy_content_id(), memo.getMemoContent()))
+                memo.getId(),
+                memo.getMemoContent(),
+                memo.getStudyContent().getStudy_content_id(),
+                memo.getStudyContent().getFirstCategory().getCategory(),
+                memo.getStudyContent().getTitle(),
+                memo.getStudyContent().getBody()
+            ))
             .collect(Collectors.toList());
     }
 
-    // 메모 단건 조회
-    public StudyMemoResponseDto getStudyMemoById(Long studyMemoId, Member member) {
-        StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
-            .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
-
-        if (!studyMemo.getMember().equals(member)) {
-            throw new ServiceException("403", "본인이 작성한 메모만 조회할 수 있습니다.");
-        }
-
-        return new StudyMemoResponseDto(
-            studyMemo.getStudyContent().getStudy_content_id(),
-            studyMemo.getMemoContent()
-        );
-    }
-
-    // 메모 수정
     public StudyMemoResponseDto updateStudyMemo(Long studyMemoId, StudyMemoRequestDto updatedDto, Member member) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
@@ -71,10 +62,16 @@ public class StudyMemoService {
         studyMemo.setMemoContent(updatedDto.getMemoContent());
         StudyMemo updatedMemo = studyMemoRepository.save(studyMemo);
 
-        return new StudyMemoResponseDto(updatedMemo.getStudyContent().getStudy_content_id(), updatedMemo.getMemoContent());
+        return new StudyMemoResponseDto(
+            updatedMemo.getId(),
+            updatedMemo.getMemoContent(),
+            updatedMemo.getStudyContent().getStudy_content_id(),
+            updatedMemo.getStudyContent().getFirstCategory().getCategory(),
+            updatedMemo.getStudyContent().getTitle(),
+            updatedMemo.getStudyContent().getBody()
+        );
     }
 
-    // 메모 삭제
     public void deleteStudyMemo(Long studyMemoId, Member member) {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId)
             .orElseThrow(() -> new RuntimeException("해당 메모를 찾을 수 없습니다."));
