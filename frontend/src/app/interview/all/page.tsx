@@ -223,7 +223,6 @@ export default function InterviewAllPage() {
     setShowAnswer((prev) => !prev);
   };
 
-  // 댓글 저장 함수 (POST /api/v1/interview-comments)
   const handleCommentSubmit = async () => {
     if (!currentInterview) return;
     if (commentText.trim() === "") {
@@ -232,7 +231,7 @@ export default function InterviewAllPage() {
     }
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/interview-comments",
+        "http://localhost:8080/api/v1/interview/comment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -247,8 +246,11 @@ export default function InterviewAllPage() {
       if (!res.ok) {
         throw new Error("댓글 저장에 실패했습니다.");
       }
+      // 변경된 API 응답 DTO (MyPageInterviewCommentResponseDto) 파싱
+      const createdComment = await res.json();
       setCommentText("");
       alert("댓글이 저장되었습니다.");
+      // 필요 시 createdComment를 상태 업데이트 등에 활용
     } catch (err: any) {
       alert(err.message);
     }
@@ -261,7 +263,7 @@ export default function InterviewAllPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/my/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -284,7 +286,7 @@ export default function InterviewAllPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/public/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {

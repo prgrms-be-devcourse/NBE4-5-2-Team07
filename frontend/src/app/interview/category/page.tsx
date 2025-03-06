@@ -61,22 +61,20 @@ export default function CategoryStudyPage() {
   const [memosError, setMemosError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
+  // 북마크 응답 메시지 상태
+  const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
+
   // 스타일 정의
-  // 1) 컨테이너의 padding을 제거하거나 최소화하고,
-  // 2) leftPanelStyle에 margin을 부여하여 좀 더 왼쪽/위쪽으로 배치.
   const containerStyle: React.CSSProperties = {
     display: "flex",
     fontFamily: "Arial, sans-serif",
-    // 기존에 있던 padding: "1rem" 제거 혹은 줄이기
     padding: 0,
     gap: "2rem",
-    // 수직 정렬을 맨 위로
     alignItems: "flex-start",
   };
 
   const leftPanelStyle: React.CSSProperties = {
     width: "200px",
-    // 왼쪽/위쪽으로 붙이기 위해 margin을 조정
     marginLeft: "1rem",
     marginTop: "1rem",
   };
@@ -85,7 +83,6 @@ export default function CategoryStudyPage() {
   const mainBoxStyle: React.CSSProperties = {
     width: "900px",
     margin: "0 auto",
-    // 상단 여백을 조금 줄이고 싶다면 marginTop 조절
   };
 
   const questionBoxStyle: React.CSSProperties = {
@@ -93,6 +90,7 @@ export default function CategoryStudyPage() {
     padding: "1.5rem",
     borderRadius: "10px",
     backgroundColor: "#f9f9f9",
+    position: "relative",
   };
 
   const commentContainerStyle: React.CSSProperties = {
@@ -113,6 +111,28 @@ export default function CategoryStudyPage() {
     textAlign: "center",
     borderRadius: "6px",
   });
+
+  // 북마크 토글 함수
+  const handleBookmark = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("북마크 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      setBookmarkMessage(message);
+      alert(message);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   // 카테고리 버튼 클릭 시
   const handleCategorySelect = (category: string) => {
@@ -160,7 +180,8 @@ export default function CategoryStudyPage() {
       setDetailLoading(false);
       setDetailError(null);
       setShowAnswer(false);
-      // 새 질문 로드시 탭 초기화
+      // 새 질문 로드시 북마크 메시지 초기화
+      setBookmarkMessage("");
       setActiveTab(null);
     } catch (err: any) {
       setDetailError(err.message);
@@ -224,7 +245,7 @@ export default function CategoryStudyPage() {
     }
     try {
       const res = await fetch(
-        "http://localhost:8080/api/v1/interview-comments",
+        "http://localhost:8080/api/v1/interview/comment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -253,7 +274,7 @@ export default function CategoryStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/my/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -276,7 +297,7 @@ export default function CategoryStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview-comments/public/${currentInterview.id}`,
+        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
@@ -320,12 +341,12 @@ export default function CategoryStudyPage() {
         ))}
       </div>
 
-      {/* 중앙 질문 박스 (고정 폭 900px) */}
+      {/* 중앙 질문 박스 */}
       <div style={mainBoxStyle}>
         {listLoading && <p>카테고리 질문 ID 목록 로딩중...</p>}
         {listError && <p style={{ color: "red" }}>{listError}</p>}
 
-        {/* 카테고리 선택 후, 아직 학습 모드 시작 전이면 "학습하기" 버튼 표시 */}
+        {/* 카테고리 선택 후 학습 모드 시작 전 "학습하기" 버튼 */}
         {selectedCategory && !isStudyMode && !listLoading && !listError && (
           <div style={{ textAlign: "center", marginTop: "2rem" }}>
             <button
@@ -353,20 +374,41 @@ export default function CategoryStudyPage() {
             {detailError && <p style={{ color: "red" }}>{detailError}</p>}
             {!detailLoading && !detailError && (
               <div style={questionBoxStyle}>
-                {/* 카테고리/키워드 박스 */}
+                {/* 상단 헤더 영역: 카테고리/키워드와 북마크 버튼 */}
                 <div
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#e8e8e8",
-                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: "1rem",
-                    fontSize: "1.1rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
                   }}
                 >
-                  {currentInterview.category.toUpperCase()} &gt;{" "}
-                  {currentInterview.keyword}
+                  <div
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#e8e8e8",
+                      borderRadius: "6px",
+                      fontSize: "1.1rem",
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    {currentInterview.category.toUpperCase()} &gt;{" "}
+                    {currentInterview.keyword}
+                  </div>
+                  <button
+                    onClick={handleBookmark}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: "#5cb85c",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                  >
+                    내 노트에 추가
+                  </button>
                 </div>
 
                 {/* 질문 내용 */}
@@ -505,9 +547,7 @@ export default function CategoryStudyPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "0.5rem",
-                      gap: "0.5rem",
+                      justifyContent: "space-between",
                     }}
                   >
                     <label style={{ fontSize: "1rem" }}>

@@ -1,6 +1,6 @@
 "use client"; // 클라이언트 컴포넌트임을 명시
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface Message {
@@ -90,8 +90,9 @@ export default function TechInterviewChat() {
   // 주제 선택 전 화면: 두 개의 버튼 제공
   if (!interviewType) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-200">
-        <div className="bg-white rounded-xl shadow-md p-8 max-w-xl text-center">
+      <div className="flex items-center justify-center min-h-screen">
+        {/* 폭을 50vw로 고정하고 중앙 정렬 */}
+        <div className="bg-white rounded-xl shadow-md p-8 w-[50vw] text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             안녕하세요, 기술 면접을 담당하는 AI 면접관 입니다.
           </h1>
@@ -119,8 +120,9 @@ export default function TechInterviewChat() {
 
   // 인터뷰 진행 중 화면: 채팅 UI + 평가 버튼 추가
   return (
-    <div className="min-h-screen bg-gray-200 flex flex-col items-center py-10">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-2xl p-6">
+    <div className="min-h-screen flex flex-col items-center py-10">
+      {/* 폭을 50vw로 고정 */}
+      <div className="bg-white rounded-lg shadow-md w-[50vw] p-6">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
           기술 면접 챗봇
         </h1>

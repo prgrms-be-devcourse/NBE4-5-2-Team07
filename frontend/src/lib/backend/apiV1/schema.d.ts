@@ -347,7 +347,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getStudyContents"];
+        get: operations["getStudyContentByCategory"];
         put?: never;
         post?: never;
         delete?: never;
@@ -548,6 +548,40 @@ export interface components {
             contentId?: number;
             question?: string;
             answer?: string;
+        };
+        PageStudyContentDetailDto: {
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["StudyContentDetailDto"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            empty?: boolean;
+        };
+        PageableObject: {
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
+            unpaged?: boolean;
+            paged?: boolean;
+            /** Format: int32 */
+            pageNumber?: number;
+            /** Format: int32 */
+            pageSize?: number;
+        };
+        SortObject: {
+            empty?: boolean;
+            unsorted?: boolean;
+            sorted?: boolean;
         };
         StudyContentDetailDto: {
             /** Format: int64 */
@@ -1400,9 +1434,12 @@ export interface operations {
             };
         };
     };
-    getStudyContents: {
+    getStudyContentByCategory: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                size?: number;
+            };
             header?: never;
             path: {
                 firstCategory: string;
@@ -1418,7 +1455,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["StudyContentDetailDto"][];
+                    "*/*": components["schemas"]["PageStudyContentDetailDto"];
                 };
             };
             /** @description Internal Server Error */
