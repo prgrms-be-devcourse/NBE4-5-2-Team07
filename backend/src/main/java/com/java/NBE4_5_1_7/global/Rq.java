@@ -24,6 +24,7 @@ public class Rq {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
+    private final MemberService memberService;
 
     public void setLogin(Member actor) {
 
@@ -101,5 +102,9 @@ public class Rq {
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
+    }
+
+    public Member getRealActor(Member actor) {
+        return memberService.findById(actor.getId()).get();
     }
 }
