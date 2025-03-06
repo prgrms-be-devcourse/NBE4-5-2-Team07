@@ -4,26 +4,23 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import client from "@/lib/backend/client";
 import styles from "../styles/header.module.css";
-import { LoginMemberContext } from "../login/loginMemberStore";
-import { useContext } from "react";
+import { useLoginMemberContext } from "../login/loginMemberStore";
 
 export default function Header() {
-  const { isLogin, removeLoginMember } = useContext(LoginMemberContext);
+  const { isLogin, removeLoginMember } = useLoginMemberContext();
   const router = useRouter();
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith("/admin");
 
-  async function handleLogout(e: React.MouseEvent<HTMLAnchorElement>) {
+  async function handleLogout(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     const response = await client.DELETE("/member/logout", {
       credentials: "include",
     });
-
     if (response.error) {
       alert(response.error.msg);
       return;
     }
-
     removeLoginMember();
     router.replace("/");
   }
@@ -52,7 +49,6 @@ export default function Header() {
               <li>
                 <Link href="/">CS 전공지식 학습하기</Link>
               </li>
-
               {/* 드롭다운 메뉴 시작 */}
               <li className={styles.dropdown}>
                 <Link href="#">기술 면접 대비하기</Link>
@@ -81,7 +77,6 @@ export default function Header() {
                 </ul>
               </li>
               {/* 드롭다운 메뉴 끝 */}
-
               <li>
                 <Link href="/contact">로드맵</Link>
               </li>
@@ -100,14 +95,17 @@ export default function Header() {
             <>
               {!isLogin && (
                 <li>
-                  <Link href="/login">로그인 / 회원가입</Link>
+                  <Link href="/login">로그인</Link>
                 </li>
               )}
               {isLogin && (
                 <li>
-                  <Link href="" onClick={handleLogout}>
+                  <button
+                    onClick={handleLogout}
+                    className={styles.logoutButton}
+                  >
                     로그아웃
-                  </Link>
+                  </button>
                 </li>
               )}
               <li>

@@ -1,9 +1,9 @@
 "use client";
+import { useContext } from "react";
 import { LoginMemberContext } from "./loginMemberStore";
-import { use } from "react";
 
 export default function Login() {
-  const { isLogin, loginMember } = use(LoginMemberContext);
+  const { isLogin, loginMember } = useContext(LoginMemberContext);
 
   return (
     <>
