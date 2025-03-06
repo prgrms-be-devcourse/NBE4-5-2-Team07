@@ -59,10 +59,6 @@ public class Rq {
                 .build();
     }
 
-    public String getHeader(String name) {
-        return request.getHeader(name);
-    }
-
     public String getValueFromCookie(String name) {
         Cookie[] cookies = request.getCookies();
 
@@ -89,19 +85,6 @@ public class Rq {
         accsessTokenCookie.setAttribute("SameSite", "Strict");
 
         response.addCookie(accsessTokenCookie);
-    }
-
-    public void removeCookie(String name) {
-
-        Cookie cookie = new Cookie(name, null);
-        cookie.setDomain("localhost");
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setAttribute("SameSite", "Strict");
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
     }
 
     public Member getRealActor(Member actor) {

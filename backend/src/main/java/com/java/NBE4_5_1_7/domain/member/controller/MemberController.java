@@ -25,39 +25,9 @@ public class MemberController {
     private final Rq rq;
     private final MemberService memberService;
 
-    record LoginReqBody(@NotBlank String username, @NotBlank String password) {}
-    record LoginResBody(@NonNull MemberDto item, @NonNull String apiKey, @NonNull String accessToken) {}
-
-    @PostMapping("/login")
-    public RsData<LoginResBody> login(@RequestBody @Valid LoginReqBody reqBody, HttpServletResponse response) {
-
-        Member member = memberService.findByUsername(reqBody.username()).orElseThrow(
-                () -> new ServiceException("401-1", "잘못된 아이디입니다.")
-        );
-
-        String accessToken = memberService.genAccessToken(member);
-
-        rq.addCookie("accessToken", accessToken);
-        rq.addCookie("apiKey", member.getApiKey());
-
-        return new RsData<>(
-                "200-1",
-                "%s님 환영합니다.".formatted(member.getNickname()),
-                new LoginResBody(
-                        new MemberDto(member),
-                        member.getApiKey(),
-                        accessToken
-                )
-        );
-    }
-
     @DeleteMapping("/logout")
-    public RsData<Empty> logout(HttpSession session) {
-
-        rq.removeCookie("accessToken");
-        rq.removeCookie("apiKey");
-
-        return new RsData<>("200-1", "로그아웃 되었습니다.");
+    public RsData<Empty> logout(HttpServletResponse response) {
+        return new RsData<>("200-1", "로그아웃이 완료되었습니다.", new Empty());
     }
 
     @GetMapping("/me")
