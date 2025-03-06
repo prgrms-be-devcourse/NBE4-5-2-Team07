@@ -75,4 +75,8 @@ public class MemberController {
         );
     }
 
+    @GetMapping("/role")
+    public ResponseEntity<String> changeRoleToAdmin(Long id) {
+        return ResponseEntity.ok(memberService.changeRole(id));
+    }
 }

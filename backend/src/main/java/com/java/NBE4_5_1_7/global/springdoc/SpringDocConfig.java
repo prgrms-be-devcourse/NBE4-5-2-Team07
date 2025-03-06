@@ -24,7 +24,7 @@ public class SpringDocConfig {
     public GroupedOpenApi allApi() {
         return GroupedOpenApi.builder()
                 .group("전체 API")
-                .pathsToMatch("/api/**")
+                .pathsToMatch("/**")
                 .build();
     }
 
