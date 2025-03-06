@@ -37,23 +37,29 @@ public class InterviewCommentService {
 
 		InterviewContentComment savedComment = interviewCommentRepository.save(newComment);
 
+		String category = savedComment.getInterviewContent().getCategory().getCategory();
+
 		return new InterviewCommentResponseDto(
 			savedComment.getComment_id(),
 			savedComment.getAnswer(),
 			savedComment.isPublic(),
-			savedComment.getInterviewContent().getInterview_content_id()
+			savedComment.getInterviewContent().getInterview_content_id(),
+			savedComment.getInterviewContent().getQuestion(),
+			category
 		);
 	}
 
-	public List<InterviewCommentResponseDto> getAllComments(Member member) {
-		List<InterviewContentComment> comments = interviewCommentRepository.findAll();
+	public List<InterviewCommentResponseDto> getCommentsByMemberAndCategory(Member member, String category) {
+		List<InterviewContentComment> comments = interviewCommentRepository.findByMemberAndInterviewContentCategory(member, category);
+
 		return comments.stream()
-			.filter(comment -> comment.getMember().equals(member))
 			.map(comment -> new InterviewCommentResponseDto(
 				comment.getComment_id(),
 				comment.getAnswer(),
 				comment.isPublic(),
-				comment.getInterviewContent().getInterview_content_id()
+				comment.getInterviewContent().getInterview_content_id(),
+				comment.getInterviewContent().getQuestion(),
+				comment.getInterviewContent().getCategory().getCategory()
 			))
 			.collect(Collectors.toList());
 	}
@@ -66,11 +72,15 @@ public class InterviewCommentService {
 			throw new ServiceException("403", "본인이 작성한 댓글만 조회할 수 있습니다.");
 		}
 
+		String category = comment.getInterviewContent().getCategory().getCategory();
+
 		return new InterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
-			comment.getInterviewContent().getInterview_content_id()
+			comment.getInterviewContent().getInterview_content_id(),
+			comment.getInterviewContent().getQuestion(),
+			category
 			);
 	}
 
@@ -86,11 +96,15 @@ public class InterviewCommentService {
 		comment.setAnswer(updatedDto.getComment());
 		comment.setPublic(updatedDto.isPublic());
 
+		String category = comment.getInterviewContent().getCategory().getCategory();
+
 		return new InterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
-			comment.getInterviewContent().getInterview_content_id()
+			comment.getInterviewContent().getInterview_content_id(),
+			comment.getInterviewContent().getQuestion(),
+			category
 			);
 	}
 

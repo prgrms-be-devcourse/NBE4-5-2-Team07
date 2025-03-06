@@ -91,7 +91,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["all"];
+        get: operations["getCommentsByMemberAndCategory"];
         put?: never;
         post: operations["createComment"];
         delete?: never;
@@ -171,7 +171,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getCommentById"];
+        get?: never;
         put?: never;
         post?: never;
         delete: operations["deleteComment"];
@@ -459,6 +459,8 @@ export interface components {
             comment?: string;
             /** Format: int64 */
             interviewContentId?: number;
+            interviewContentTitle?: string;
+            category?: string;
             public?: boolean;
         };
         InterviewStartDto: {
@@ -675,9 +677,11 @@ export interface operations {
             };
         };
     };
-    all: {
+    getCommentsByMemberAndCategory: {
         parameters: {
-            query?: never;
+            query: {
+                category: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -707,9 +711,7 @@ export interface operations {
     createComment: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: string;
-            };
+            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -922,37 +924,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["StudyMemoResponseDto"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    getCommentById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                commentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["InterviewCommentResponseDto"];
                 };
             };
             /** @description Internal Server Error */

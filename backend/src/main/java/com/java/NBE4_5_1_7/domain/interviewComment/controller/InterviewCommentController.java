@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java.NBE4_5_1_7.domain.interviewComment.dto.request.InterviewCommentRequestDto;
@@ -29,6 +30,7 @@ public class InterviewCommentController {
 	private final InterviewCommentService interviewCommentService;
 	private final MemberService memberService;
 
+	///  댓글 생성
 	@PostMapping
 	public ResponseEntity<InterviewCommentResponseDto> createComment(
 		@RequestBody InterviewCommentRequestDto newDto) {
@@ -38,22 +40,17 @@ public class InterviewCommentController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
 	}
 
+
+	/// 사용자 + 카테고리별 댓글 및 컨텐츠 조회
 	@GetMapping
-	public ResponseEntity<List<InterviewCommentResponseDto>> all() {
+	public ResponseEntity<List<InterviewCommentResponseDto>> getCommentsByMemberAndCategory(@RequestParam String category) {
 		Member member = memberService.getMemberFromRq();
 
-		List<InterviewCommentResponseDto> comments = interviewCommentService.getAllComments(member);
+		List<InterviewCommentResponseDto> comments = interviewCommentService.getCommentsByMemberAndCategory(member, category);
 		return ResponseEntity.ok(comments);
 	}
 
-	@GetMapping("/{commentId}")
-	public ResponseEntity<InterviewCommentResponseDto> getCommentById(@PathVariable Long commentId) {
-		Member member = memberService.getMemberFromRq();
-
-		InterviewCommentResponseDto comment = interviewCommentService.getCommentById(commentId, member);
-		return ResponseEntity.ok(comment);
-	}
-
+	///  댓글 수정
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<InterviewCommentResponseDto> updateComment(
 		@PathVariable("commentId") Long commentId,
@@ -64,6 +61,7 @@ public class InterviewCommentController {
 		return ResponseEntity.ok(updatedComment);
 	}
 
+	///  댓글 삭제
 	@DeleteMapping("/{commentId}")
 	public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
 		Member member = memberService.getMemberFromRq();
