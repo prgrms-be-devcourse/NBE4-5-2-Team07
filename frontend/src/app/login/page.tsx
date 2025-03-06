@@ -9,9 +9,9 @@ export default function Login() {
     <>
       {!isLogin && (
         <div className="flex flex-grow justify-center items-center">
-          <button>
+          <button className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-bold py-2 px-6 rounded-full shadow-lg transition-colors">
             <a href="http://localhost:8080/oauth2/authorization/kakao?redirectUrl=http://localhost:3000">
-              카카오 로그인
+              카카오톡 간편 로그인으로 시작하기
             </a>
           </button>
         </div>

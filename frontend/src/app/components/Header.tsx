@@ -47,6 +47,9 @@ export default function Header() {
           ) : (
             <>
               <li>
+                <Link href="/">MAIN</Link>
+              </li>
+              <li>
                 <Link href="/">CS 전공지식 학습하기</Link>
               </li>
               {/* 드롭다운 메뉴 시작 */}
