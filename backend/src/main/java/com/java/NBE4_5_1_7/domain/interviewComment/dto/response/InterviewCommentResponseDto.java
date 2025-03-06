@@ -14,7 +14,4 @@ public class InterviewCommentResponseDto {
 	private String comment;
 	private boolean isPublic;
 	private Long interviewContentId;
-	private String interviewContentTitle;
-	private String category;
-	private String modelAnswer;
 }
