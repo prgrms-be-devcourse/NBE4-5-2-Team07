@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.member.entity;
 
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentBookmark;
 import com.java.NBE4_5_1_7.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class Member extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InterviewContentBookmark> bookmarks = new ArrayList<>();
+
 
     public boolean isAdmin() {
         return Role.ADMIN.equals(role);

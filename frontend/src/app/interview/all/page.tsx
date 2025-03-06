@@ -53,6 +53,9 @@ export default function InterviewAllPage() {
   const [memosError, setMemosError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
+  // 북마크 응답 메시지 상태
+  const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
+
   // 스타일 객체
   const containerStyle: React.CSSProperties = {
     padding: "1rem",
@@ -73,7 +76,7 @@ export default function InterviewAllPage() {
     padding: "1.5rem",
     borderRadius: "10px",
     backgroundColor: "#f9f9f9",
-    // 가로 폭이 늘어나도 보기 좋도록 내부 스타일을 조금 수정
+    position: "relative",
   };
 
   const commentContainerStyle: React.CSSProperties = {
@@ -94,6 +97,29 @@ export default function InterviewAllPage() {
     textAlign: "center",
     fontWeight: active ? "bold" : "normal",
   });
+
+  // 북마크 토글 함수
+  const handleBookmark = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("북마크 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      setBookmarkMessage(message);
+      // 응답 메시지를 alert로 표시할 수도 있음
+      alert(message);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
 
   // 전체 ID 리스트 fetch (컴포넌트 마운트 시)
   useEffect(() => {
@@ -141,6 +167,8 @@ export default function InterviewAllPage() {
       setDetailLoading(false);
       setDetailError(null);
       setShowAnswer(false);
+      // 북마크 메시지 초기화
+      setBookmarkMessage("");
       // 초기에는 탭 비활성화
       setActiveTab(null);
     } catch (err: any) {
@@ -309,21 +337,43 @@ export default function InterviewAllPage() {
             )}
             {!detailLoading && !detailError && (
               <div style={questionBoxStyle}>
-                {/* 질문 정보 */}
+                {/* 상단 헤더 영역: 카테고리/키워드와 북마크 버튼 */}
                 <div
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "#e8e8e8",
-                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: "1rem",
-                    fontSize: "1.1rem",
-                    fontWeight: "bold",
-                    textAlign: "center",
                   }}
                 >
-                  {currentInterview.category.toUpperCase()} &gt;{" "}
-                  {currentInterview.keyword}
+                  <div
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#e8e8e8",
+                      borderRadius: "6px",
+                      fontSize: "1.1rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {currentInterview.category.toUpperCase()} &gt;{" "}
+                    {currentInterview.keyword}
+                  </div>
+                  <button
+                    onClick={handleBookmark}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      backgroundColor: "#5cb85c",
+                      color: "#fff",
+                      cursor: "pointer",
+                    }}
+                  >
+                    내 노트에 추가
+                  </button>
                 </div>
+
+                {/* 질문 내용 */}
                 <p
                   style={{
                     fontSize: "1.2rem",
