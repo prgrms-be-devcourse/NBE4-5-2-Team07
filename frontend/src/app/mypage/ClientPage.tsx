@@ -23,7 +23,7 @@ const ClientPage = () => {
   const [memoDropdownOpen, setMemoDropdownOpen] = useState(false);
   const [answerDropdownOpen, setAnswerDropdownOpen] = useState(false);
   const [selectedMemoCategory, setSelectedMemoCategory] = useState("");
-  const [selectedAnswerCategory, setSelectedAnswerCategory] = useState("");
+  const [selectedCommentCategory, setSelectedCommentCategory] = useState("");
   const [selectedNoteItem, setSelectedNoteItem] = useState<Note | null>(null);
   const [selectedCommentItem, setSelectedCommentItem] =
     useState<Comment | null>(null);
@@ -47,7 +47,7 @@ const ClientPage = () => {
   const answerCategory = ["데이터베이스", "네트워크", "운영체제", "스프링"];
 
   {
-    /* 노트 API 연동 */
+    /* 노트 조회 API */
   }
   const fetchNoteList = async () => {
     try {
@@ -70,6 +70,9 @@ const ClientPage = () => {
     }
   };
 
+  {
+    /* 노트 삭제 API */
+  }
   const deleteNote = async () => {
     if (!selectedNoteItem) return;
 
@@ -96,8 +99,9 @@ const ClientPage = () => {
       console.error("노트 삭제 중 오류가 발생했습니다.", error);
     }
   };
+
   {
-    /* 메모 API 연동 */
+    /* 메모 조회 API */
   }
   const fetchStudyMemo = async (category: string) => {
     try {
@@ -131,6 +135,9 @@ const ClientPage = () => {
     }
   };
 
+  {
+    /* 메모 수정 API */
+  }
   const updateMemo = async () => {
     if (!selectedMemoItem) return;
 
@@ -178,6 +185,9 @@ const ClientPage = () => {
     }
   };
 
+  {
+    /* 메모 삭제 API */
+  }
   const deleteMemo = async () => {
     if (!selectedMemoItem) return;
 
@@ -214,7 +224,7 @@ const ClientPage = () => {
   };
 
   {
-    /* 기술면접 API 연동 */
+    /* 기술면접 조회 API */
   }
   const fetchInterviewComment = async (category: string) => {
     try {
@@ -241,6 +251,9 @@ const ClientPage = () => {
     }
   };
 
+  {
+    /* 기술면접 수정 API */
+  }
   const updateComment = async () => {
     if (!selectedCommentItem) return;
 
@@ -294,6 +307,9 @@ const ClientPage = () => {
     }
   };
 
+  {
+    /* 기술면접 삭제 API */
+  }
   const deleteComment = async () => {
     if (!selectedCommentItem) return;
 
@@ -342,14 +358,17 @@ const ClientPage = () => {
   const handleShowNoteList = () => {
     if (!showNoteList) {
       setShowNoteList(true);
-      setSelectedAnswerCategory("");
+      setSelectedCommentCategory("");
       setSelectedMemoCategory("");
+      setSelectedCommentItem(null);
+      setSelectedMemoItem(null);
     }
   };
 
   const handleMemoCategorySelect = (category: string) => {
     setSelectedMemoCategory(category);
-    setSelectedAnswerCategory("");
+    setSelectedCommentCategory("");
+    setSelectedNoteItem(null);
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
     setShowNoteList(false);
@@ -357,8 +376,8 @@ const ClientPage = () => {
     fetchStudyMemo(category);
   };
 
-  const handleAnswerCategorySelect = (category: string) => {
-    setSelectedAnswerCategory(category);
+  const handleCommentCategorySelect = (category: string) => {
+    setSelectedCommentCategory(category);
     setSelectedMemoCategory("");
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
@@ -399,7 +418,7 @@ const ClientPage = () => {
             fetchNoteList();
           }}
         >
-          내 노트
+          내 노트Answer
         </button>
 
         {/* 학습 메모 드롭다운 */}
@@ -437,9 +456,9 @@ const ClientPage = () => {
             {answerCategory.map((category, index) => (
               <li
                 key={index}
-                onClick={() => handleAnswerCategorySelect(category)}
+                onClick={() => handleCommentCategorySelect(category)}
                 className={`${styles.dropdownItem} ${
-                  selectedAnswerCategory === category ? styles.selected : ""
+                  selectedCommentCategory === category ? styles.selected : ""
                 }`}
               >
                 {category}
@@ -453,24 +472,28 @@ const ClientPage = () => {
         <ul>
           {/* 내 노트 목록 */}
           {showNoteList ? (
-            <ul>
-              {notes.map((note) => (
-                <li
-                  key={note.contentId}
-                  onClick={() => handleNoteItemSelect(note)}
-                  className={`${styles.listItem} ${
-                    selectedNoteItem?.contentId === note.contentId
-                      ? styles.selected
-                      : ""
-                  }`}
-                >
-                  {note.question}
-                </li>
-              ))}
-            </ul>
+            notes.length > 0 ? (
+              <ul>
+                {notes.map((note) => (
+                  <li
+                    key={note.contentId}
+                    onClick={() => handleNoteItemSelect(note)}
+                    className={`${styles.listItem} ${
+                      selectedNoteItem?.contentId === note.contentId
+                        ? styles.selected
+                        : ""
+                    }`}
+                  >
+                    {note.question}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.noItems}>항목이 없습니다.</p>
+            )
           ) : /* 기술 면접 답변 목록 */
-          selectedAnswerCategory && interviewData[selectedAnswerCategory] ? (
-            interviewData[selectedAnswerCategory].map((comment) => (
+          selectedCommentCategory && interviewData[selectedCommentCategory] ? (
+            interviewData[selectedCommentCategory].map((comment) => (
               <li
                 key={comment.commentId}
                 onClick={() => handleCommentItemSelect(comment)}
@@ -599,7 +622,9 @@ const ClientPage = () => {
             </div>
             <br />
           </>
-        ) : null}
+        ) : (
+          <p className={styles.noItems}>항목이 없습니다.</p>
+        )}
       </div>
     </div>
   );
