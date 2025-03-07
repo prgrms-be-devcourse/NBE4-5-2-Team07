@@ -156,6 +156,13 @@
     font-style: italic;
 }
 
+.contentHeader {
+    display: flex;
+    justify-content: space-between; /* 양끝 배치 */
+    align-items: center; /* 세로 중앙 정렬 */
+    width: 100%;
+}
+
 
 .studyContents {
     margin-bottom: 20px;
