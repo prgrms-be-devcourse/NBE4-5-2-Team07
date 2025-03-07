@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 import styles from "../styles/studyContent.module.css";
 
 const DEFAULT_CATEGORY = {
@@ -61,36 +61,66 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
     const handleMemoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setMemo(event.target.value);
     };
-    const handleMemoCreate = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost:8080/api/v1/studyMemo/create/${selectedContentId}`,
-                    {
-                        method: "POST",
-                        credentials: "include",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            content: memo,
-                        }),
-                    }
-                );
+    const handleMemoCheck = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/studyMemo/${selectedContentId}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-                if(!response.ok) {
-                    if (response.status === 401) {
-                        alert("로그인 후 이용해주세요.");
-                        router.push("http://localhost:3000/login");
-                        return;
-                    }
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert("로그인 후 이용해주세요.");
+                    router.push("http://localhost:3000/login");
+                    return;
                 }
-                if (response.ok) {
-                    alert("메모가 저장되었습니다.");
-                    setMemo("");
-                }
-            } catch (error) {
-                alert("서버와 연결할 수 없습니다.");
             }
+            const data = await response.json();
+            if (data.memoContent) {
+                setMemo(data.memoContent); // 가져온 메모 내용으로 상태 업데이트
+            } else {
+                alert("메모가 없습니다.");
+            }
+
+        } catch (error) {
+            console.error("사용자 정보를 가져오는 데 실패했습니다:", error);
+            return null;
+        }
+    };
+
+    const handleMemoCreate = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/v1/studyMemo/create/${selectedContentId}`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        content: memo,
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert("로그인 후 이용해주세요.");
+                    router.push("http://localhost:3000/login");
+                    return;
+                }
+            }
+            if (response.ok) {
+                alert("메모가 저장되었습니다.");
+                setMemo("");
+            }
+        } catch (error) {
+            alert("서버와 연결할 수 없습니다.");
+        }
     };
     if (loading) {
         return <div>로딩 중...</div>;
@@ -153,9 +183,14 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                     value={memo}
                     onChange={handleMemoChange}
                 />
-                <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
-                    저장
-                </button>
+                <div className={styles.memoBtnBox}>
+                    <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
+                        저장
+                    </button>
+                    <button onClick={handleMemoCheck} className={styles.memoSaveBtn}>
+                        나의 메모 조회
+                    </button>
+                </div>
             </div>
         </div>
     );

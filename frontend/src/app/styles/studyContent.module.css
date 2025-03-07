@@ -21,14 +21,14 @@
 }
 
 .card h2 {
-    font-size: 1.5rem;  /* 폰트 크기 */
-    font-weight: bold;  /* 글씨 두껍게 */
-    color: #333;        /* 어두운 색상 */
+    font-size: 1.5rem; /* 폰트 크기 */
+    font-weight: bold; /* 글씨 두껍게 */
+    color: #333; /* 어두운 색상 */
     padding-bottom: 10px; /* 아래 여백 */
-    border-bottom: 2px solid #ddd;  /* 아래에 밑줄 */
-    margin-bottom: 20px;  /* 제목과 내용 사이 간격 */
-    text-align: left;    /* 왼쪽 정렬 */
-    font-family: 'Arial', sans-serif;  /* 폰트 설정 */
+    border-bottom: 2px solid #ddd; /* 아래에 밑줄 */
+    margin-bottom: 20px; /* 제목과 내용 사이 간격 */
+    text-align: left; /* 왼쪽 정렬 */
+    font-family: 'Arial', sans-serif; /* 폰트 설정 */
 }
 
 .card .btn {
@@ -166,9 +166,9 @@
 
 .studyContents {
     margin-bottom: 20px;
-    flex-grow: 1;  /* 나머지 공간을 차지하게 설정 */
+    flex-grow: 1; /* 나머지 공간을 차지하게 설정 */
     max-height: 400px; /* 고정된 높이 */
-    overflow-y: auto;  /* 스크롤 가능하게 설정 */
+    overflow-y: auto; /* 스크롤 가능하게 설정 */
 }
 
 .studyContent {
@@ -273,10 +273,15 @@
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
+.memoBtnBox {
+    display: flex;
+}
+
 .memoSaveBtn {
     background-color: #3498db;
     color: white;
     padding: 10px 20px;
+    margin: 10px 10px;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -294,4 +299,3 @@
     background-color: #16a085; /* 클릭 시 배경 색상 */
     transform: scale(0.98); /* 클릭 시 버튼 크기 살짝 줄어들기 */
 }
-
