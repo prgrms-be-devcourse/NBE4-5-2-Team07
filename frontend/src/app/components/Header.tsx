@@ -8,7 +8,7 @@ import { useLoginMemberContext } from "../login/loginMemberStore";
 import { useEffect } from "react";
 
 export default function Header() {
-  const { isLogin, removeLoginMember } = useLoginMemberContext();
+  const { isLogin, isAdmin, removeLoginMember } = useLoginMemberContext();
   const router = useRouter();
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith("/admin");
@@ -120,9 +120,11 @@ export default function Header() {
                   </button>
                 </li>
               )}
-              <li>
-                <Link href="/admin">⚙️</Link>
-              </li>
+              {isAdmin && (
+                <li>
+                  <Link href="/admin">⚙️</Link>
+                </li>
+              )}
             </>
           )}
         </ul>
