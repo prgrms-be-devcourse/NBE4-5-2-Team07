@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 // 백엔드 DTO와 동일한 타입들
 interface InterviewResponseDto {
@@ -31,6 +32,8 @@ interface InterviewCommentResponseDto {
 }
 
 export default function RandomInterviewPage() {
+  const router = useRouter();
+
   // 전체 ID 리스트
   const [headIds, setHeadIds] = useState<number[]>([]);
   // 랜덤 모드 시작 여부
@@ -62,7 +65,7 @@ export default function RandomInterviewPage() {
   const [memosError, setMemosError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
-  // **추가 상태**: 북마크 응답 메시지 상태
+  // 추가 상태: 북마크 응답 메시지 상태
   const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
 
   // 스타일 객체들
@@ -112,17 +115,22 @@ export default function RandomInterviewPage() {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            router.push("http://localhost:3000/login");
+            return;
+          }
           throw new Error("전체 질문 ID 리스트를 가져오는데 실패했습니다.");
         }
         return res.json();
       })
       .then((data: number[]) => {
-        setHeadIds(data);
+        // API 응답이 undefined인 경우 빈 배열로 처리
+        setHeadIds(Array.isArray(data) ? data : []);
       })
       .catch((err: Error) => {
         setError(err.message);
       });
-  }, []);
+  }, [router]);
 
   // (2) "실전 면접 대비" 시작
   const startRandomMode = () => {
@@ -158,6 +166,10 @@ export default function RandomInterviewPage() {
         body: JSON.stringify(requestBody),
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("랜덤 면접 질문을 가져오는데 실패했습니다.");
       }
       const data: RandomResponseDto = await res.json();
@@ -199,6 +211,7 @@ export default function RandomInterviewPage() {
   const fetchInterviewById = async (id: number) => {
     try {
       setLoading(true);
+      // 이전 질문을 히스토리에 저장
       if (currentInterview) {
         setHistory((prev) => [...prev, currentInterview]);
       }
@@ -206,6 +219,10 @@ export default function RandomInterviewPage() {
         credentials: "include",
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("면접 질문을 가져오는데 실패했습니다.");
       }
       const data: InterviewResponseDto = await res.json();
@@ -226,6 +243,7 @@ export default function RandomInterviewPage() {
       fetchInterviewById(currentInterview.head_id);
     }
   };
+
   const handleTailQuestion = () => {
     if (currentInterview?.tail_id) {
       fetchInterviewById(currentInterview.tail_id);
@@ -259,6 +277,10 @@ export default function RandomInterviewPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("댓글 저장에 실패했습니다.");
       }
       setCommentText("");
@@ -279,6 +301,10 @@ export default function RandomInterviewPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
@@ -302,6 +328,10 @@ export default function RandomInterviewPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
@@ -314,7 +344,7 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // **(A-2) 북마크 토글 함수**
+  // (A-2) 북마크 토글 함수
   const handleBookmark = async () => {
     if (!currentInterview) return;
     try {
@@ -326,6 +356,10 @@ export default function RandomInterviewPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("북마크 요청에 실패했습니다.");
       }
       const message = await res.text();

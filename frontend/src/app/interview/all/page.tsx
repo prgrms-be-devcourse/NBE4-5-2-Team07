@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface InterviewResponseDto {
   id: number;
@@ -21,6 +22,8 @@ interface InterviewCommentResponseDto {
 }
 
 export default function InterviewAllPage() {
+  const router = useRouter();
+
   // 전체 ID 리스트 관련 상태
   const [headIds, setHeadIds] = useState<number[]>([]);
   const [listLoading, setListLoading] = useState<boolean>(true);
@@ -110,11 +113,14 @@ export default function InterviewAllPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("북마크 요청에 실패했습니다.");
       }
       const message = await res.text();
       setBookmarkMessage(message);
-      // 응답 메시지를 alert로 표시할 수도 있음
       alert(message);
     } catch (err: any) {
       alert(err.message);
@@ -130,19 +136,25 @@ export default function InterviewAllPage() {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            router.push("http://localhost:3000/login");
+            return;
+          }
           throw new Error("전체 질문 ID 리스트를 받아오는데 실패했습니다.");
         }
         return res.json();
       })
       .then((data: number[]) => {
-        setHeadIds(data);
+        if (data) {
+          setHeadIds(data);
+        }
         setListLoading(false);
       })
       .catch((err: Error) => {
         setListError(err.message);
         setListLoading(false);
       });
-  }, []);
+  }, [router]);
 
   // 특정 질문 ID에 대한 상세 데이터 fetch
   const fetchInterview = async (id: number) => {
@@ -160,6 +172,10 @@ export default function InterviewAllPage() {
         credentials: "include",
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("면접 질문을 가져오는 데 실패했습니다.");
       }
       const data: InterviewResponseDto = await res.json();
@@ -167,9 +183,7 @@ export default function InterviewAllPage() {
       setDetailLoading(false);
       setDetailError(null);
       setShowAnswer(false);
-      // 북마크 메시지 초기화
       setBookmarkMessage("");
-      // 초기에는 탭 비활성화
       setActiveTab(null);
     } catch (err: any) {
       setDetailError(err.message);
@@ -244,13 +258,15 @@ export default function InterviewAllPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("댓글 저장에 실패했습니다.");
       }
-      // 변경된 API 응답 DTO (MyPageInterviewCommentResponseDto) 파싱
       const createdComment = await res.json();
       setCommentText("");
       alert("댓글이 저장되었습니다.");
-      // 필요 시 createdComment를 상태 업데이트 등에 활용
     } catch (err: any) {
       alert(err.message);
     }
@@ -267,6 +283,10 @@ export default function InterviewAllPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
@@ -290,6 +310,10 @@ export default function InterviewAllPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();

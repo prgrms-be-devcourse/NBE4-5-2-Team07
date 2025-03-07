@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/interview/**", "/member/**", "/api/v1/study/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/member/**", "/api/v1/study/**", "/api/interview/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .cors(Customizer.withDefaults())
@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                 })
+                .anonymous(anonymous -> anonymous.disable()) // 익명 인증 비활성화
                 .logout(logout -> logout
                         .logoutUrl("/member/logout")
                         .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout", "DELETE")) // DELETE 방식으로 처리

@@ -1,4 +1,4 @@
-"use client"; // 클라이언트 컴포넌트임을 명시
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -8,8 +8,26 @@ interface Message {
   text: string;
 }
 
+interface MeResponseData {
+  // /member/me 응답 구조에 맞춰서 필요한 필드를 정의
+  id: number;
+  username: string;
+  // ...
+}
+
+interface RsData<T> {
+  resultCode: string;
+  msg: string;
+  data: T;
+}
+
 export default function TechInterviewChat() {
   const router = useRouter();
+
+  // 로그인 사용자 정보와 로딩 상태
+  const [user, setUser] = useState<MeResponseData | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
   // 메시지 기록, 사용자 입력, 인터뷰 주제 관리
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -19,6 +37,48 @@ export default function TechInterviewChat() {
   // 평가 진행 상태 관리
   const [isEvaluating, setIsEvaluating] = useState(false);
 
+  // 컴포넌트 마운트 시 로그인 여부 확인
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("http://localhost:8080/member/me", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          // 로그인 안됨 → 로그인 페이지로 이동
+          router.push("/login");
+          return;
+        }
+        // 성공 시 RsData<MemberDto> 형태라고 가정
+        const json = (await res.json()) as RsData<MeResponseData>;
+        // user 상태 업데이트
+        setUser(json.data);
+      } catch (error) {
+        // 예외 발생 시 로그인 페이지로 이동
+        router.push("/login");
+      } finally {
+        setLoadingUser(false);
+      }
+    })();
+  }, [router]);
+
+  // 아직 로그인 정보를 가져오는 중이면 로딩중 표시
+  if (loadingUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>로그인 상태 확인중...</p>
+      </div>
+    );
+  }
+
+  // user가 없으면(로그인 안됨) null 리턴
+  // (이미 useEffect에서 push("/login") 처리했으므로, UI는 표시 안함)
+  if (!user) {
+    return null;
+  }
+
+  // 이제부터는 로그인 된 상태.
   // 인터뷰 시작: 주제 선택 버튼 클릭 시
   const startInterview = async (type: "CS" | "프로젝트") => {
     setInterviewType(type);
@@ -63,7 +123,7 @@ export default function TechInterviewChat() {
     setInput("");
   };
 
-  // 평가 요청: 평가 진행 중이면 알림, 아니면 평가 API 호출
+  // 평가 요청
   const evaluateInterview = async () => {
     if (isEvaluating) {
       alert("답변에 대해 AI 가 정리중입니다. 잠시만 기다려주세요.");
@@ -94,7 +154,8 @@ export default function TechInterviewChat() {
         {/* 폭을 50vw로 고정하고 중앙 정렬 */}
         <div className="bg-white rounded-xl shadow-md p-8 w-[50vw] text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            안녕하세요, 기술 면접을 담당하는 AI 면접관 입니다.
+            {user.username}님, 안녕하세요! <br />
+            기술 면접을 담당하는 AI 면접관 입니다.
           </h1>
           <p className="text-gray-600 mb-6">
             아래 버튼에서 가상 인터뷰 주제를 선택해주세요.

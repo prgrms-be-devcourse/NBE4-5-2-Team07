@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 // 백엔드 DTO 타입들
 interface InterviewResponseDto {
@@ -22,50 +23,51 @@ interface InterviewCommentResponseDto {
 }
 
 export default function KeywordStudyPage() {
-  // 1. 키워드 목록 관련 상태 (GET /interview/keyword)
+  const router = useRouter();
+
+  // (A) 키워드 목록 관련 상태
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordsLoading, setKeywordsLoading] = useState<boolean>(true);
   const [keywordsError, setKeywordsError] = useState<string | null>(null);
 
-  // 2. 사용자가 선택한 키워드 (다중 선택)
+  // (B) 사용자가 선택한 키워드 (다중 선택)
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
 
-  // 3. 선택된 키워드로부터 받아온 머리 질문 ID 리스트
+  // (C) 선택된 키워드로부터 받아온 머리 질문 ID 리스트
   const [headIds, setHeadIds] = useState<number[]>([]);
   const [headIdsLoading, setHeadIdsLoading] = useState<boolean>(false);
   const [headIdsError, setHeadIdsError] = useState<string | null>(null);
 
-  // 4. 학습 모드 관련 상태 (질문 상세 보기)
+  // (D) 학습 모드 관련 상태 (질문 상세 보기)
   const [isStudyMode, setIsStudyMode] = useState<boolean>(false);
   const [currentInterview, setCurrentInterview] =
     useState<InterviewResponseDto | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
 
-  // 5. 이전 질문 히스토리 (이전 질문 다시보기)
+  // (E) 이전 질문 히스토리 (이전 질문 다시보기)
   const [history, setHistory] = useState<InterviewResponseDto[]>([]);
 
-  // 6. 정답 보이기/가리기 상태
+  // (F) 정답 보이기/가리기 상태
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
-  // **추가 상태**: 마지막 머리 질문 ID (headIds에 있는 값)
+  // (G) 추가 상태: 마지막 머리 질문 ID (headIds에 있는 값)
   const [currentHeadId, setCurrentHeadId] = useState<number | null>(null);
 
-  // **추가 상태**: 메모(댓글) 입력 및 공개/비공개 상태
+  // (H) 추가 상태: 메모(댓글) 입력 및 공개/비공개 상태
   const [commentText, setCommentText] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(true);
 
-  // **추가 상태**: 메모(댓글) 조회 관련 상태
+  // (I) 추가 상태: 메모(댓글) 조회 관련 상태
   const [myMemos, setMyMemos] = useState<InterviewCommentResponseDto[]>([]);
   const [publicMemos, setPublicMemos] = useState<InterviewCommentResponseDto[]>(
     []
   );
   const [loadingMemos, setLoadingMemos] = useState<boolean>(false);
   const [memosError, setMemosError] = useState<string | null>(null);
-  // "my" 또는 "public" 탭 활성 상태
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
-  // **추가 상태**: 북마크 응답 메시지 상태
+  // (J) 추가 상태: 북마크 응답 메시지 상태
   const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
 
   // (A) 키워드 목록 불러오기
@@ -76,19 +78,23 @@ export default function KeywordStudyPage() {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            router.push("http://localhost:3000/login");
+            return;
+          }
           throw new Error("키워드 목록을 불러오는데 실패했습니다.");
         }
         return res.json();
       })
       .then((data: string[]) => {
-        setKeywords(data);
+        setKeywords(Array.isArray(data) ? data : []);
         setKeywordsLoading(false);
       })
       .catch((err: Error) => {
         setKeywordsError(err.message);
         setKeywordsLoading(false);
       });
-  }, []);
+  }, [router]);
 
   // (B) 키워드 선택 토글 (다중 선택)
   const toggleKeywordSelection = (kw: string) => {
@@ -98,7 +104,6 @@ export default function KeywordStudyPage() {
   };
 
   // (C) "면접 질문 생성하기" 버튼 클릭 시
-  // POST /interview/keyword/content { keywordList: selectedKeywords }
   const generateQuestions = () => {
     if (selectedKeywords.length === 0) {
       alert("하나 이상의 키워드를 선택하세요.");
@@ -113,12 +118,16 @@ export default function KeywordStudyPage() {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            router.push("http://localhost:3000/login");
+            return;
+          }
           throw new Error("키워드를 포함한 질문 ID를 받아오는데 실패했습니다.");
         }
         return res.json();
       })
       .then((data: number[]) => {
-        setHeadIds(data);
+        setHeadIds(Array.isArray(data) ? data : []);
         setHeadIdsLoading(false);
         if (data.length === 0) {
           alert("선택한 키워드에 해당하는 질문이 없습니다.");
@@ -151,6 +160,10 @@ export default function KeywordStudyPage() {
         credentials: "include",
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("면접 질문 상세 정보를 불러오는데 실패했습니다.");
       }
       const data: InterviewResponseDto = await res.json();
@@ -241,6 +254,10 @@ export default function KeywordStudyPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("댓글 저장에 실패했습니다.");
       }
       setCommentText("");
@@ -261,6 +278,10 @@ export default function KeywordStudyPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
@@ -284,6 +305,10 @@ export default function KeywordStudyPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
@@ -305,7 +330,6 @@ export default function KeywordStudyPage() {
     alignItems: "center",
   };
 
-  // 고정 폭(예: 800px)으로 중앙 정렬
   const mainBoxStyle: React.CSSProperties = {
     width: "800px",
     margin: "0 auto",
@@ -327,7 +351,7 @@ export default function KeywordStudyPage() {
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   };
 
-  const tabButtonStyle = (active: boolean): React.CSSProperties => ({
+  const tabButtonStyleFn = (active: boolean): React.CSSProperties => ({
     flex: 1,
     padding: "0.5rem",
     cursor: "pointer",
@@ -337,7 +361,7 @@ export default function KeywordStudyPage() {
     borderRadius: "6px",
   });
 
-  // **추가 함수**: 북마크 토글 기능
+  // (M) 추가 함수: 북마크 토글 기능
   const handleBookmark = async () => {
     if (!currentInterview) return;
     try {
@@ -349,6 +373,10 @@ export default function KeywordStudyPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("북마크 요청에 실패했습니다.");
       }
       const message = await res.text();
@@ -375,6 +403,7 @@ export default function KeywordStudyPage() {
           {keywordsLoading && <p>키워드 로딩중...</p>}
           {keywordsError && <p style={{ color: "red" }}>{keywordsError}</p>}
           {!keywordsLoading &&
+            Array.isArray(keywords) &&
             keywords.map((kw) => (
               <button
                 key={kw}
@@ -665,13 +694,13 @@ export default function KeywordStudyPage() {
                   >
                     <button
                       onClick={fetchMyMemos}
-                      style={tabButtonStyle(activeTab === "my")}
+                      style={tabButtonStyleFn(activeTab === "my")}
                     >
                       내 메모 보기
                     </button>
                     <button
                       onClick={fetchPublicMemos}
-                      style={tabButtonStyle(activeTab === "public")}
+                      style={tabButtonStyleFn(activeTab === "public")}
                     >
                       다른 사람 메모 보기
                     </button>

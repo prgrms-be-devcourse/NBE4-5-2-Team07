@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 // 질문 데이터 타입
 interface InterviewResponseDto {
@@ -23,6 +24,8 @@ interface InterviewCommentResponseDto {
 }
 
 export default function CategoryStudyPage() {
+  const router = useRouter();
+
   // 좌측 카테고리 버튼용: Enum 값
   const categories = ["DATABASE", "NETWORK", "OperatingSystem", "SPRING"];
 
@@ -124,6 +127,10 @@ export default function CategoryStudyPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("북마크 요청에 실패했습니다.");
       }
       const message = await res.text();
@@ -146,6 +153,10 @@ export default function CategoryStudyPage() {
     })
       .then((res) => {
         if (!res.ok) {
+          if (res.status === 401) {
+            router.push("http://localhost:3000/login");
+            return;
+          }
           throw new Error(
             `"${category}" 질문 리스트를 받아오는데 실패했습니다.`
           );
@@ -153,7 +164,8 @@ export default function CategoryStudyPage() {
         return res.json();
       })
       .then((data: number[]) => {
-        setHeadIds(data);
+        // 만약 data가 undefined라면 빈 배열로 처리
+        setHeadIds(Array.isArray(data) ? data : []);
         setListLoading(false);
       })
       .catch((err: Error) => {
@@ -177,6 +189,10 @@ export default function CategoryStudyPage() {
         credentials: "include",
       });
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("면접 질문을 가져오는 데 실패했습니다.");
       }
       const data: InterviewResponseDto = await res.json();
@@ -195,7 +211,7 @@ export default function CategoryStudyPage() {
 
   // "학습하기" 버튼 클릭 시
   const startStudy = () => {
-    if (headIds.length === 0) {
+    if ((headIds || []).length === 0) {
       alert("해당 분야의 머리 질문 ID 리스트가 없습니다.");
       return;
     }
@@ -262,6 +278,10 @@ export default function CategoryStudyPage() {
         }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("댓글 저장에 실패했습니다.");
       }
       setCommentText("");
@@ -282,10 +302,14 @@ export default function CategoryStudyPage() {
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
-      setMyMemos(data);
+      setMyMemos(Array.isArray(data) ? data : []);
       setActiveTab("my");
     } catch (err: any) {
       setMemosError(err.message);
@@ -301,14 +325,18 @@ export default function CategoryStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
+        `http://localhost:3000/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
       }
       const data: InterviewCommentResponseDto[] = await res.json();
-      setPublicMemos(data);
+      setPublicMemos(Array.isArray(data) ? data : []);
       setActiveTab("public");
     } catch (err: any) {
       setMemosError(err.message);
@@ -355,7 +383,7 @@ export default function CategoryStudyPage() {
           <div style={{ textAlign: "center", marginTop: "2rem" }}>
             <button
               onClick={startStudy}
-              disabled={headIds.length === 0}
+              disabled={!(headIds && headIds.length > 0)}
               style={{
                 padding: "0.7rem 1.2rem",
                 fontSize: "1rem",
