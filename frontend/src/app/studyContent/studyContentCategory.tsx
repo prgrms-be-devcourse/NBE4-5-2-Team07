@@ -34,7 +34,7 @@ const StudyContentCategory = ({ onCategorySelect }: { onCategorySelect: (firstCa
 
     return (
         <div className={`${styles.card} ${styles.small}`}>
-            <h2>📂 카테고리</h2>
+            <h2>📂 학습자료</h2>
             <ul>
                 {Object.entries(categories).map(([firstCategory, subCategories]) => (
                     <li key={firstCategory} className={styles.mb4}>
