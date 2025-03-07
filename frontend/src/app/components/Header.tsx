@@ -26,13 +26,6 @@ export default function Header() {
     router.replace("/");
   }
 
-  useEffect(() => {
-    if (pathname === "/mypage" && !isLogin) {
-      alert("로그인 후 이용 가능합니다.");
-      router.replace("/login");
-    }
-  }, [pathname, isLogin, router]);
-
   return (
     <header className={styles.header}>
       <nav className={styles.nav}>
@@ -92,9 +85,11 @@ export default function Header() {
               <li>
                 <Link href="/contact">로드맵</Link>
               </li>
-              <li>
-                <Link href="/mypage">마이페이지</Link>
-              </li>
+              {isLogin && (
+                <li>
+                  <Link href="/mypage">마이페이지</Link>
+                </li>
+              )}
             </>
           )}
         </ul>
