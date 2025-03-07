@@ -76,3 +76,12 @@ custom:
     secret-key: ${security.jwt.secret-key}
     expire-seconds: "#{60}"
     refresh-expire-seconds: "#{3600}"
+
+springdoc:
+  swagger-ui:
+    # swagger-ui에서 API 호출 시 쿠키를 전송하도록 하는 requestInterceptor 설정
+    requestInterceptor: >
+      function(request) {
+          request.credentials = 'include';
+          return request;
+      }
