@@ -12,6 +12,8 @@ interface InterviewResponseDto {
   category: string;
   keyword: string;
   next_id: number | null;
+  likeCount: number;
+  likedByUser: boolean;
 }
 
 interface InterviewCommentResponseDto {
@@ -122,6 +124,39 @@ export default function InterviewAllPage() {
       const message = await res.text();
       setBookmarkMessage(message);
       alert(message);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  // 좋아요 토글 함수
+  const handleLikeToggle = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/like?id=${currentInterview.id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
+        throw new Error("좋아요 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      let updatedInterview = { ...currentInterview };
+      if (message === "좋아요 추가") {
+        updatedInterview.likedByUser = true;
+        updatedInterview.likeCount = updatedInterview.likeCount + 1;
+      } else if (message === "좋아요 취소") {
+        updatedInterview.likedByUser = false;
+        updatedInterview.likeCount = updatedInterview.likeCount - 1;
+      }
+      setCurrentInterview(updatedInterview);
     } catch (err: any) {
       alert(err.message);
     }
@@ -363,7 +398,7 @@ export default function InterviewAllPage() {
             )}
             {!detailLoading && !detailError && (
               <div style={questionBoxStyle}>
-                {/* 상단 헤더 영역: 카테고리/키워드와 북마크 버튼 */}
+                {/* 상단 헤더 영역: 카테고리/키워드, 북마크, 좋아요 버튼 */}
                 <div
                   style={{
                     display: "flex",
@@ -374,15 +409,40 @@ export default function InterviewAllPage() {
                 >
                   <div
                     style={{
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#e8e8e8",
-                      borderRadius: "6px",
-                      fontSize: "1.1rem",
-                      fontWeight: "bold",
+                      display: "flex",
+                      gap: "1rem",
+                      alignItems: "center",
                     }}
                   >
-                    {currentInterview.category.toUpperCase()} &gt;{" "}
-                    {currentInterview.keyword}
+                    <div
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#e8e8e8",
+                        borderRadius: "6px",
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {currentInterview.category.toUpperCase()} &gt;{" "}
+                      {currentInterview.keyword}
+                    </div>
+                    <button
+                      onClick={handleLikeToggle}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "none",
+                        backgroundColor: currentInterview.likedByUser
+                          ? "#d9534f"
+                          : "#5cb85c",
+                        color: "#fff",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {currentInterview.likedByUser
+                        ? `좋아요 취소 (${currentInterview.likeCount})`
+                        : `좋아요 추가 (${currentInterview.likeCount})`}
+                    </button>
                   </div>
                   <button
                     onClick={handleBookmark}

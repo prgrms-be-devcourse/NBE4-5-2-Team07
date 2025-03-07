@@ -260,6 +260,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/interview/like": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["likeChange"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/interview/keyword": {
         parameters: {
             query?: never;
@@ -597,6 +613,9 @@ export interface components {
             keyword?: string;
             /** Format: int64 */
             next_id?: number;
+            /** Format: int64 */
+            likeCount?: number;
+            likedByUser?: boolean;
         };
         RandomResponseDto: {
             indexList?: number[];
@@ -707,8 +726,8 @@ export interface components {
         };
         SortObject: {
             empty?: boolean;
-            unsorted?: boolean;
             sorted?: boolean;
+            unsorted?: boolean;
         };
         StudyContentDetailDto: {
             /** Format: int64 */
@@ -1376,6 +1395,37 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["InterviewResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    likeChange: {
+        parameters: {
+            query: {
+                id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
                 };
             };
             /** @description Internal Server Error */

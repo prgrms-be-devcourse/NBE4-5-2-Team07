@@ -13,6 +13,8 @@ interface InterviewResponseDto {
   category: string;
   keyword: string;
   next_id: number | null;
+  likeCount: number; // 좋아요 개수
+  likedByUser: boolean; // 현재 사용자가 좋아요를 눌렀는지 여부
 }
 
 // 댓글(메모) 데이터 타입
@@ -141,6 +143,39 @@ export default function CategoryStudyPage() {
     }
   };
 
+  // 좋아요 토글 함수
+  const handleLikeToggle = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/like?id=${currentInterview.id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
+        throw new Error("좋아요 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      let updatedInterview = { ...currentInterview };
+      if (message === "좋아요 추가") {
+        updatedInterview.likedByUser = true;
+        updatedInterview.likeCount = updatedInterview.likeCount + 1;
+      } else if (message === "좋아요 취소") {
+        updatedInterview.likedByUser = false;
+        updatedInterview.likeCount = updatedInterview.likeCount - 1;
+      }
+      setCurrentInterview(updatedInterview);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   // 카테고리 버튼 클릭 시
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
@@ -164,7 +199,6 @@ export default function CategoryStudyPage() {
         return res.json();
       })
       .then((data: number[]) => {
-        // 만약 data가 undefined라면 빈 배열로 처리
         setHeadIds(Array.isArray(data) ? data : []);
         setListLoading(false);
       })
@@ -200,7 +234,6 @@ export default function CategoryStudyPage() {
       setDetailLoading(false);
       setDetailError(null);
       setShowAnswer(false);
-      // 새 질문 로드시 북마크 메시지 초기화
       setBookmarkMessage("");
       setActiveTab(null);
     } catch (err: any) {
@@ -406,7 +439,7 @@ export default function CategoryStudyPage() {
             {detailError && <p style={{ color: "red" }}>{detailError}</p>}
             {!detailLoading && !detailError && (
               <div style={questionBoxStyle}>
-                {/* 상단 헤더 영역: 카테고리/키워드와 북마크 버튼 */}
+                {/* 상단 헤더 영역: 카테고리/키워드, 북마크, 좋아요 버튼 */}
                 <div
                   style={{
                     display: "flex",
@@ -417,16 +450,41 @@ export default function CategoryStudyPage() {
                 >
                   <div
                     style={{
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#e8e8e8",
-                      borderRadius: "6px",
-                      fontSize: "1.1rem",
-                      fontWeight: "bold",
-                      textAlign: "center",
+                      display: "flex",
+                      gap: "1rem",
+                      alignItems: "center",
                     }}
                   >
-                    {currentInterview.category.toUpperCase()} &gt;{" "}
-                    {currentInterview.keyword}
+                    <div
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#e8e8e8",
+                        borderRadius: "6px",
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {currentInterview.category.toUpperCase()} &gt;{" "}
+                      {currentInterview.keyword}
+                    </div>
+                    <button
+                      onClick={handleLikeToggle}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "none",
+                        backgroundColor: currentInterview.likedByUser
+                          ? "#d9534f"
+                          : "#5cb85c",
+                        color: "white",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {currentInterview.likedByUser
+                        ? `좋아요 취소 (${currentInterview.likeCount})`
+                        : `좋아요 추가 (${currentInterview.likeCount})`}
+                    </button>
                   </div>
                   <button
                     onClick={handleBookmark}

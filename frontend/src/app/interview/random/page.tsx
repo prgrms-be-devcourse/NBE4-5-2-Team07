@@ -13,6 +13,8 @@ interface InterviewResponseDto {
   category: string;
   keyword: string;
   next_id: number | null;
+  likeCount: number; // 좋아요 개수
+  likedByUser: boolean; // 현재 사용자가 좋아요를 누른 여부
 }
 
 interface RandomRequestDto {
@@ -34,19 +36,19 @@ interface InterviewCommentResponseDto {
 export default function RandomInterviewPage() {
   const router = useRouter();
 
-  // 전체 ID 리스트
+  // 전체 머리 질문 ID 리스트
   const [headIds, setHeadIds] = useState<number[]>([]);
   // 랜덤 모드 시작 여부
   const [isRandomMode, setIsRandomMode] = useState<boolean>(false);
 
-  // 현재 보여주는 질문 (InterviewResponseDto)
+  // 현재 보여주는 질문
   const [currentInterview, setCurrentInterview] =
     useState<InterviewResponseDto | null>(null);
 
-  // 다음 랜덤 요청 시 보낼 ID 리스트
+  // 다음 랜덤 요청 시 사용할 ID 리스트
   const [randomList, setRandomList] = useState<number[]>([]);
 
-  // 로딩 / 에러 / 정답 보기 상태
+  // 로딩, 에러, 정답 보기 상태
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
@@ -65,7 +67,7 @@ export default function RandomInterviewPage() {
   const [memosError, setMemosError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"my" | "public" | null>(null);
 
-  // 추가 상태: 북마크 응답 메시지 상태
+  // 추가 상태: 북마크 응답 메시지
   const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
 
   // 스타일 객체들
@@ -76,7 +78,6 @@ export default function RandomInterviewPage() {
     justifyContent: "center",
   };
 
-  // 가로 폭을 900px로 고정하고 중앙 정렬
   const mainBoxStyle: React.CSSProperties = {
     width: "900px",
     margin: "0 auto",
@@ -124,7 +125,6 @@ export default function RandomInterviewPage() {
         return res.json();
       })
       .then((data: number[]) => {
-        // API 응답이 undefined인 경우 빈 배열로 처리
         setHeadIds(Array.isArray(data) ? data : []);
       })
       .catch((err: Error) => {
@@ -147,13 +147,13 @@ export default function RandomInterviewPage() {
     fetchRandomInterview(headIds);
   };
 
-  // (3) 랜덤 질문 호출: /interview/random (POST)
+  // (3) 랜덤 질문 호출: POST /interview/random
   const fetchRandomInterview = async (indices: number[]) => {
     try {
       setLoading(true);
       setError(null);
 
-      // 이전 질문을 history에 저장
+      // 현재 질문이 있다면 history에 저장
       if (currentInterview) {
         setHistory((prev) => [...prev, currentInterview]);
       }
@@ -174,13 +174,12 @@ export default function RandomInterviewPage() {
       }
       const data: RandomResponseDto = await res.json();
 
-      // 새 질문과 새 indexList 반영
+      // 새 질문과 업데이트된 indexList 반영
       setCurrentInterview(data.interviewResponseDto);
       setRandomList(data.indexList);
       setShowAnswer(false);
       setActiveTab(null);
       setLoading(false);
-      // 북마크 메시지 초기화
       setBookmarkMessage("");
     } catch (err: any) {
       setError(err.message);
@@ -207,11 +206,11 @@ export default function RandomInterviewPage() {
     setActiveTab(null);
   };
 
-  // (6) 상위/꼬리 질문 보기
+  // (6) 상위/꼬리 질문 보기 (단, 재조회 방식을 동일하게 사용)
   const fetchInterviewById = async (id: number) => {
     try {
       setLoading(true);
-      // 이전 질문을 히스토리에 저장
+      // 현재 질문이 있다면 히스토리에 저장
       if (currentInterview) {
         setHistory((prev) => [...prev, currentInterview]);
       }
@@ -230,7 +229,6 @@ export default function RandomInterviewPage() {
       setLoading(false);
       setShowAnswer(false);
       setActiveTab(null);
-      // 북마크 메시지 초기화
       setBookmarkMessage("");
     } catch (err: any) {
       setError(err.message);
@@ -250,12 +248,38 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // 정답 보기 토글
+  // (7) 정답 보기 토글
   const toggleAnswer = () => {
     setShowAnswer((prev) => !prev);
   };
 
-  // (7) 메모(댓글) 저장 함수
+  // (8) 좋아요 토글 함수 – 좋아요 요청 후 현재 질문을 재조회하여 최신 상태 반영
+  const handleLikeToggle = async () => {
+    if (!currentInterview) return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/interview/like?id=${currentInterview.id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("http://localhost:3000/login");
+          return;
+        }
+        throw new Error("좋아요 요청에 실패했습니다.");
+      }
+      const message = await res.text();
+      // 좋아요 토글 후, 백엔드에서 최신 데이터를 재조회하여 업데이트
+      await fetchInterviewById(currentInterview.id);
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  // (9) 메모(댓글) 저장 함수
   const handleCommentSubmit = async () => {
     if (!currentInterview) return;
     if (commentText.trim() === "") {
@@ -290,7 +314,7 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // (8) 내 메모 보기 함수
+  // (10) 내 메모 보기 함수
   const fetchMyMemos = async () => {
     if (!currentInterview) return;
     setLoadingMemos(true);
@@ -317,7 +341,7 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // (9) 다른 사람 메모 보기 함수
+  // (11) 다른 사람 메모 보기 함수
   const fetchPublicMemos = async () => {
     if (!currentInterview) return;
     setLoadingMemos(true);
@@ -344,7 +368,7 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // (A-2) 북마크 토글 함수
+  // (A-2) 북마크 토글 함수 (이미 구현됨)
   const handleBookmark = async () => {
     if (!currentInterview) return;
     try {
@@ -399,7 +423,7 @@ export default function RandomInterviewPage() {
             {loading && <p>로딩중...</p>}
             {!loading && (
               <div style={questionBoxStyle}>
-                {/* 상단 헤더 영역: 카테고리/키워드 박스와 북마크 버튼 */}
+                {/* 상단 헤더 영역: 카테고리/키워드와 북마크, 좋아요 버튼 */}
                 <div
                   style={{
                     display: "flex",
@@ -410,16 +434,41 @@ export default function RandomInterviewPage() {
                 >
                   <div
                     style={{
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#e8e8e8",
-                      borderRadius: "6px",
-                      fontSize: "1.1rem",
-                      fontWeight: "bold",
-                      textAlign: "center",
+                      display: "flex",
+                      gap: "1rem",
+                      alignItems: "center",
                     }}
                   >
-                    {currentInterview.category.toUpperCase()} &gt;{" "}
-                    {currentInterview.keyword}
+                    <div
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#e8e8e8",
+                        borderRadius: "6px",
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {currentInterview.category.toUpperCase()} &gt;{" "}
+                      {currentInterview.keyword}
+                    </div>
+                    <button
+                      onClick={handleLikeToggle}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        borderRadius: "6px",
+                        border: "none",
+                        backgroundColor: currentInterview.likedByUser
+                          ? "#d9534f"
+                          : "#5cb85c",
+                        color: "white",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {currentInterview.likedByUser
+                        ? `좋아요 취소 (${currentInterview.likeCount})`
+                        : `좋아요 추가 (${currentInterview.likeCount})`}
+                    </button>
                   </div>
                   <button
                     onClick={handleBookmark}
@@ -454,7 +503,7 @@ export default function RandomInterviewPage() {
                   <strong>질문:</strong> {currentInterview.question}
                 </p>
 
-                {/* 정답 보기 버튼 */}
+                {/* 정답 보기 토글 */}
                 <div style={{ textAlign: "center", marginBottom: "1rem" }}>
                   <button
                     onClick={toggleAnswer}
