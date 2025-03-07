@@ -4,30 +4,11 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/mypage.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { components } from "@/lib/backend/apiV1/schema";
 
-interface Note {
-  contentId: number;
-  question: string;
-  answer: string;
-}
-
-interface Comment {
-  commentId: number;
-  comment: string;
-  interviewContentId: number;
-  interviewContentTitle: string;
-  category: string;
-  public: boolean;
-  modelAnswer: String;
-}
-
-interface Memo {
-  memoId: number;
-  memoContent: string;
-  firstCategory: string;
-  title: string;
-  body: string;
-}
+type Note = components["schemas"]["BookmarkResponseDto"];
+type Comment = components["schemas"]["MyPageInterviewCommentResponseDto"];
+type Memo = components["schemas"]["StudyMemoResponseDto"];
 
 interface InterviewData {
   [category: string]: Comment[];
@@ -75,9 +56,7 @@ const ClientPage = () => {
         credentials: "include",
       });
 
-      const responseData = await response.json();
-
-      console.log(responseData);
+      const responseData: Note[] = await response.json();
 
       if (!responseData || responseData.length === 0) {
         console.log("No Notes available.");
@@ -99,156 +78,24 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/interview/bookmark/${selectedNoteItem?.contentId}`,
+        `http://localhost:8080/interview/bookmark/${selectedNoteItem.contentId}`,
         {
           method: "DELETE",
           credentials: "include",
         }
       );
 
-      if (response.ok) {
-        setSelectedNoteItem(null);
-        alert("노트가 삭제되었습니다.");
-        window.location.reload();
-      } else {
+      if (!response.ok) {
         console.error("노트 삭제에 실패했습니다.");
       }
+
+      setSelectedNoteItem(null);
+      alert("노트가 삭제되었습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("노트 삭제 중 오류가 발생했습니다.", error);
     }
   };
-
-  {
-    /* 기술면접 API 연동 */
-  }
-  const fetchInterviewComment = async (category: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment?category=${category}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!responseData || responseData.length === 0) {
-        console.log("No comments available for this category.");
-      }
-
-      const updatedCategoryItems = responseData.reduce(
-        (acc: InterviewData, comment: Comment) => {
-          const commentCategory = comment.category;
-          if (!acc[commentCategory]) {
-            acc[commentCategory] = [];
-          }
-          acc[commentCategory].push(comment);
-          return acc;
-        },
-        {}
-      );
-
-      setInterviewData(updatedCategoryItems);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-  };
-
-  const updateComment = async () => {
-    if (!selectedCommentItem) return;
-
-    const isConfirmed = window.confirm("해당 답변을 수정하시겠습니까?");
-    if (!isConfirmed) return;
-
-    const updatedDto = {
-      comment: updatedComment,
-      isPublic: isPublic,
-      interviewContentId: selectedCommentItem.interviewContentId,
-    };
-
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedDto),
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        const updatedData = await response.json();
-
-        setInterviewData((prevData) => {
-          const updatedInterviewData = { ...prevData };
-          const updatedCategory = selectedCommentItem.category;
-
-          updatedInterviewData[updatedCategory] = updatedInterviewData[
-            updatedCategory
-          ].map((comment) =>
-            comment.commentId === selectedCommentItem.commentId
-              ? {
-                  ...comment,
-                  comment: updatedData.comment,
-                  public: updatedData.isPublic,
-                }
-              : comment
-          );
-          return updatedInterviewData;
-        });
-
-        alert("댓글이 수정되었습니다.");
-        window.location.reload();
-      } else {
-        console.error("댓글 수정에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("댓글 수정 중 오류가 발생했습니다.", error);
-    }
-  };
-
-  const deleteComment = async () => {
-    if (!selectedCommentItem) return;
-
-    const isConfirmed = window.confirm("해당 답변을 삭제하시겠습니까?");
-    if (!isConfirmed) return;
-
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        setInterviewData((prevData) => {
-          const updatedInterviewData = { ...prevData };
-          const updatedCategory = selectedCommentItem.category;
-          updatedInterviewData[updatedCategory] = updatedInterviewData[
-            updatedCategory
-          ].filter(
-            (comment) => comment.commentId !== selectedCommentItem.commentId
-          );
-          return updatedInterviewData;
-        });
-
-        setSelectedCommentItem(null);
-        alert("댓글이 삭제되었습니다.");
-        window.location.reload();
-      } else {
-        console.error("댓글 삭제에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("댓글 삭제 중 오류가 발생했습니다.", error);
-    }
-  };
-
   {
     /* 메모 API 연동 */
   }
@@ -262,7 +109,7 @@ const ClientPage = () => {
         }
       );
 
-      const responseData = await response.json();
+      const responseData: Memo[] = await response.json();
 
       if (!responseData || responseData.length === 0) {
         console.log("No memos available for this category.");
@@ -270,10 +117,8 @@ const ClientPage = () => {
 
       const updatedCategoryItems = responseData.reduce(
         (acc: MemoData, memo: Memo) => {
-          const memoCategory = memo.firstCategory;
-          if (!acc[memoCategory]) {
-            acc[memoCategory] = [];
-          }
+          const memoCategory = memo.firstCategory as string;
+          if (!acc[memoCategory]) acc[memoCategory] = [];
           acc[memoCategory].push(memo);
           return acc;
         },
@@ -310,31 +155,24 @@ const ClientPage = () => {
         }
       );
 
-      if (response.ok) {
-        const updatedData = await response.json();
-
-        setMemoData((prevData) => {
-          const updatedMemoData = { ...prevData };
-          const updatedCategory = selectedMemoItem.firstCategory;
-
-          updatedMemoData[updatedCategory] = updatedMemoData[
-            updatedCategory
-          ].map((memo) =>
-            memo.memoId === selectedMemoItem.memoId
-              ? {
-                  ...memo,
-                  memoContent: updatedData.memoContent,
-                }
-              : memo
-          );
-          return updatedMemoData;
-        });
-
-        alert("메모가 수정되었습니다.");
-        window.location.reload();
-      } else {
+      if (!response.ok) {
         console.error("메모 수정에 실패했습니다.");
+        return;
       }
+
+      const updatedData = await response.json();
+      const memoCategory = selectedMemoItem.firstCategory as string;
+      setMemoData((prevData) => ({
+        ...prevData,
+        [memoCategory]: prevData[memoCategory].map((memo) =>
+          memo.memoId === selectedMemoItem.memoId
+            ? { ...memo, memoContent: updatedData.memoContent }
+            : memo
+        ),
+      }));
+
+      alert("메모가 수정되었습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("메모 수정 중 오류가 발생했습니다.", error);
     }
@@ -355,24 +193,140 @@ const ClientPage = () => {
         }
       );
 
-      if (response.ok) {
-        setMemoData((prevData) => {
-          const updatedMemoData = { ...prevData };
-          const updatedCategory = selectedMemoItem.firstCategory;
-          updatedMemoData[updatedCategory] = updatedMemoData[
-            updatedCategory
-          ].filter((memo) => memo.memoId !== selectedMemoItem.memoId);
-          return updatedMemoData;
-        });
-
-        setSelectedMemoItem(null);
-        alert("메모가 삭제되었습니다.");
-        window.location.reload();
-      } else {
+      if (!response.ok) {
         console.error("메모 삭제에 실패했습니다.");
+        return;
       }
+      const memoCategory = selectedMemoItem.firstCategory as string;
+      setMemoData((prevData) => ({
+        ...prevData,
+        [memoCategory]: prevData[memoCategory].filter(
+          (memo) => memo.memoId !== selectedMemoItem.memoId
+        ),
+      }));
+
+      setSelectedMemoItem(null);
+      alert("메모가 삭제되었습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("메모 삭제 중 오류가 발생했습니다.", error);
+    }
+  };
+
+  {
+    /* 기술면접 API 연동 */
+  }
+  const fetchInterviewComment = async (category: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment?category=${category}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      const responseData: Comment[] = await response.json();
+
+      if (!responseData || responseData.length === 0) {
+        console.log("No comments available for this category.");
+      }
+
+      setInterviewData((prevData) => ({
+        ...prevData,
+        [category]: responseData,
+      }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  const updateComment = async () => {
+    if (!selectedCommentItem) return;
+
+    const isConfirmed = window.confirm("해당 답변을 수정하시겠습니까?");
+    if (!isConfirmed) return;
+
+    const updatedDto = {
+      comment: updatedComment,
+      isPublic: isPublic,
+      interviewContentId: selectedCommentItem.interviewContentId,
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedDto),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        console.error("댓글 수정에 실패했습니다.");
+        return;
+      }
+
+      const updatedData = await response.json();
+      const updatedCategory = selectedCommentItem.category as string;
+
+      setInterviewData((prevData) => ({
+        ...prevData,
+        [updatedCategory]: prevData[updatedCategory].map((comment) =>
+          comment.commentId === selectedCommentItem.commentId
+            ? {
+                ...comment,
+                comment: updatedData.comment,
+                public: updatedData.isPublic,
+              }
+            : comment
+        ),
+      }));
+
+      alert("댓글이 수정되었습니다.");
+      window.location.reload();
+    } catch (error) {
+      console.error("댓글 수정 중 오류가 발생했습니다.", error);
+    }
+  };
+
+  const deleteComment = async () => {
+    if (!selectedCommentItem) return;
+
+    const isConfirmed = window.confirm("해당 답변을 삭제하시겠습니까?");
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        console.error("댓글 삭제에 실패했습니다.");
+        return;
+      }
+
+      const commentCategory = selectedCommentItem.category as string;
+      setInterviewData((prevData) => ({
+        ...prevData,
+        [commentCategory]: prevData[commentCategory].filter(
+          (comment) => comment.commentId !== selectedCommentItem.commentId
+        ),
+      }));
+
+      setSelectedCommentItem(null);
+      alert("댓글이 삭제되었습니다.");
+      window.location.reload();
+    } catch (error) {
+      console.error("댓글 삭제 중 오류가 발생했습니다.", error);
     }
   };
 
@@ -391,10 +345,6 @@ const ClientPage = () => {
       setSelectedAnswerCategory("");
       setSelectedMemoCategory("");
     }
-  };
-
-  const handleDeleteNote = () => {
-    deleteNote();
   };
 
   const handleMemoCategorySelect = (category: string) => {
@@ -421,31 +371,15 @@ const ClientPage = () => {
     setSelectedNoteItem(null);
     setSelectedMemoItem(null);
     setSelectedCommentItem(comment);
-    setUpdatedComment(comment.comment);
-    setIsPublic(comment.public);
-  };
-
-  const handleUpdateComment = () => {
-    updateComment();
-  };
-
-  const handleDeleteComment = () => {
-    deleteComment();
+    setUpdatedComment(comment.comment!!);
+    setIsPublic(comment.public!!);
   };
 
   const handleMemoItemSelect = (memo: Memo) => {
     setSelectedNoteItem(null);
     setSelectedCommentItem(null);
     setSelectedMemoItem(memo);
-    setUpdatedMemo(memo.memoContent);
-  };
-
-  const handleUpdateMemo = () => {
-    updateMemo();
-  };
-
-  const handleDeleteMemo = () => {
-    deleteMemo();
+    setUpdatedMemo(memo.memoContent!!);
   };
 
   useEffect(() => {
@@ -575,10 +509,7 @@ const ClientPage = () => {
           <>
             <div className={styles.largeText}>
               <strong>{selectedNoteItem.question}</strong>
-              <button
-                className={styles.noteDeleteButton}
-                onClick={handleDeleteNote}
-              >
+              <button className={styles.noteDeleteButton} onClick={deleteNote}>
                 내 노트에서 삭제
               </button>
             </div>
@@ -606,13 +537,13 @@ const ClientPage = () => {
                 <span className={styles.actionButtons}>
                   <button
                     className={styles.updateButton}
-                    onClick={handleUpdateComment}
+                    onClick={updateComment}
                   >
                     수정
                   </button>
                   <button
                     className={styles.deleteButton}
-                    onClick={handleDeleteComment}
+                    onClick={deleteComment}
                   >
                     삭제
                   </button>
@@ -635,7 +566,7 @@ const ClientPage = () => {
             <br />
             <span className={styles.text}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {selectedMemoItem.body.replace(/<br\s*\/?>/gi, "")}
+                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "")}
               </ReactMarkdown>
             </span>
             <br />
@@ -646,13 +577,13 @@ const ClientPage = () => {
                   <span className={styles.actionButtons}>
                     <button
                       className={styles.updateButton}
-                      onClick={handleUpdateMemo}
+                      onClick={updateMemo}
                     >
                       수정
                     </button>
                     <button
                       className={styles.deleteButton}
-                      onClick={handleDeleteMemo}
+                      onClick={deleteMemo}
                     >
                       삭제
                     </button>
@@ -669,7 +600,7 @@ const ClientPage = () => {
             <br />
           </>
         ) : null}
-      </div>{" "}
+      </div>
     </div>
   );
 };
