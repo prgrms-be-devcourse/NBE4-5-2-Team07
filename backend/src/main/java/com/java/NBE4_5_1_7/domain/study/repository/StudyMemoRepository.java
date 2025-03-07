@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.study.repository;
 
 import java.util.List;
 
+import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +16,5 @@ public interface StudyMemoRepository extends JpaRepository<StudyMemo, Long> {
 		"WHERE c.member = :member AND ic.firstCategory = :category")
 	List<StudyMemo> findByMemberAndStudyContentCategory(@Param("member") Member member, @Param("category") FirstCategory category);
 
+	StudyMemo findByMemberAndStudyContent(Member member, StudyContent studyContentId);
 }

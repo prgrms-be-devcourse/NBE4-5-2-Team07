@@ -19,6 +19,11 @@ import java.util.Map;
 public class StudyContentService {
     private final StudyContentRepository studyContentRepository;
 
+    public StudyContent findById(Long id) {
+        return studyContentRepository.findById(id)
+                .orElse(null);
+    }
+
     public Map<String, List<String>> getAllCategory() {
         Map<String, List<String>> categories = new HashMap<>();
         List<FirstCategory> firstCategories = studyContentRepository.findDistinctFirstCategories();

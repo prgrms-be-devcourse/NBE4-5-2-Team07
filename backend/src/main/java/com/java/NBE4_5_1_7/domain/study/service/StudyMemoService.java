@@ -34,6 +34,12 @@ public class StudyMemoService {
         studyMemoRepository.save(studyMemo);
     }
 
+    // 메모 단건 조회
+    public StudyMemoResponseDto getStudyMemoByStudyMemberAndContentId(Member member, StudyContent studyContentId) {
+        StudyMemo studyMemo = studyMemoRepository.findByMemberAndStudyContent(member, studyContentId);
+        return new StudyMemoResponseDto(studyMemo);
+    }
+
     public List<StudyMemoResponseDto> getStudyMemosByMemberAndCategory(Member member, FirstCategory category) {
         List<StudyMemo> memos = studyMemoRepository.findByMemberAndStudyContentCategory(member, category);
 

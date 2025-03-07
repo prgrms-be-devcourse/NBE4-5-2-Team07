@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.study.dto.response;
 
+import com.java.NBE4_5_1_7.domain.study.entity.StudyMemo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,10 @@ public class StudyMemoResponseDto {
 	private String firstCategory;
 	private String title;
 	private String body;
+
+	public StudyMemoResponseDto(StudyMemo studyMemo) {
+		this.memoId = studyMemo.getId();
+		this.memoContent = studyMemo.getMemoContent();
+		this.studyContentId = studyMemo.getStudyContent().getStudy_content_id();
+	}
 }

@@ -2,6 +2,8 @@ package com.java.NBE4_5_1_7.domain.study.controller;
 
 import java.util.List;
 
+import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
+import com.java.NBE4_5_1_7.domain.study.service.StudyContentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudyMemoController {
     private final StudyMemoService studyMemoService;
+    private final StudyContentService studyContentService;
     private final MemberService memberService;
 
     /// 메모 생성
@@ -37,6 +40,14 @@ public class StudyMemoController {
             @PathVariable Long studyContentId) {
         studyMemoService.createStudyMemo(requestDto.getContent(), studyContentId);
         return ResponseEntity.ok("create success");
+    }
+
+    /// 학습 컨텐츠에 대한 메모 단건 조회
+    @GetMapping("/{studyContentId}")
+    public ResponseEntity<StudyMemoResponseDto> getStudyMemoByMemberAndStudyContentId(@PathVariable("studyContentId") Long studyContentId) {
+        Member member = memberService.getMemberFromRq();
+        StudyContent studyContent = studyContentService.findById(studyContentId);
+        return ResponseEntity.ok(studyMemoService.getStudyMemoByStudyMemberAndContentId(member, studyContent));
     }
 
     /// 사용자 + 카테고리별 메모 및 컨텐츠 조회
