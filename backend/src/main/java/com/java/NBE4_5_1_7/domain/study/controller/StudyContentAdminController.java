@@ -4,6 +4,8 @@ import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentAdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +26,18 @@ public class StudyContentAdminController {
         return ResponseEntity.ok(studyContentAdminService.getFirstCategoryKeys());
     }
 
-    // 특정 카테고리에 대한 학습 콘텐츠 조회
+    // 특정 카테고리에 대한 학습 콘텐츠 조회 (페이징 처리)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<StudyContentDetailDto>> getStudyContentsByFirstCategory(
-            @RequestParam String firstCategory) {
-        return ResponseEntity.ok(studyContentAdminService.getStudyContentsByFirstCategory(firstCategory));
+    public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByCategory(
+            @RequestParam String firstCategory,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<StudyContentDetailDto> studyContents = studyContentAdminService
+                .getPagedStudyContentsByCategory(firstCategory, PageRequest.of(page, size));
+
+        return ResponseEntity.ok(studyContents);
     }
 
     // 특정 학습 콘텐츠 조회 (ID 기반)

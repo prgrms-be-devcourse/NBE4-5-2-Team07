@@ -6,6 +6,8 @@ import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,7 @@ public class StudyContentAdminService {
     }
 
     // 특정 카테고리에 대한 학습 콘텐츠 조회
-    public List<StudyContentDetailDto> getStudyContentsByFirstCategory(String firstCategory) {
+    public Page<StudyContentDetailDto> getPagedStudyContentsByCategory(String firstCategory, Pageable pageable) {
         FirstCategory category;
         try {
             category = FirstCategory.fromString(firstCategory);
@@ -40,15 +42,13 @@ public class StudyContentAdminService {
             throw new ServiceException("400", "올바르지 않은 카테고리 값입니다: " + firstCategory);
         }
 
-        List<StudyContent> studyContents = studyContentRepository.findByFirstCategory(category);
+        Page<StudyContent> studyContents = studyContentRepository.findByFirstCategory(category, pageable);
 
         if (studyContents.isEmpty()) {
             throw new ServiceException("404", "해당 카테고리에 학습 콘텐츠가 존재하지 않습니다.");
         }
 
-        return studyContents.stream()
-                .map(StudyContentDetailDto::new)
-                .collect(Collectors.toList());
+        return studyContents.map(StudyContentDetailDto::new);
     }
 
     // 특정 학습 콘텐츠 조회 (ID 기반)
