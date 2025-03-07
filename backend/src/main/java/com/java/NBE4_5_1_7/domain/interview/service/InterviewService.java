@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentLikeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +31,21 @@ public class InterviewService {
     private final InterviewContentRepository interviewRepository;
     private final MemberRepository memberRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final InterviewContentLikeRepository likeRepository;
 
     // 1. 면접 컨텐츠 ID -> 면접 컨텐츠 DTO
-    public InterviewResponseDto showOneInterviewContent(Long id) {
+    public InterviewResponseDto showOneInterviewContent(Long id, Long memberId) {
         InterviewContent interview = interviewRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 면접 컨텐츠를 찾을 수 없습니다."));
+
+        InterviewContent interviewContent = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
+
+        Long likeCount = likeRepository.countByInterviewContent(interviewContent);
+
+        // 해당 사용자가 좋아요를 눌렀는지 여부 확인
+        boolean likedByUser = likeRepository.findByInterviewContentAndMember(interviewContent, memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."))).isPresent();
+
 
         Long nextId;
 
@@ -57,7 +69,9 @@ public class InterviewService {
                 interview.getModelAnswer(),
                 interview.getCategory().toString(),
                 interview.getKeyword(),
-                nextId
+                nextId,
+                likeCount,
+                likedByUser
         );
     }
 
@@ -67,7 +81,7 @@ public class InterviewService {
     }
 
     //3. 모든 질문에 대해 순서 랜덤하게
-    public RandomResponseDto showRandomInterviewContent(RandomRequestDto randomRequestDto) {
+    public RandomResponseDto showRandomInterviewContent(RandomRequestDto randomRequestDto, Long memberId) {
 
         List<Long> headList = randomRequestDto.getIndexList();
         Long randomValue = null;
@@ -81,6 +95,9 @@ public class InterviewService {
         Long randomId = headList.get(randomIndex);
         headList.remove(randomId);
         InterviewContent interview = interviewRepository.findById(randomId).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
+        Long likeCount = likeRepository.countByInterviewContent(interview);
+        boolean likedByUser = likeRepository.findByInterviewContentAndMember(interview, memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."))).isPresent();
+
         return new RandomResponseDto(
                 headList,
                 new InterviewResponseDto(
@@ -91,7 +108,9 @@ public class InterviewService {
                         interview.getModelAnswer(),
                         interview.getCategory().toString(),
                         interview.getKeyword(),
-                        randomValue
+                        randomValue,
+                        likeCount,
+                        likedByUser
                 ));
     }
 
@@ -100,35 +119,35 @@ public class InterviewService {
         return interviewRepository.findInterviewContentIdsByCategoryAndHeadTrueAndHeadIdIsNull(category);
     }
 
-    //4. 특정 카테고리에 대해 질문 반환하기
-    public InterviewResponseDto showCategoryInterviewContent(InterviewCategory category, Long id) {
-        List<Long> interviewList = interviewRepository.findInterviewContentIdsByCategoryAndHeadTrueAndHeadIdIsNull(category);
-        if (!interviewList.contains(id)) {
-            throw new RuntimeException("해당 ID 의 컨텐츠는 해당 카테고리에 속하지 않습니다.");
-        }
-
-        InterviewContent interview = interviewRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 ID 의 컨텐츠를 찾을 수 없습니다."));
-        Long nextId;
-        int nowIndex = interviewList.indexOf(id);
-
-        if (nowIndex + 1 == interviewList.size()) {
-            nextId = null;
-        } else {
-            nextId = interviewList.get(nowIndex + 1);
-        }
-
-        return new InterviewResponseDto(
-                interview.getInterview_content_id(),
-                interview.getHead_id(),
-                interview.getTail_id(),
-                interview.getQuestion(),
-                interview.getModelAnswer(),
-                interview.getCategory().toString(),
-                interview.getKeyword(),
-                nextId
-        );
-
-    }
+//    //4. 특정 카테고리에 대해 질문 반환하기
+//    public InterviewResponseDto showCategoryInterviewContent(InterviewCategory category, Long id) {
+//        List<Long> interviewList = interviewRepository.findInterviewContentIdsByCategoryAndHeadTrueAndHeadIdIsNull(category);
+//        if (!interviewList.contains(id)) {
+//            throw new RuntimeException("해당 ID 의 컨텐츠는 해당 카테고리에 속하지 않습니다.");
+//        }
+//
+//        InterviewContent interview = interviewRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 ID 의 컨텐츠를 찾을 수 없습니다."));
+//        Long nextId;
+//        int nowIndex = interviewList.indexOf(id);
+//
+//        if (nowIndex + 1 == interviewList.size()) {
+//            nextId = null;
+//        } else {
+//            nextId = interviewList.get(nowIndex + 1);
+//        }
+//
+//        return new InterviewResponseDto(
+//                interview.getInterview_content_id(),
+//                interview.getHead_id(),
+//                interview.getTail_id(),
+//                interview.getQuestion(),
+//                interview.getModelAnswer(),
+//                interview.getCategory().toString(),
+//                interview.getKeyword(),
+//                nextId
+//        );
+//
+//    }
 
     // 키워드 목록 조회
     public List<String> showKeywordList() {

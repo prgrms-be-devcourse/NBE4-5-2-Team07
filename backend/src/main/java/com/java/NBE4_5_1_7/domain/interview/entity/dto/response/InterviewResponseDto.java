@@ -15,4 +15,6 @@ public class InterviewResponseDto {
     private String category;
     private String keyword;
     private Long next_id;
+    private Long likeCount;
+    private boolean likedByUser;
 }

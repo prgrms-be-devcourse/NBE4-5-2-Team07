@@ -37,13 +37,13 @@ public class InterviewController {
     // 특정 ID 면접 컨텐츠 단건 조회 -> 다음 면접 컨텐츠 ID 값은 ID 순서대로 제공
     @GetMapping("/{id}")
     public ResponseEntity<InterviewResponseDto> oneContent(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.showOneInterviewContent(id));
+        return ResponseEntity.ok(service.showOneInterviewContent(id, memberService.getIdFromRq()));
     }
 
     // 특정 ID 면접 컨텐츠 단건 조회 -> 다음 면접 컨텐츠 ID 값은 랜덤하게 제공
     @PostMapping("/random")
     public ResponseEntity<RandomResponseDto> randomContent(@RequestBody RandomRequestDto randomRequestDto) {
-        return ResponseEntity.ok(service.showRandomInterviewContent(randomRequestDto));
+        return ResponseEntity.ok(service.showRandomInterviewContent(randomRequestDto, memberService.getIdFromRq()));
     }
 
     // Keyword 리스트 반환
