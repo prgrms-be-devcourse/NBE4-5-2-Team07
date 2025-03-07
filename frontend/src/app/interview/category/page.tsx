@@ -141,7 +141,9 @@ export default function CategoryStudyPage() {
     setCurrentInterview(null);
     setHistory([]);
     setListLoading(true);
-    fetch(`http://localhost:8080/interview/category/${category}`)
+    fetch(`http://localhost:8080/interview/category/${category}`, {
+      credentials: "include",
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error(
@@ -171,7 +173,9 @@ export default function CategoryStudyPage() {
         }
         return prev;
       });
-      const res = await fetch(`http://localhost:8080/interview/${id}`);
+      const res = await fetch(`http://localhost:8080/interview/${id}`, {
+        credentials: "include",
+      });
       if (!res.ok) {
         throw new Error("면접 질문을 가져오는 데 실패했습니다.");
       }
@@ -318,7 +322,7 @@ export default function CategoryStudyPage() {
       {/* 좌측 카테고리 영역 */}
       <div style={leftPanelStyle}>
         <h3 style={{ textAlign: "center" }}>카테고리 선택</h3>
-        {["DATABASE", "NETWORK", "OperatingSystem", "SPRING"].map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => handleCategorySelect(cat)}
@@ -524,6 +528,13 @@ export default function CategoryStudyPage() {
                   </button>
                 </div>
 
+                {/* 북마크 응답 메시지 */}
+                {bookmarkMessage && (
+                  <p style={{ marginTop: "0.8rem", textAlign: "center" }}>
+                    {bookmarkMessage}
+                  </p>
+                )}
+
                 {/* 댓글(메모) 입력 영역 */}
                 <div style={commentContainerStyle}>
                   <h3 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
@@ -547,7 +558,9 @@ export default function CategoryStudyPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
+                      justifyContent: "center",
+                      marginTop: "0.5rem",
+                      gap: "0.5rem",
                     }}
                   >
                     <label style={{ fontSize: "1rem" }}>

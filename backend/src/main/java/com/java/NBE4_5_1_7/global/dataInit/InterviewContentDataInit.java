@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class InterviewContentDataInit {
     private final InterviewContentRepository repository;
 
-    @PostConstruct
+//    @PostConstruct
     public void dataInit() {
         importCsvData();
         updateHasTailField();
