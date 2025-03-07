@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class StudyContentDataInit {
                 if (isFirstLine) {
                     isFirstLine = false;
                     continue;
-                }   
+                }
                 // CSV 컬럼 순서: study_content_id, first_category, second_category, title, body
                 // study_content_id는 auto-generated 필드이므로 사용하지 않습니다.
                 String firstCategoryStr = line[1].trim();
@@ -75,6 +76,11 @@ public class StudyContentDataInit {
                 String secondCategory = line[2].trim();
                 String title = line[3].trim();
                 String body = line[4].trim();
+
+                Optional<StudyContent> existingContent = repository.findByTitle(title);
+                if (existingContent.isPresent()) {
+                    continue; // 중복된 데이터가 있으면 저장하지 않음
+                }
 
                 StudyContent studyContent = new StudyContent();
                 studyContent.setFirstCategory(firstCategory);
