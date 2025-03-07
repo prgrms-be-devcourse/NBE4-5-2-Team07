@@ -418,7 +418,7 @@ const ClientPage = () => {
             fetchNoteList();
           }}
         >
-          내 노트Answer
+          내 노트
         </button>
 
         {/* 학습 메모 드롭다운 */}
@@ -491,21 +491,6 @@ const ClientPage = () => {
             ) : (
               <p className={styles.noItems}>항목이 없습니다.</p>
             )
-          ) : /* 기술 면접 답변 목록 */
-          selectedCommentCategory && interviewData[selectedCommentCategory] ? (
-            interviewData[selectedCommentCategory].map((comment) => (
-              <li
-                key={comment.commentId}
-                onClick={() => handleCommentItemSelect(comment)}
-                className={`${styles.listItem} ${
-                  selectedCommentItem?.commentId === comment.commentId
-                    ? styles.selected
-                    : ""
-                }`}
-              >
-                {comment.interviewContentTitle}
-              </li>
-            ))
           ) : /* 학습 메모 목록 */
           selectedMemoCategory && memoData[selectedMemoCategory] ? (
             memoData[selectedMemoCategory].map((memo) => (
@@ -521,6 +506,25 @@ const ClientPage = () => {
                 {memo.title}
               </li>
             ))
+          ) : /* 기술 면접 답변 목록 */
+          selectedCommentCategory && interviewData[selectedCommentCategory] ? (
+            interviewData[selectedCommentCategory].length > 0 ? (
+              interviewData[selectedCommentCategory].map((comment) => (
+                <li
+                  key={comment.commentId}
+                  onClick={() => handleCommentItemSelect(comment)}
+                  className={`${styles.listItem} ${
+                    selectedCommentItem?.commentId === comment.commentId
+                      ? styles.selected
+                      : ""
+                  }`}
+                >
+                  {comment.interviewContentTitle}
+                </li>
+              ))
+            ) : (
+              <p className={styles.noItems}>항목이 없습니다.</p>
+            )
           ) : (
             <p className={styles.noItems}>항목이 없습니다.</p>
           )}
@@ -538,6 +542,47 @@ const ClientPage = () => {
             </div>
             <br />
             <div className={styles.text}>{selectedNoteItem.answer}</div>
+          </>
+        ) : selectedMemoItem ? (
+          <>
+            <strong className={styles.largeText}>
+              {selectedMemoItem.title}
+            </strong>
+            <br />
+            <span className={styles.text}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "")}
+              </ReactMarkdown>
+            </span>
+            <br />
+            <div className={styles.bottom}>
+              {selectedMemoItem && (
+                <div>
+                  <strong className={styles.text}>내 메모</strong>
+                  <span className={styles.actionButtons}>
+                    <button
+                      className={styles.updateButton}
+                      onClick={updateMemo}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={deleteMemo}
+                    >
+                      삭제
+                    </button>
+                  </span>
+                  <textarea
+                    value={updatedMemo}
+                    onChange={(e) => setUpdatedMemo(e.target.value)}
+                    rows={5}
+                    className={styles.textarea}
+                  />
+                </div>
+              )}
+            </div>
+            <br />
           </>
         ) : selectedCommentItem ? (
           <>
@@ -578,47 +623,6 @@ const ClientPage = () => {
                 rows={5}
                 className={styles.textarea}
               />
-            </div>
-            <br />
-          </>
-        ) : selectedMemoItem ? (
-          <>
-            <strong className={styles.largeText}>
-              {selectedMemoItem.title}
-            </strong>
-            <br />
-            <span className={styles.text}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "")}
-              </ReactMarkdown>
-            </span>
-            <br />
-            <div className={styles.bottom}>
-              {selectedMemoItem && (
-                <div>
-                  <strong className={styles.text}>내 메모</strong>
-                  <span className={styles.actionButtons}>
-                    <button
-                      className={styles.updateButton}
-                      onClick={updateMemo}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={deleteMemo}
-                    >
-                      삭제
-                    </button>
-                  </span>
-                  <textarea
-                    value={updatedMemo}
-                    onChange={(e) => setUpdatedMemo(e.target.value)}
-                    rows={5}
-                    className={styles.textarea}
-                  />
-                </div>
-              )}
             </div>
             <br />
           </>
