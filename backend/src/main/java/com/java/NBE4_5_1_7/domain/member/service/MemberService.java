@@ -70,7 +70,6 @@ public class MemberService {
         }
     }
 
-    // 아래 코드를 MemberService.java에 추가
     public Map<String, Object> getRefreshPayload(String refreshToken) {
         try {
             Map<String, Object> payload = authTokenService.getRefreshPayload(refreshToken);
@@ -84,12 +83,10 @@ public class MemberService {
         }
     }
 
-
     public Long getIdFromRq() {
         Member member = rq.getActor();
         return member.getId();
     }
-
 
     public String genRefreshToken(Member member) {
         return authTokenService.genRefreshToken(member);
@@ -115,5 +112,9 @@ public class MemberService {
             member.setRole(Role.ADMIN);
             return "Member [" + id + "] 의 권한을 ADMIN 으로 변경하였습니다.";
         }
+    }
+    public Boolean isAdmin(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        return member.isAdmin();
     }
 }
