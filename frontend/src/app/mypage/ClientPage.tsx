@@ -1,7 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/mypage.module.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+interface Note {
+  contentId: number;
+  question: string;
+  answer: string;
+}
 
 interface Comment {
   commentId: number;
@@ -33,20 +41,19 @@ const ClientPage = () => {
   const [showNoteList, setShowNoteList] = useState(false);
   const [memoDropdownOpen, setMemoDropdownOpen] = useState(false);
   const [answerDropdownOpen, setAnswerDropdownOpen] = useState(false);
-  const [selectedNoteCategory, setSelectedNoteCategory] = useState("");
   const [selectedMemoCategory, setSelectedMemoCategory] = useState("");
   const [selectedAnswerCategory, setSelectedAnswerCategory] = useState("");
+  const [selectedNoteItem, setSelectedNoteItem] = useState<Note | null>(null);
   const [selectedCommentItem, setSelectedCommentItem] =
     useState<Comment | null>(null);
   const [selectedMemoItem, setSelectedMemoItem] = useState<Memo | null>(null);
-  const [selectedNote, setSelectedNote] = useState("");
+  const [notes, setNotes] = useState<Note[]>([]);
   const [interviewData, setInterviewData] = useState<InterviewData>({});
   const [updatedComment, setUpdatedComment] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [memoData, setMemoData] = useState<MemoData>({});
   const [updatedMemo, setUpdatedMemo] = useState("");
 
-  const notes = ["노트1", "노트2", "노트3", "노트4", "노트5", "노트6"];
   const memoCategory = [
     "컴퓨터구조",
     "자료구조",
@@ -57,6 +64,59 @@ const ClientPage = () => {
     "웹",
   ];
   const answerCategory = ["데이터베이스", "네트워크", "운영체제", "스프링"];
+
+  {
+    /* 노트 API 연동 */
+  }
+  const fetchNoteList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/interview/bookmark`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const responseData = await response.json();
+
+      console.log(responseData);
+
+      if (!responseData || responseData.length === 0) {
+        console.log("No Notes available.");
+        setNotes([]);
+        return;
+      }
+
+      setNotes(responseData);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  const deleteNote = async () => {
+    if (!selectedNoteItem) return;
+
+    const isConfirmed = window.confirm("해당 노트를 삭제하시겠습니까?");
+    if (!isConfirmed) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/interview/bookmark/${selectedNoteItem?.contentId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        setSelectedNoteItem(null);
+        alert("노트가 삭제되었습니다.");
+        window.location.reload();
+      } else {
+        console.error("노트 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("노트 삭제 중 오류가 발생했습니다.", error);
+    }
+  };
 
   {
     /* 기술면접 API 연동 */
@@ -319,18 +379,26 @@ const ClientPage = () => {
   {
     /* 핸들러 */
   }
-  const handleNoteCategorySelect = (category: string) => {
-    setSelectedNoteCategory(category);
-    setSelectedAnswerCategory("");
-    setSelectedMemoCategory("");
+  const handleNoteItemSelect = (note: Note) => {
+    setSelectedNoteItem(note);
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
-    setSelectedNote(category);
+  };
+
+  const handleShowNoteList = () => {
+    if (!showNoteList) {
+      setShowNoteList(true);
+      setSelectedAnswerCategory("");
+      setSelectedMemoCategory("");
+    }
+  };
+
+  const handleDeleteNote = () => {
+    deleteNote();
   };
 
   const handleMemoCategorySelect = (category: string) => {
     setSelectedMemoCategory(category);
-    setSelectedNoteCategory("");
     setSelectedAnswerCategory("");
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
@@ -342,7 +410,6 @@ const ClientPage = () => {
   const handleAnswerCategorySelect = (category: string) => {
     setSelectedAnswerCategory(category);
     setSelectedMemoCategory("");
-    setSelectedNoteCategory("");
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
     setShowNoteList(false);
@@ -351,6 +418,8 @@ const ClientPage = () => {
   };
 
   const handleCommentItemSelect = (comment: Comment) => {
+    setSelectedNoteItem(null);
+    setSelectedMemoItem(null);
     setSelectedCommentItem(comment);
     setUpdatedComment(comment.comment);
     setIsPublic(comment.public);
@@ -365,6 +434,8 @@ const ClientPage = () => {
   };
 
   const handleMemoItemSelect = (memo: Memo) => {
+    setSelectedNoteItem(null);
+    setSelectedCommentItem(null);
     setSelectedMemoItem(memo);
     setUpdatedMemo(memo.memoContent);
   };
@@ -377,15 +448,21 @@ const ClientPage = () => {
     deleteMemo();
   };
 
+  useEffect(() => {
+    if (showNoteList) {
+      fetchNoteList();
+    }
+  }, [showNoteList]);
+
   return (
     <div className={styles.container}>
       <div className={`${styles.card} ${styles.small}`}>
         {/* 내 노트 버튼 */}
         <button
-          className={styles.btn}
+          className={`${styles.btn} ${showNoteList ? styles.selectedBtn : ""}`}
           onClick={() => {
-            setShowNoteList((prevState) => !prevState);
-            setSelectedNoteCategory("");
+            handleShowNoteList();
+            fetchNoteList();
           }}
         >
           내 노트
@@ -437,30 +514,31 @@ const ClientPage = () => {
           </ul>
         )}
       </div>
-
       {/* 선택한 카테고리의 아이템 목록 */}
       <div className={`${styles.card} ${styles.small}`}>
         <ul>
           {/* 내 노트 목록 */}
           {showNoteList ? (
             <ul>
-              {notes.map((category, index) => (
+              {notes.map((note) => (
                 <li
-                  key={index}
-                  onClick={() => handleNoteCategorySelect(category)}
-                  className={`${styles.dropdownItem} ${
-                    selectedNoteCategory === category ? styles.selected : ""
+                  key={note.contentId}
+                  onClick={() => handleNoteItemSelect(note)}
+                  className={`${styles.listItem} ${
+                    selectedNoteItem?.contentId === note.contentId
+                      ? styles.selected
+                      : ""
                   }`}
                 >
-                  {category}
+                  {note.question}
                 </li>
               ))}
             </ul>
           ) : /* 기술 면접 답변 목록 */
           selectedAnswerCategory && interviewData[selectedAnswerCategory] ? (
-            interviewData[selectedAnswerCategory].map((comment, index) => (
+            interviewData[selectedAnswerCategory].map((comment) => (
               <li
-                key={index}
+                key={comment.commentId}
                 onClick={() => handleCommentItemSelect(comment)}
                 className={`${styles.listItem} ${
                   selectedCommentItem?.commentId === comment.commentId
@@ -473,9 +551,9 @@ const ClientPage = () => {
             ))
           ) : /* 학습 메모 목록 */
           selectedMemoCategory && memoData[selectedMemoCategory] ? (
-            memoData[selectedMemoCategory].map((memo, index) => (
+            memoData[selectedMemoCategory].map((memo) => (
               <li
-                key={index}
+                key={memo.memoId}
                 onClick={() => handleMemoItemSelect(memo)}
                 className={`${styles.listItem} ${
                   selectedMemoItem?.memoId === memo.memoId
@@ -491,10 +569,23 @@ const ClientPage = () => {
           )}
         </ul>
       </div>
-
       {/* 상세 내용 */}
       <div className={`${styles.card} ${styles.large}`}>
-        {selectedCommentItem ? (
+        {selectedNoteItem ? (
+          <>
+            <div className={styles.largeText}>
+              <strong>{selectedNoteItem.question}</strong>
+              <button
+                className={styles.noteDeleteButton}
+                onClick={handleDeleteNote}
+              >
+                내 노트에서 삭제
+              </button>
+            </div>
+            <br />
+            <div className={styles.text}>{selectedNoteItem.answer}</div>
+          </>
+        ) : selectedCommentItem ? (
           <>
             <strong className={styles.largeText}>
               {selectedCommentItem.interviewContentTitle}
@@ -536,13 +627,17 @@ const ClientPage = () => {
             </div>
             <br />
           </>
-        ) : (
+        ) : selectedMemoItem ? (
           <>
             <strong className={styles.largeText}>
-              {selectedMemoItem?.title}
+              {selectedMemoItem.title}
             </strong>
             <br />
-            <span className={styles.text}>{selectedMemoItem?.body}</span>
+            <span className={styles.text}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {selectedMemoItem.body.replace(/<br\s*\/?>/gi, "")}
+              </ReactMarkdown>
+            </span>
             <br />
             <div className={styles.bottom}>
               {selectedMemoItem && (
@@ -573,8 +668,8 @@ const ClientPage = () => {
             </div>
             <br />
           </>
-        )}
-      </div>
+        ) : null}
+      </div>{" "}
     </div>
   );
 };

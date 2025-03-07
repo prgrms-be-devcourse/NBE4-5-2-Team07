@@ -1,5 +1,12 @@
 package com.java.NBE4_5_1_7.domain.interview.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentBookmark;
@@ -12,14 +19,9 @@ import com.java.NBE4_5_1_7.domain.interview.repository.BookmarkRepository;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.java.NBE4_5_1_7.global.exception.ServiceException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
@@ -176,5 +178,16 @@ public class InterviewService {
         }
 
         return result;
+    }
+
+    public void deleteNote(Long noteId, Member member) {
+        InterviewContentBookmark bookmark = bookmarkRepository.findById(noteId)
+            .orElseThrow(() -> new ServiceException("404", "북마크를 찾을 수 없습니다."));
+
+        if (!bookmark.getMember().equals(member)) {
+            throw new ServiceException("403", "본인이 추가한 북마크만 삭제할 수 있습니다.");
+        }
+
+        bookmarkRepository.deleteById(noteId);
     }
 }
