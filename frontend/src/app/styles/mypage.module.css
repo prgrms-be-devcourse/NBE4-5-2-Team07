@@ -46,6 +46,10 @@
   background-color: #5a72b0aa;
 }
 
+.selectedBtn {
+  background-color: #8e8e8eaa;
+}
+
 .dropdown {
   margin-top: 15px;
 }
@@ -150,6 +154,18 @@
   cursor: pointer;
   border-radius: 15px;
   margin-right: 40px;
+}
+
+.noteDeleteButton {
+  background-color: #f44336;
+  color: white;
+  padding: 7px;
+  border: none;
+  cursor: pointer;
+  border-radius: 15px;
+  margin-right: 20px;
+  float: right;
+  font-size: 1.1rem;
 }
 
 .actionButtons {
