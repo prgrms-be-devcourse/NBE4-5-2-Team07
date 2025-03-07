@@ -10,6 +10,7 @@ import com.java.NBE4_5_1_7.domain.study.entity.StudyMemo;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
 import com.java.NBE4_5_1_7.domain.study.repository.StudyMemoRepository;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +24,23 @@ public class StudyMemoService {
     private final StudyContentRepository studyContentRepository;
     private final MemberService memberService;
 
-    // 멤버, 학습 컨텐츠 ID, 메모 내용 저장
+    // 멤버, 학습 컨텐츠 ID, 메모 내용 저장, 중복 작성 시 수정하게끔 변경
+    @Transactional
     public void createStudyMemo(String studyMemoContent, Long studyContentId) {
         Member member = memberService.getMemberFromRq();
 
         StudyContent studyContent = studyContentRepository.findById(studyContentId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 학습 컨텐츠 입니다."));
-        StudyMemo studyMemo = new StudyMemo(studyMemoContent, studyContent, member);
 
+        StudyMemo studyMemo = studyMemoRepository.findByMemberAndStudyContent(member, studyContent);
+
+        if (studyMemo == null) {
+            studyMemo = new StudyMemo(studyMemoContent, studyContent, member);
+
+        } else {
+//            updateStudyMemo(studyMemo.getId(), new StudyMemoRequestDto(studyMemo), member);
+            studyMemo.setMemoContent(studyMemoContent);
+        }
         studyMemoRepository.save(studyMemo);
     }
 
