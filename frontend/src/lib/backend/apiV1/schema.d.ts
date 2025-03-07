@@ -36,22 +36,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/study/update/{studyContentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateStudyContent_1"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/member/role": {
         parameters: {
             query?: never;
@@ -62,22 +46,6 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["changeRoleToAdmin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/study/update/{studyContentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateStudyContent_1"];
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -548,6 +516,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/interview/bookmark/{noteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["deleteNote"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/study/delete/{studyContentId}": {
         parameters: {
             query?: never;
@@ -559,22 +543,6 @@ export interface paths {
         put?: never;
         post?: never;
         delete: operations["deleteStudyContent"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/study/delete/{studyContentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["deleteStudyContent_1"];
         options?: never;
         head?: never;
         patch?: never;
@@ -709,18 +677,18 @@ export interface components {
             answer?: string;
         };
         PageStudyContentDetailDto: {
-            /** Format: int32 */
-            totalPages?: number;
             /** Format: int64 */
             totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+            first?: boolean;
+            last?: boolean;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
-            first?: boolean;
-            last?: boolean;
             /** Format: int32 */
             numberOfElements?: number;
             pageable?: components["schemas"]["PageableObject"];
@@ -730,12 +698,12 @@ export interface components {
             /** Format: int64 */
             offset?: number;
             sort?: components["schemas"]["SortObject"];
+            unpaged?: boolean;
+            paged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
             /** Format: int32 */
             pageSize?: number;
-            paged?: boolean;
-            unpaged?: boolean;
         };
         SortObject: {
             empty?: boolean;
@@ -861,41 +829,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["RsDataString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    updateStudyContent_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                studyContentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StudyContentUpdateRequestDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": string;
                 };
             };
             /** @description Internal Server Error */
@@ -1946,12 +1879,12 @@ export interface operations {
             };
         };
     };
-    deleteStudyContent: {
+    deleteNote: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                studyContentId: number;
+                noteId: number;
             };
             cookie?: never;
         };
@@ -1977,7 +1910,7 @@ export interface operations {
             };
         };
     };
-    deleteStudyContent_1: {
+    deleteStudyContent: {
         parameters: {
             query?: never;
             header?: never;

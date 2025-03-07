@@ -66,25 +66,6 @@ public class InterviewCommentService {
 			.collect(Collectors.toList());
 	}
 
-	public MyPageInterviewCommentResponseDto getCommentById(Long commentId, Member member) {
-		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
-			.orElseThrow(() -> new ServiceException("404", "해당 댓글을 찾을 수 없습니다."));
-
-		if (!comment.getMember().equals(member)) {
-			throw new ServiceException("403", "본인이 작성한 댓글만 조회할 수 있습니다.");
-		}
-
-		return new MyPageInterviewCommentResponseDto(
-			comment.getComment_id(),
-			comment.getAnswer(),
-			comment.isPublic(),
-			comment.getInterviewContent().getInterview_content_id(),
-			comment.getInterviewContent().getQuestion(),
-			comment.getInterviewContent().getCategory().getCategory(),
-			comment.getInterviewContent().getModelAnswer()
-			);
-	}
-
 	@Transactional
 	public MyPageInterviewCommentResponseDto updateComment(Long commentId, InterviewCommentRequestDto updatedDto, Member member) {
 		InterviewContentComment comment = interviewCommentRepository.findById(commentId)
