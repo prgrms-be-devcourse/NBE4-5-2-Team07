@@ -39,15 +39,13 @@ public class InterviewCommentService {
 
 		InterviewContentComment savedComment = interviewCommentRepository.save(newComment);
 
-		String category = savedComment.getInterviewContent().getCategory().getCategory();
-
 		return new MyPageInterviewCommentResponseDto(
 			savedComment.getComment_id(),
 			savedComment.getAnswer(),
 			savedComment.isPublic(),
 			savedComment.getInterviewContent().getInterview_content_id(),
 			savedComment.getInterviewContent().getQuestion(),
-			category,
+			savedComment.getInterviewContent().getCategory().getCategory(),
 			savedComment.getInterviewContent().getModelAnswer()
 		);
 	}
@@ -76,15 +74,13 @@ public class InterviewCommentService {
 			throw new ServiceException("403", "본인이 작성한 댓글만 조회할 수 있습니다.");
 		}
 
-		String category = comment.getInterviewContent().getCategory().getCategory();
-
 		return new MyPageInterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
 			comment.getInterviewContent().getInterview_content_id(),
 			comment.getInterviewContent().getQuestion(),
-			category,
+			comment.getInterviewContent().getCategory().getCategory(),
 			comment.getInterviewContent().getModelAnswer()
 			);
 	}
@@ -101,15 +97,13 @@ public class InterviewCommentService {
 		comment.setAnswer(updatedDto.getComment());
 		comment.setPublic(updatedDto.getIsPublic());
 
-		String category = comment.getInterviewContent().getCategory().getCategory();
-
 		return new MyPageInterviewCommentResponseDto(
 			comment.getComment_id(),
 			comment.getAnswer(),
 			comment.isPublic(),
 			comment.getInterviewContent().getInterview_content_id(),
 			comment.getInterviewContent().getQuestion(),
-			category,
+			comment.getInterviewContent().getCategory().getCategory(),
 			comment.getInterviewContent().getModelAnswer()
 			);
 	}

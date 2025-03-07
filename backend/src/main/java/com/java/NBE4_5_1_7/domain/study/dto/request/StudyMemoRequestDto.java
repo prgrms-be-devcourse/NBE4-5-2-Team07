@@ -12,11 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyMemoRequestDto {
-	private Long studyContentId;
+	private Long memoId;
 	private String memoContent;
 
 	public StudyMemoRequestDto(StudyMemo memo) {
-		this.studyContentId = memo.getStudyContent().getStudy_content_id();
+		this.memoId = memo.getId();
 		this.memoContent = memo.getMemoContent();
 	}
 }
