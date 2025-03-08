@@ -36,7 +36,7 @@ export default function Header() {
                 <Link href="/admin">관리자 홈</Link>
               </li>
               <li>
-                <Link href="/admin/content">학습 콘텐츠 관리</Link>
+                <Link href="/admin/studyContent">학습 콘텐츠 관리</Link>
               </li>
               <li>
                 <Link href="/admin/questions">질문 관리</Link>
