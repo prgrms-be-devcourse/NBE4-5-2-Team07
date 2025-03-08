@@ -6,5 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class StudyContentUpdateRequestDto {
+    private String title;
+    private String firstCategory;
+    private String secondCategory;
     private String updateContent;
 }
