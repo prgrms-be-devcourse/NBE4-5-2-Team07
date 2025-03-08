@@ -17,6 +17,7 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
     const [category, setCategory] = useState(
         selectedCategory || DEFAULT_CATEGORY
     );
+    const [isPublished, setIsPublished] = useState<boolean>(false);
     const [studyContents, setStudyContents] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -58,8 +59,13 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
     const handlePreviousPage = () => {
         if (page > 0) setPage(page - 1);
     };
+    // 메모 내용 상태 변경 핸들러
     const handleMemoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setMemo(event.target.value);
+    };
+    // 체크박스 상태 변경 핸들러
+    const handlePublishedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsPublished(event.target.checked);
     };
     const handleMemoCheck = async () => {
         try {
@@ -80,6 +86,7 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
             }
             const data = await response.json();
             if (data.memoContent) {
+                setIsPublished(data.isPublished);
                 setMemo(data.memoContent); // 가져온 메모 내용으로 상태 업데이트
             } else {
                 alert("메모가 없습니다.");
@@ -103,6 +110,7 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                     },
                     body: JSON.stringify({
                         content: memo,
+                        isPublished : isPublished,
                     }),
                 }
             );
@@ -176,7 +184,19 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                 )}
             </div>
             <div className={styles.memoContainer}>
-                <p> 나의 메모</p>
+                <div className={styles.memoHeader}>
+                    <p> 나의 메모</p>
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="shareMemo"
+                            name="shareMemo"
+                            checked={isPublished}
+                            onChange={handlePublishedChange}
+                        />
+                        <label htmlFor="shareMemo">공개</label>
+                    </div>
+                </div>
                 <textarea
                     className={styles.memoInput}
                     placeholder="메모를 입력하세요..."
@@ -184,7 +204,7 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                     onChange={handleMemoChange}
                 />
                 <div className={styles.memoBtnBox}>
-                    <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
+                <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
                         저장
                     </button>
                     <button onClick={handleMemoCheck} className={styles.memoSaveBtn}>

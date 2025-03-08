@@ -244,11 +244,41 @@
     border-top: 2px solid #f0f0f0;
 }
 
-.memoContainer p {
-    font-size: 1.2rem;
+.memoHeader {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: start; /* 좌측 정렬 */
+    height: 50px; /* 부모 요소 높이 지정 */
+    padding: 0 10px; /* 좌우 패딩 */
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.memoHeader p {
+    font-size: 18px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 8px;
+    margin-right: 15px; /* '나의 메모'와 체크박스 사이의 간격 */
+}
+
+.memoHeader div {
+    display: flex;
+    align-items: center; /* 체크박스와 텍스트를 수직으로 중앙 정렬 */
+}
+
+.memoHeader input[type="checkbox"] {
+    margin-right: 5px; /* 체크박스와 '공개' 텍스트 사이의 간격 */
+    cursor: pointer;
+}
+
+.memoHeader label {
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+}
+
+.memoHeader input[type="checkbox"]:checked + label {
+    color: #4caf50; /* 체크 시 텍스트 색상 변경 */
 }
 
 /* 메모 입력 필드 */
