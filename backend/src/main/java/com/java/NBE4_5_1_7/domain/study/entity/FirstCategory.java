@@ -20,7 +20,7 @@ public enum FirstCategory {
 
     public static FirstCategory fromString(String category) {
         for (FirstCategory c : FirstCategory.values()) {
-            if (c.getCategory().equalsIgnoreCase(category)) {
+            if (c.getCategory().equalsIgnoreCase(category) || c.name().equalsIgnoreCase(category)) {
                 return c;
             }
         }
