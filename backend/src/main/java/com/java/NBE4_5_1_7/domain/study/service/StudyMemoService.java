@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.study.service;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoCreateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyMemoRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.response.StudyMemoResponseDto;
 import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
@@ -26,7 +27,7 @@ public class StudyMemoService {
 
     // 멤버, 학습 컨텐츠 ID, 메모 내용 저장, 중복 작성 시 수정하게끔 변경
     @Transactional
-    public void createStudyMemo(String studyMemoContent, Long studyContentId) {
+    public void createStudyMemo(StudyMemoCreateRequestDto requestDto, Long studyContentId) {
         Member member = memberService.getMemberFromRq();
 
         StudyContent studyContent = studyContentRepository.findById(studyContentId)
@@ -35,11 +36,12 @@ public class StudyMemoService {
         StudyMemo studyMemo = studyMemoRepository.findByMemberAndStudyContent(member, studyContent);
 
         if (studyMemo == null) {
-            studyMemo = new StudyMemo(studyMemoContent, studyContent, member);
+            studyMemo = new StudyMemo(requestDto.getContent(), studyContent, member, requestDto.isPublished());
 
         } else {
 //            updateStudyMemo(studyMemo.getId(), new StudyMemoRequestDto(studyMemo), member);
-            studyMemo.setMemoContent(studyMemoContent);
+            studyMemo.setMemoContent(requestDto.getContent());
+            studyMemo.setPublished(requestDto.isPublished());
         }
         studyMemoRepository.save(studyMemo);
     }

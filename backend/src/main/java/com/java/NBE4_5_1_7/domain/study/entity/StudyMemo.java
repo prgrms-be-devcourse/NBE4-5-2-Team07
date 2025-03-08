@@ -1,22 +1,15 @@
 package com.java.NBE4_5_1_7.domain.study.entity;
 
-import java.time.LocalDateTime;
-
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.global.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.global.entity.BaseEntity;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -34,6 +27,8 @@ public class StudyMemo extends BaseEntity {
 
     private String memoContent;
 
+    private boolean isPublished;
+
     @CreatedDate
     @Column(updatable = false) // 생성 날짜는 수정되지 않도록 설정
     private LocalDateTime createdAt;
@@ -41,9 +36,10 @@ public class StudyMemo extends BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public StudyMemo(String memoContent, StudyContent studyContent, Member member) {
+    public StudyMemo(String memoContent, StudyContent studyContent, Member member, boolean isPublished) {
         this.memoContent = memoContent;
         this.studyContent = studyContent;
         this.member = member;
+        this.isPublished = isPublished;
     }
 }
