@@ -1,0 +1,119 @@
+/* 콘텐츠 리스트 컨테이너 */
+.contentContainer {
+  flex-grow: 1;
+  margin-left: 20px;
+  max-width: 800px;
+}
+
+/* 콘텐츠 리스트 */
+.contentList {
+  list-style: none;
+  padding: 0;
+}
+
+/* 개별 콘텐츠 아이템 */
+.contentItem {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 콘텐츠 제목 스타일 */
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 부제목 (두 번째 카테고리) */
+.subTitle {
+  font-size: 14px;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+/* 버튼 그룹 */
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 상세 보기 버튼 */
+.detailButton {
+  background: #1976d2;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.detailButton:hover {
+  background: #155a9f;
+}
+
+/* 수정 버튼 */
+.editButton {
+  background: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background: #388e3c;
+}
+
+/* 삭제 버튼 */
+.deleteButton {
+  background: #ff4444;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background: #cc0000;
+}
+
+/* 페이징 컨트롤 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 오류 메시지 */
+.errorMessage {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
