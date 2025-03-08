@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { interviewCategories, dummyInterviewQuestions } from "../dummyData";
-import styles from "../../styles/admin.module.css";
+import styles from "../../styles/admin/page.module.css";
 
 export default function QuestionsPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -57,12 +57,12 @@ export default function QuestionsPage() {
       prevQuestions.map((item) =>
         item.id === editId
           ? {
-              ...item,
-              category: editCategory,
-              keyword: editKeyword,
-              question: editQuestion,
-              answer: editAnswer,
-            }
+            ...item,
+            category: editCategory,
+            keyword: editKeyword,
+            question: editQuestion,
+            answer: editAnswer,
+          }
           : item
       )
     );
@@ -153,27 +153,27 @@ export default function QuestionsPage() {
                   </div>
                 </div>
               ) : (
-                <><div className={ styles.titleContainer}>
-                    <span>{question.question}</span>
-                    <span className={styles.subTitle}>{question.keyword}</span>
-                    </div>
-                  <div className={ styles.buttonContainer}>
-                  <button
-                    className={styles.editBtn}
-                    onClick={() =>
-                      handleEditClick(
-                        question.id,
-                        question.category,
-                        question.keyword,
-                        question.question,
-                        question.answer
-                      )
-                    }
-                  >
-                    수정
-                      </button>
-                  <button className={styles.deleteBtn} onClick={() =>handleDeleteClick(question.id)}>삭제</button>
-                    </div>
+                <><div className={styles.titleContainer}>
+                  <span>{question.question}</span>
+                  <span className={styles.subTitle}>{question.keyword}</span>
+                </div>
+                  <div className={styles.buttonContainer}>
+                    <button
+                      className={styles.editBtn}
+                      onClick={() =>
+                        handleEditClick(
+                          question.id,
+                          question.category,
+                          question.keyword,
+                          question.question,
+                          question.answer
+                        )
+                      }
+                    >
+                      수정
+                    </button>
+                    <button className={styles.deleteBtn} onClick={() => handleDeleteClick(question.id)}>삭제</button>
+                  </div>
                 </>
               )}
             </li>
