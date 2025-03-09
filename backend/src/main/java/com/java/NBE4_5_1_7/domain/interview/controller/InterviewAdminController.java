@@ -9,7 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class InterviewAdminController {
 
     private final InterviewAdminService interviewAdminService;
+
     @Operation(summary = "카테고리별 키워드 조회", description = "각 카테고리 내 키워드 목록을 조회합니다.")
     @GetMapping("/all")
     public ResponseEntity<Map<String, List<String>>> getCategoryKeywords() {
@@ -47,4 +51,11 @@ public class InterviewAdminController {
         return ResponseEntity.ok(interviewAdminService.getInterviewsByCategoryAndKeyword(category, keyword));
     }
 
+    @Operation(summary = "특정 면접 질문 ID 조회", description = "면접 질문 ID를 이용하여 해당 데이터를 조회합니다.")
+    @GetMapping("/{interviewContentId}")
+    public ResponseEntity<InterviewContentAdminResponseDto> getInterviewContentById(
+            @Parameter(description = "조회할 면접 질문 ID", example = "1")
+            @PathVariable("interviewContentId") Long interviewContentId) {
+        return ResponseEntity.ok(interviewAdminService.getInterviewContentById(interviewContentId));
+    }
 }
