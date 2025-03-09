@@ -22,7 +22,7 @@ public interface InterviewContentAdminRepository extends JpaRepository<Interview
     List<InterviewContent> findByCategory(@Param("category") InterviewCategory category);
 
     // 특정 질문의 좋아요 개수 조회
-    @Query("SELECT COUNT(icl) FROM InterviewContentLike icl WHERE icl.interviewContent.id = :interviewContentId")
+    @Query("SELECT COUNT(icl) FROM InterviewContentLike icl WHERE icl.interviewContent.interview_content_id = :interviewContentId")
     Long countLikesByInterviewContentId(@Param("interviewContentId") Long interviewContentId);
 
     // 특정 카테고리 & 키워드를 포함하는 질문 조회
