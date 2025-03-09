@@ -28,4 +28,8 @@ public interface InterviewContentAdminRepository extends JpaRepository<Interview
     // 특정 카테고리 & 키워드를 포함하는 질문 조회
     @Query("SELECT ic FROM InterviewContent ic WHERE ic.category = :category AND ic.keyword = :keyword")
     List<InterviewContent> findByCategoryAndKeyword(@Param("category") InterviewCategory category, @Param("keyword") String keyword);
+
+    // 주어진 head_id를 기준으로 해당 질문과 연결된 모든 후속(꼬리) 질문을 조회
+    @Query("SELECT ic FROM InterviewContent ic WHERE ic.head_id = :id")
+    List<InterviewContent> findRelatedQuestions(@Param("id") Long id);
 }
