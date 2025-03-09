@@ -68,4 +68,12 @@ public class InterviewAdminService {
                 })
                 .collect(Collectors.toList());
     }
+
+    // 특정 면접 질문 ID 조회
+    public InterviewContentAdminResponseDto getInterviewContentById(Long interviewContentId) {
+        InterviewContent content = interviewContentAdminRepository.findById(interviewContentId)
+                .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
+        Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
+        return new InterviewContentAdminResponseDto(content, likeCount);
+    }
 }
