@@ -16,19 +16,18 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/admin/study")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class StudyContentAdminController {
 
     private final StudyContentAdminService studyContentAdminService;
 
     // 모든 카테고리 (첫 번째 카테고리 + 두 번째 카테고리) 조회
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<Map<String, List<String>>> getAllCategory() {
         return ResponseEntity.ok(studyContentAdminService.getAllCategory());
     }
 
     // 첫 번째 카테고리에 해당하는 학습 콘텐츠 조회
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/category/{firstCategory}")
     public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByFirstCategory(@PathVariable String firstCategory, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
@@ -38,7 +37,6 @@ public class StudyContentAdminController {
     }
 
     // 첫 번째 + 두 번째 카테고리에 해당하는 학습 콘텐츠 조회
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/category/{firstCategory}/{secondCategory}")
     public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByCategories(@PathVariable String firstCategory, @PathVariable String secondCategory, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
@@ -48,14 +46,12 @@ public class StudyContentAdminController {
     }
 
     // 학습 콘텐츠 조회
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{studyContentId}")
     public ResponseEntity<StudyContentDetailDto> getStudyContentById(@PathVariable Long studyContentId) {
         return ResponseEntity.ok(studyContentAdminService.getStudyContentById(studyContentId));
     }
 
     // 학습 콘텐츠 수정
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{studyContentId}")
     public ResponseEntity<String> updateStudyContent(@PathVariable Long studyContentId, @RequestBody StudyContentUpdateRequestDto requestDto) {
         studyContentAdminService.updateStudyContent(studyContentId, requestDto);
@@ -63,7 +59,6 @@ public class StudyContentAdminController {
     }
 
     // 학습 콘텐츠 삭제
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{studyContentId}")
     public ResponseEntity<String> deleteStudyContent(@PathVariable Long studyContentId) {
         studyContentAdminService.deleteStudyContent(studyContentId);
