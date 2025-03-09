@@ -126,4 +126,30 @@ public class InterviewAdminService {
 
         return new InterviewContentAdminResponseDto(content, 0L);
     }
+
+    // 특정 면접 질문과 모든 꼬리 질문을 삭제
+    @Transactional
+    public void deleteInterviewContentWithAllTails(Long interviewContentId) {
+        InterviewContent content = interviewContentAdminRepository.findById(interviewContentId)
+                .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
+
+        List<InterviewContent> relatedQuestions = getTailContents(content.getInterview_content_id());
+
+        // 모든 연관된 질문 삭제
+        interviewContentAdminRepository.deleteAll(relatedQuestions);
+        interviewContentAdminRepository.delete(content);
+    }
+
+    // 주어진 headId를 기준으로 연관된 모든 꼬리 질문들을 조회
+    private List<InterviewContent> getTailContents(Long headId) {
+        List<InterviewContent> tails = interviewContentAdminRepository.findRelatedQuestions(headId);
+        List<InterviewContent> result = new ArrayList<>(tails);
+
+        for (InterviewContent tail : tails) {
+            if (tail.isHasTail()) {
+                result.addAll(getTailContents(tail.getInterview_content_id()));
+            }
+        }
+        return result;
+    }
 }

@@ -72,4 +72,12 @@ public class InterviewAdminController {
             @RequestBody InterviewContentAdminRequestDto requestDto) {
         return ResponseEntity.ok(interviewAdminService.updateInterviewContent(interviewContentId, requestDto));
     }
+
+    @Operation(summary = "특정 면접 질문 삭제", description = "면접 질문 ID를 기준으로 해당 질문과 모든 꼬리 질문을 삭제합니다.")
+    @DeleteMapping("/{interviewContentId}")
+    public ResponseEntity<Void> deleteInterviewContent(
+            @PathVariable Long interviewContentId) {
+        interviewAdminService.deleteInterviewContentWithAllTails(interviewContentId);
+        return ResponseEntity.noContent().build();
+    }
 }
