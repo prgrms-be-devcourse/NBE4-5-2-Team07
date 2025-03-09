@@ -39,10 +39,10 @@ export default function Header() {
                 <Link href="/admin/studyContent">학습 콘텐츠 관리</Link>
               </li>
               <li>
-                <Link href="/admin/questions">질문 관리</Link>
+                <Link href="/admin/interview">면접 질문 관리</Link>
               </li>
               <li>
-                <Link href="/admin/members">사용자 관리</Link>
+                <Link href="/admin/member">사용자 관리</Link>
               </li>
             </>
           ) : (
