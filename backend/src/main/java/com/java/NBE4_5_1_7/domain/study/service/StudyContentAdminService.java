@@ -66,7 +66,7 @@ public class StudyContentAdminService {
         Page<StudyContent> studyContents = studyContentRepository.findByFirstCategoryAndSecondCategory(category, secondCategory, pageable);
 
         if (studyContents.isEmpty()) {
-            throw new ServiceException("404", "해당 카테고리 조합에 학습 콘텐츠가 존재하지 않습니다.");
+            throw new ServiceException("404", "해당 카테고리 조합에 학습 콘텐츠가 존재하지 않습니다." + firstCategory + secondCategory);
         }
 
         return studyContents.map(StudyContentDetailDto::new);
