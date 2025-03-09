@@ -124,7 +124,8 @@ public class InterviewAdminService {
 
         interviewContentAdminRepository.save(content);
 
-        return new InterviewContentAdminResponseDto(content, 0L);
+        Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
+        return new InterviewContentAdminResponseDto(content, likeCount);
     }
 
     // 특정 면접 질문과 모든 꼬리 질문을 삭제
