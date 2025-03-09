@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.interview.controller;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.InterviewContentAdminRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewContentAdminResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.service.InterviewAdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -65,5 +63,13 @@ public class InterviewAdminController {
             @Parameter(description = "조회할 면접 질문 ID", example = "1")
             @PathVariable Long interviewContentId) {
         return ResponseEntity.ok(interviewAdminService.getInterviewContentWithAllTails(interviewContentId));
+    }
+
+    @Operation(summary = "특정 면접 질문 수정", description = "면접 질문 ID를 기준으로 카테고리, 키워드, 질문, 모범 답안을 수정합니다.")
+    @PutMapping("/{interviewContentId}")
+    public ResponseEntity<InterviewContentAdminResponseDto> updateInterviewContent(
+            @PathVariable Long interviewContentId,
+            @RequestBody InterviewContentAdminRequestDto requestDto) {
+        return ResponseEntity.ok(interviewAdminService.updateInterviewContent(interviewContentId, requestDto));
     }
 }
