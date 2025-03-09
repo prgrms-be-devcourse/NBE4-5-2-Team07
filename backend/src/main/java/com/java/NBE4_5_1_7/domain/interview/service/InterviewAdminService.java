@@ -2,6 +2,7 @@ package com.java.NBE4_5_1_7.domain.interview.service;
 
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
+import com.java.NBE4_5_1_7.domain.interview.entity.dto.request.InterviewContentAdminRequestDto;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewContentAdminResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentAdminRepository;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
@@ -108,5 +109,21 @@ public class InterviewAdminService {
             }
         }
         return result;
+    }
+
+    // 면접 질문 ID를 기준으로 카테고리, 키워드, 질문, 모범 답안을 수정
+    @Transactional
+    public InterviewContentAdminResponseDto updateInterviewContent(Long interviewContentId, InterviewContentAdminRequestDto requestDto) {
+        InterviewContent content = interviewContentAdminRepository.findById(interviewContentId)
+                .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
+
+        content.setCategory(requestDto.getCategory());
+        content.setKeyword(requestDto.getKeyword());
+        content.setQuestion(requestDto.getQuestion());
+        content.setModelAnswer(requestDto.getModelAnswer());
+
+        interviewContentAdminRepository.save(content);
+
+        return new InterviewContentAdminResponseDto(content, 0L);
     }
 }
