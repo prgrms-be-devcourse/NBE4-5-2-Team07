@@ -58,4 +58,12 @@ public class InterviewAdminController {
             @PathVariable("interviewContentId") Long interviewContentId) {
         return ResponseEntity.ok(interviewAdminService.getInterviewContentById(interviewContentId));
     }
+
+    @Operation(summary = "연관된 면접 질문 조회", description = "특정 면접 질문 ID를 기준으로 관련된 모든 꼬리 질문을 조회합니다.")
+    @GetMapping("/{interviewContentId}/related")
+    public ResponseEntity<List<InterviewContentAdminResponseDto>> getRelatedInterviewContents(
+            @Parameter(description = "조회할 면접 질문 ID", example = "1")
+            @PathVariable Long interviewContentId) {
+        return ResponseEntity.ok(interviewAdminService.getInterviewContentWithAllTails(interviewContentId));
+    }
 }

@@ -5,9 +5,11 @@ import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import com.java.NBE4_5_1_7.domain.interview.entity.dto.response.InterviewContentAdminResponseDto;
 import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentAdminRepository;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,5 +77,36 @@ public class InterviewAdminService {
                 .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
         Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
         return new InterviewContentAdminResponseDto(content, likeCount);
+    }
+
+    // 주어진 interviewContentId에 해당하는 면접 질문을 조회하고, 관련된 모든 꼬리 질문을 포함하여 반환
+    @Transactional
+    public List<InterviewContentAdminResponseDto> getInterviewContentWithAllTails(Long interviewContentId) {
+        InterviewContent content = interviewContentAdminRepository.findById(interviewContentId)
+                .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
+        Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
+
+        List<InterviewContentAdminResponseDto> relatedQuestions = getTailQuestions(content.getInterview_content_id());
+
+        List<InterviewContentAdminResponseDto> result = new ArrayList<>();
+        result.add(new InterviewContentAdminResponseDto(content, likeCount));
+        result.addAll(relatedQuestions);
+        return result;
+    }
+
+    // 주어진 headId를 기준으로 연관된 꼬리 질문들을 조회
+    private List<InterviewContentAdminResponseDto> getTailQuestions(Long headId) {
+        List<InterviewContent> tails = interviewContentAdminRepository.findRelatedQuestions(headId);
+
+        List<InterviewContentAdminResponseDto> result = new ArrayList<>();
+        for (InterviewContent tail : tails) {
+            Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(tail.getInterview_content_id());
+            result.add(new InterviewContentAdminResponseDto(tail, likeCount));
+
+            if (tail.isHasTail()) {
+                result.addAll(getTailQuestions(tail.getInterview_content_id()));
+            }
+        }
+        return result;
     }
 }
