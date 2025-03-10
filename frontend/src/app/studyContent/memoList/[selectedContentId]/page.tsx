@@ -1,7 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import {useParams} from "next/navigation";
+import {useEffect, useState} from "react";
 
 type StudyMemoResponseDto = {
     memoId: number;
@@ -11,7 +11,7 @@ type StudyMemoResponseDto = {
 };
 
 const MemoList = () => {
-    const { selectedContentId } = useParams();
+    const {selectedContentId} = useParams();
     const [memoList, setMemoList] = useState<StudyMemoResponseDto[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -57,13 +57,24 @@ const MemoList = () => {
                 throw new Error("좋아요를 추가하는 데 실패했습니다.");
             }
 
-            setMemoList((prevMemoList) =>
-                prevMemoList.map((memo) =>
-                    memo.memoId === memoId
-                        ? { ...memo, likeCount: memo.likeCount + 1 }
-                        : memo
-                )
-            );
+            const responseMessage = await response.text();
+            if (responseMessage === "좋아요 추가") {
+                setMemoList((prevMemoList) =>
+                    prevMemoList.map((memo) =>
+                        memo.memoId === memoId
+                            ? {...memo, likeCount: memo.likeCount + 1}
+                            : memo
+                    )
+                );
+            } else if (responseMessage === "좋아요 취소") {
+                setMemoList((prevMemoList) =>
+                    prevMemoList.map((memo) =>
+                        memo.memoId === memoId
+                            ? {...memo, likeCount: memo.likeCount - 1}
+                            : memo
+                    )
+                );
+            }
         } catch (err: any) {
             console.error("좋아요 실패:", err.message);
         }
@@ -73,7 +84,7 @@ const MemoList = () => {
     if (error) return <p>오류 발생: {error}</p>;
 
     return (
-        <div style={{ padding: "30px 20px", fontFamily: "Arial, sans-serif", backgroundColor: "#f4f7fb" }}>
+        <div style={{padding: "30px 20px", fontFamily: "Arial, sans-serif", backgroundColor: "#f4f7fb"}}>
             <h1
                 style={{
                     color: "#333",
@@ -86,7 +97,7 @@ const MemoList = () => {
                 공개 메모 리스트
             </h1>
             {memoList.length > 0 ? (
-                <ul style={{ listStyleType: "none", padding: 0 }}>
+                <ul style={{listStyleType: "none", padding: 0}}>
                     {memoList.map((memo) => (
                         <li
                             key={memo.memoId}
@@ -140,7 +151,7 @@ const MemoList = () => {
                                 >
                                     🧡
                                 </button>
-                                <span style={{ fontWeight: "bold", color: "#333" }}>
+                                <span style={{fontWeight: "bold", color: "#333"}}>
                                     {memo.likeCount}
                                 </span>
                                 {memo.createdAt && (
@@ -159,7 +170,7 @@ const MemoList = () => {
                     ))}
                 </ul>
             ) : (
-                <p style={{ textAlign: "center", color: "#777", fontStyle: "italic" }}>
+                <p style={{textAlign: "center", color: "#777", fontStyle: "italic"}}>
                     공개된 메모가 없습니다.
                 </p>
             )}
