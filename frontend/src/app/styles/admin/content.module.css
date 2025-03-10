@@ -21,15 +21,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
 }
 
-/* 콘텐츠 제목 스타일 */
 .titleContainer {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  margin-right: 10px;
+  overflow: visible;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
-/* 부제목 (두 번째 카테고리) */
 .subTitle {
   font-size: 14px;
   color: #6c757d;
@@ -41,7 +45,21 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+/* 버튼 공통 스타일 */
+.detailButton,
+.editButton,
+.deleteButton {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 75px;
+  text-align: center;
 }
 
 /* 상세 보기 버튼 */
