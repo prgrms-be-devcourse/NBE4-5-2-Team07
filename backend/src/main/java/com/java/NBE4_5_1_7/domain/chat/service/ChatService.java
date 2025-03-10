@@ -1,26 +1,46 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
-import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import com.java.NBE4_5_1_7.domain.chat.model.Message;
 
 @Service
-@RequiredArgsConstructor
 public class ChatService {
-	private final RedisTemplate<String, String> redisTemplate;
 
-	public void saveMessage(Long roomId, String message) {
-		String key = "chat:room:" + roomId;
-		redisTemplate.opsForList().rightPush(key, message);
-		redisTemplate.expire(key, Duration.ofMinutes(10)); // 10분 후 자동 삭제
+	private final Map<Long, List<Message>> messageStorage = new HashMap<>();
+	private final Map<Long, Long> messageTimestamp = new HashMap<>();
+
+	/// 메시지 저장
+	public void saveMessage(Long roomId, String sender, String messageContent) {
+		Message message = new Message(sender, messageContent);
+
+		messageStorage.putIfAbsent(roomId, new ArrayList<>());
+		messageStorage.get(roomId).add(message);
+		messageTimestamp.put(roomId, System.currentTimeMillis());
 	}
 
-	public List<String> getMessages(Long roomId) {
-		String key = "chat:room:" + roomId;
-		return redisTemplate.opsForList().range(key, 0, -1);
+	/// 24시간이 지난 메시지 삭제
+	@Scheduled(cron = "0 0 0/1 * * ?") // 1시간마다 체크
+	public void deleteExpiredMessages() {
+		long currentTime = System.currentTimeMillis();
+		messageTimestamp.entrySet().removeIf(entry -> {
+			long elapsed = currentTime - entry.getValue();
+			if (elapsed >= 86400000) { // 24시간 (24 * 60 * 60 * 1000ms)
+				messageStorage.remove(entry.getKey());
+				return true;
+			}
+			return false;
+		});
+	}
+
+	/// 채팅방 메시지 조회
+	public List<Message> getMessage(Long roomId) {
+		return messageStorage.get(roomId);
 	}
 }
