@@ -85,4 +85,16 @@ public class InterviewAdminController {
         interviewAdminService.deleteInterviewContentWithAllTails(interviewContentId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "면접 질문 등록", description = """
+        새로운 면접 질문을 등록합니다. 기존 질문의 꼬리 질문으로 추가할 수도 있습니다.
+        
+        - `headId`가 `null`이면 새로운 머리 질문이 됩니다.
+        - `headId`가 존재하면, 해당 질문의 마지막 질문인지(`has_tail = 0`) 확인 후 꼬리 질문으로 추가합니다.
+        """)
+    @PostMapping
+    public ResponseEntity<InterviewContentAdminResponseDto> createInterviewContent(
+            @RequestBody InterviewContentAdminRequestDto requestDto) {
+        return ResponseEntity.ok(interviewAdminService.createInterviewContent(requestDto));
+    }
 }
