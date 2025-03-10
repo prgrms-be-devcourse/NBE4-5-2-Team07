@@ -22,7 +22,7 @@ import java.util.List;
 public class InterviewContentDataInit {
     private final InterviewContentRepository repository;
 
-    @PostConstruct
+//    @PostConstruct
     public void dataInit() {
         if (repository.count() == 0) {
             importCsvData();
