@@ -41,6 +41,7 @@ public class StudyMemoController {
         return ResponseEntity.ok(studyMemoService.getStudyMemoByStudyMemberAndContentId(member, studyContent));
     }
 
+    /// 학습 컨텐츠 별 사용자들의 공개 메모 리스트 반환
     @GetMapping("/list/{studyContentId}")
     public ResponseEntity<List<StudyMemoResponseDto>> getStudyMemoListByMemberAndStudyContentId(@PathVariable Long studyContentId) {
         return ResponseEntity.ok(studyMemoService.getStudyMemoListByStudyContentId(studyContentId));
