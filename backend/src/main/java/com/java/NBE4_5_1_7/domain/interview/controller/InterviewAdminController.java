@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "면접 질문 관리", description = "관리자가 면접 질문을 관리하는 API")
+@Tag(name = "면접 질문 관리", description = "관리자용 API")
 @RestController
 @RequestMapping("/api/v1/admin/interview")
 @RequiredArgsConstructor
