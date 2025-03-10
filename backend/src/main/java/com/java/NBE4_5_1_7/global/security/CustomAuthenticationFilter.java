@@ -67,6 +67,12 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String url = request.getRequestURI();
+
+        if (url.startsWith("/ws/chat")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (List.of("/member/logout").contains(url)) {
             filterChain.doFilter(request, response);
             return;

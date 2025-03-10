@@ -23,7 +23,7 @@ public class ChatController {
 	private final ChatPublisher chatPublisher;
 
 	/// 사용자가 메시지를 보낼 때
-	@MessageMapping("/user/chat/{roomId}")
+	@MessageMapping("/chat/user/{roomId}")
 	public void sendUserMessage(@DestinationVariable Long roomId, String message) {
 		chatService.saveMessage(roomId, "USER", message);
 		chatPublisher.sendMessageToAdmin(roomId, message);
@@ -32,7 +32,7 @@ public class ChatController {
 	}
 
 	/// 관리자가 응답할 때
-	@MessageMapping("/admin/chat/{roomId}")
+	@MessageMapping("/chat/admin/{roomId}")
 	public void sendAdminMessage(@DestinationVariable Long roomId, String message) {
 		chatService.saveMessage(roomId, "ADMIN", message);
 
