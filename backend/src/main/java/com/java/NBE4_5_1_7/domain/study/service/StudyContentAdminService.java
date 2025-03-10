@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.study.service;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentCreateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
 import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
@@ -115,5 +116,30 @@ public class StudyContentAdminService {
             throw new ServiceException("404", "해당 학습 콘텐츠를 찾을 수 없습니다.");
         }
         studyContentRepository.deleteById(studyContentId);
+    }
+
+    @Transactional
+    public StudyContentDetailDto createStudyContent(StudyContentCreateRequestDto requestDto) {
+        FirstCategory firstCategory;
+        try {
+            firstCategory = FirstCategory.fromString(requestDto.getFirstCategory());
+        } catch (IllegalArgumentException e) {
+            throw new ServiceException("400", "존재하지 않는 첫 번째 카테고리입니다: " + requestDto.getFirstCategory());
+        }
+
+        if (requestDto.getSecondCategory() == null || requestDto.getSecondCategory().trim().isEmpty() ||
+                requestDto.getTitle() == null || requestDto.getTitle().trim().isEmpty() ||
+                requestDto.getBody() == null || requestDto.getBody().trim().isEmpty()) {
+            throw new ServiceException("400", "두 번째 카테고리, 제목, 내용은 비워둘 수 없습니다.");
+        }
+
+        StudyContent studyContent = new StudyContent();
+        studyContent.setFirstCategory(firstCategory);
+        studyContent.setSecondCategory(requestDto.getSecondCategory());
+        studyContent.setTitle(requestDto.getTitle());
+        studyContent.setBody(requestDto.getBody());
+
+        studyContentRepository.save(studyContent);
+        return new StudyContentDetailDto(studyContent);
     }
 }

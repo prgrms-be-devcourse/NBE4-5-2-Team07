@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentCreateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentAdminService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,5 +78,16 @@ public class StudyContentAdminController {
     public ResponseEntity<String> deleteStudyContent(@PathVariable Long studyContentId) {
         studyContentAdminService.deleteStudyContent(studyContentId);
         return ResponseEntity.ok("delete success");
+    }
+
+    @Operation(summary = "학습 콘텐츠 등록", description = """
+                새로운 학습 콘텐츠를 등록합니다.
+                - `firstCategory`는 기존에 존재하는 카테고리 중에서만 선택 가능합니다.
+                - `secondCategory`, `title`, `body`는 빈 문자열 또는 `null`일 수 없습니다.
+            """)
+    @PostMapping
+    public ResponseEntity<StudyContentDetailDto> createStudyContent(
+            @RequestBody StudyContentCreateRequestDto requestDto) {
+        return ResponseEntity.ok(studyContentAdminService.createStudyContent(requestDto));
     }
 }
