@@ -41,6 +41,11 @@ public class StudyMemoController {
         return ResponseEntity.ok(studyMemoService.getStudyMemoByStudyMemberAndContentId(member, studyContent));
     }
 
+    @GetMapping("/list/{studyContentId}")
+    public ResponseEntity<List<StudyMemoResponseDto>> getStudyMemoListByMemberAndStudyContentId(@PathVariable Long studyContentId) {
+        return ResponseEntity.ok(studyMemoService.getStudyMemoListByStudyContentId(studyContentId));
+    }
+
     /// 사용자 + 카테고리별 메모 및 컨텐츠 조회
     @GetMapping
     public ResponseEntity<List<StudyMemoResponseDto>> getStudyMemosByMemberAndCategory(@RequestParam String category) {
