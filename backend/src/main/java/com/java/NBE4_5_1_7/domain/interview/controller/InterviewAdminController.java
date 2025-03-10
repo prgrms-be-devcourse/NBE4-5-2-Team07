@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,22 +32,26 @@ public class InterviewAdminController {
     }
 
     @Operation(summary = "특정 카테고리의 모든 질문 조회", description = "선택한 카테고리에 속하는 모든 면접 질문 데이터를 조회합니다.")
-    @GetMapping("/category/{Category}")
-    public ResponseEntity<List<InterviewContentAdminResponseDto>> getInterviewsByCategory(
+    @GetMapping("/category/{category}")
+    public ResponseEntity<Page<InterviewContentAdminResponseDto>> getInterviewsByCategory(
             @Parameter(description = "조회할 카테고리", example = "DATABASE")
-            @PathVariable("Category") InterviewCategory category) {
-        return ResponseEntity.ok(interviewAdminService.getInterviewsByCategory(category));
+            @PathVariable("category") InterviewCategory category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(interviewAdminService.getInterviewsByCategory(category, page, size));
     }
 
     @Operation(summary = "특정 카테고리의 키워드에 해당하는 모든 질문 조회",
             description = "선택한 카테고리 내에서 특정 키워드를 포함하는 면접 질문을 조회합니다.")
     @GetMapping("/category/{category}/{keyword}")
-    public ResponseEntity<List<InterviewContentAdminResponseDto>> getInterviewsByCategoryAndKeyword(
+    public ResponseEntity<Page<InterviewContentAdminResponseDto>> getInterviewsByCategoryAndKeyword(
             @Parameter(description = "조회할 카테고리", example = "DATABASE")
             @PathVariable("category") InterviewCategory category,
             @Parameter(description = "조회할 키워드", example = "sequence")
-            @PathVariable("keyword") String keyword) {
-        return ResponseEntity.ok(interviewAdminService.getInterviewsByCategoryAndKeyword(category, keyword));
+            @PathVariable("keyword") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(interviewAdminService.getInterviewsByCategoryAndKeyword(category, keyword, page, size));
     }
 
     @Operation(summary = "특정 면접 질문 ID 조회", description = "면접 질문 ID를 이용하여 해당 데이터를 조회합니다.")

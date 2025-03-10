@@ -8,6 +8,9 @@ import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentAdminRepo
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,35 +44,33 @@ public class InterviewAdminService {
     }
 
     // 특정 카테고리의 모든 면접 질문 조회
-    public List<InterviewContentAdminResponseDto> getInterviewsByCategory(InterviewCategory category) {
-        List<InterviewContent> contents = interviewContentAdminRepository.findByCategory(category);
+    public Page<InterviewContentAdminResponseDto> getInterviewsByCategory(InterviewCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InterviewContent> contents = interviewContentAdminRepository.findByCategory(category, pageable);
 
         if (contents.isEmpty()) {
             throw new ServiceException("404", "해당 카테고리에 속하는 면접 질문이 없습니다.");
         }
 
-        return contents.stream()
-                .map(content -> {
-                    Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
-                    return new InterviewContentAdminResponseDto(content, likeCount);
-                })
-                .collect(Collectors.toList());
+        return contents.map(content -> {
+            Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
+            return new InterviewContentAdminResponseDto(content, likeCount);
+        });
     }
 
     // 특정 카테고리와 키워드를 포함하는 면접 질문 조회
-    public List<InterviewContentAdminResponseDto> getInterviewsByCategoryAndKeyword(InterviewCategory category, String keyword) {
-        List<InterviewContent> contents = interviewContentAdminRepository.findByCategoryAndKeyword(category, keyword);
+    public Page<InterviewContentAdminResponseDto> getInterviewsByCategoryAndKeyword(InterviewCategory category, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InterviewContent> contents = interviewContentAdminRepository.findByCategoryAndKeyword(category, keyword, pageable);
 
         if (contents.isEmpty()) {
             throw new ServiceException("404", "해당 카테고리와 키워드를 포함하는 면접 질문이 없습니다.");
         }
 
-        return contents.stream()
-                .map(content -> {
-                    Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
-                    return new InterviewContentAdminResponseDto(content, likeCount);
-                })
-                .collect(Collectors.toList());
+        return contents.map(content -> {
+            Long likeCount = interviewContentAdminRepository.countLikesByInterviewContentId(content.getInterview_content_id());
+            return new InterviewContentAdminResponseDto(content, likeCount);
+        });
     }
 
     // 특정 면접 질문 ID 조회
