@@ -20,17 +20,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/study/update/{studyContentId}": {
+    "/api/v1/admin/study/{studyContentId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["getStudyContentById"];
         put: operations["updateStudyContent_1"];
         post?: never;
-        delete?: never;
+        delete: operations["deleteStudyContent"];
         options?: never;
         head?: never;
         patch?: never;
@@ -468,14 +468,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/study": {
+    "/api/v1/admin/study/category/{firstCategory}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getPagedStudyContentsByCategory"];
+        get: operations["getPagedStudyContentsByFirstCategory"];
         put?: never;
         post?: never;
         delete?: never;
@@ -484,14 +484,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/study/{studyContentId}": {
+    "/api/v1/admin/study/category/{firstCategory}/{secondCategory}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getStudyContentById"];
+        get: operations["getPagedStudyContentsByCategories"];
         put?: never;
         post?: never;
         delete?: never;
@@ -500,14 +500,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/study/categories": {
+    "/api/v1/admin/study/all": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getFirstCategories"];
+        get: operations["getAllCategory_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -574,22 +574,6 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["deleteStudyContent"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/study/delete/{studyContentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
         delete: operations["deleteStudyContent_1"];
         options?: never;
         head?: never;
@@ -606,6 +590,9 @@ export interface components {
             data: Record<string, never>;
         };
         StudyContentUpdateRequestDto: {
+            title?: string;
+            firstCategory?: string;
+            secondCategory?: string;
             updateContent?: string;
         };
         RsDataString: {
@@ -719,31 +706,31 @@ export interface components {
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         PageableObject: {
+            paged?: boolean;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int32 */
+            pageNumber?: number;
+            unpaged?: boolean;
             /** Format: int64 */
             offset?: number;
             sort?: components["schemas"]["SortObject"];
-            paged?: boolean;
-            /** Format: int32 */
-            pageNumber?: number;
-            /** Format: int32 */
-            pageSize?: number;
-            unpaged?: boolean;
         };
         SortObject: {
-            empty?: boolean;
             sorted?: boolean;
             unsorted?: boolean;
+            empty?: boolean;
         };
         StudyContentDetailDto: {
             /** Format: int64 */
@@ -811,6 +798,37 @@ export interface operations {
             };
         };
     };
+    getStudyContentById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyContentDetailDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
     updateStudyContent_1: {
         parameters: {
             query?: never;
@@ -825,6 +843,37 @@ export interface operations {
                 "application/json": components["schemas"]["StudyContentUpdateRequestDto"];
             };
         };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    deleteStudyContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                studyContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
@@ -1825,15 +1874,16 @@ export interface operations {
             };
         };
     };
-    getPagedStudyContentsByCategory: {
+    getPagedStudyContentsByFirstCategory: {
         parameters: {
-            query: {
-                firstCategory: string;
+            query?: {
                 page?: number;
                 size?: number;
             };
             header?: never;
-            path?: never;
+            path: {
+                firstCategory: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -1858,12 +1908,16 @@ export interface operations {
             };
         };
     };
-    getStudyContentById: {
+    getPagedStudyContentsByCategories: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                size?: number;
+            };
             header?: never;
             path: {
-                studyContentId: number;
+                firstCategory: string;
+                secondCategory: string;
             };
             cookie?: never;
         };
@@ -1875,7 +1929,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["StudyContentDetailDto"];
+                    "*/*": components["schemas"]["PageStudyContentDetailDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1889,7 +1943,7 @@ export interface operations {
             };
         };
     };
-    getFirstCategories: {
+    getAllCategory_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -1904,7 +1958,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": string[];
+                    "*/*": {
+                        [key: string]: string[];
+                    };
                 };
             };
             /** @description Internal Server Error */
@@ -1982,37 +2038,6 @@ export interface operations {
             header?: never;
             path: {
                 noteId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": string;
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    deleteStudyContent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                studyContentId: number;
             };
             cookie?: never;
         };

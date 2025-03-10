@@ -54,6 +54,8 @@ public class Member extends BaseEntity{
 
         List<String> authorities = new ArrayList<>();
 
+        authorities.add("ROLE_USER");
+
         if(isAdmin()) {
             authorities.add("ROLE_ADMIN");
         }

@@ -84,7 +84,13 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        rq.setLogin(actor);
+        Member freshActor = memberService.findById(actor.getId()).orElse(null);
+        if (freshActor != null) {
+            rq.setLogin(freshActor);
+        } else {
+            rq.setLogin(actor);
+        }
+
         filterChain.doFilter(request, response);
     }
 }

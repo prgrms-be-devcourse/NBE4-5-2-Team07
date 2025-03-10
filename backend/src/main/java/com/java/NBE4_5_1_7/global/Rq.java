@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.global;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.member.entity.Role;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 import com.java.NBE4_5_1_7.global.exception.ServiceException;
 import com.java.NBE4_5_1_7.global.security.SecurityUser;
@@ -27,9 +28,13 @@ public class Rq {
     private final MemberService memberService;
 
     public void setLogin(Member actor) {
+        // DB에서 최신 정보를 가져와 권한 정보 갱신
+        Member freshActor = memberService.findById(actor.getId())
+                .orElseThrow(() -> new ServiceException("401-3", "사용자 정보를 찾을 수 없습니다"));
 
         // 유저 정보 생성
-        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), actor.getNickname(), actor.getAuthorities());
+        UserDetails user = new SecurityUser(freshActor.getId(), freshActor.getUsername(),
+                freshActor.getNickname(), freshActor.getAuthorities());
 
         // 인증 정보 저장소
         SecurityContextHolder.getContext().setAuthentication(
@@ -46,17 +51,13 @@ public class Rq {
 
         Object principal = authentication.getPrincipal();
 
-        if (!(principal instanceof OAuth2User)) {
-            throw new ServiceException("401-3", "OAuth2 인증이 필요합니다");
+        if (principal instanceof SecurityUser) {
+            SecurityUser user = (SecurityUser) principal;
+            return memberService.findById(user.getId())
+                    .orElseThrow(() -> new ServiceException("401-3", "인증 정보가 올바르지 않습니다"));
         }
 
-        SecurityUser user = (SecurityUser) principal;
-
-        return Member.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .nickname(user.getNickname())
-                .build();
+        throw new ServiceException("401-3", "인증 정보가 올바르지 않습니다");
     }
 
     public String getValueFromCookie(String name) {
