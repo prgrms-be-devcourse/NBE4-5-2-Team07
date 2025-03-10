@@ -1,18 +1,20 @@
 package com.java.NBE4_5_1_7.global.dataInit;
 
-import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
-import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
-import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
-import com.opencsv.CSVReader;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.java.NBE4_5_1_7.domain.study.entity.FirstCategory;
+import com.java.NBE4_5_1_7.domain.study.entity.StudyContent;
+import com.java.NBE4_5_1_7.domain.study.repository.StudyContentRepository;
+import com.opencsv.CSVReader;
+
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

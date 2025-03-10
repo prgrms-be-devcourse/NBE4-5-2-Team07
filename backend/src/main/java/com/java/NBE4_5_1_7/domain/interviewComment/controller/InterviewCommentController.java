@@ -32,6 +32,7 @@ public class InterviewCommentController {
 	private final InterviewCommentService interviewCommentService;
 	private final MemberService memberService;
 
+	/// 댓글 생성
 	@PostMapping
 	public ResponseEntity<MyPageInterviewCommentResponseDto> createComment(
 		@RequestBody InterviewCommentRequestDto newDto) {

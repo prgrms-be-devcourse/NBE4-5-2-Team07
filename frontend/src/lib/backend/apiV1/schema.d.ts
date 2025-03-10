@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/V1/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAllChatRooms"];
+        put?: never;
+        post: operations["addChatRoom"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/studyMemo/{studyMemoId}": {
         parameters: {
             query?: never;
@@ -516,6 +532,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/V1/chat/{roomId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getChatRoom"];
+        put?: never;
+        post?: never;
+        delete: operations["deleteChatRoom"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/": {
         parameters: {
             query?: never;
@@ -661,6 +693,15 @@ export interface components {
             role?: string;
             content?: string;
         };
+        ChatRoomRequestDto: {
+            /** Format: int64 */
+            roomId?: number;
+            message?: string;
+        };
+        ChatRoomResponseDto: {
+            /** Format: int64 */
+            roomId?: number;
+        };
         StudyMemoRequestDto: {
             /** Format: int64 */
             memoId?: number;
@@ -747,6 +788,18 @@ export interface components {
             /** Format: int64 */
             interviewContentId?: number;
             public?: boolean;
+        };
+        ChatMessage: {
+            /** Format: int64 */
+            id?: number;
+            message?: string;
+            /** Format: date-time */
+            sendAt?: string;
+        };
+        ChatMessageResponseDto: {
+            /** Format: int64 */
+            roomId?: number;
+            chatMessages?: components["schemas"]["ChatMessage"][];
         };
         Empty: Record<string, never>;
         RsDataEmpty: {
@@ -1237,6 +1290,68 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getAllChatRooms: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChatRoomResponseDto"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    addChatRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatRoomRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChatRoomResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -1974,6 +2089,68 @@ export interface operations {
             };
         };
     };
+    getChatRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roomId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ChatMessageResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    deleteChatRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roomId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
     home: {
         parameters: {
             query?: never;
@@ -2036,6 +2213,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
+            path: {
+                noteId: number;
+            };
             path: {
                 noteId: number;
             };
