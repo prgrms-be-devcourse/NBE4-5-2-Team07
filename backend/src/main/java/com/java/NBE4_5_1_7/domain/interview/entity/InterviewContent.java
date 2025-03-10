@@ -39,4 +39,13 @@ public class InterviewContent {
 
     @OneToMany(mappedBy = "interviewContent", cascade = CascadeType.ALL)
     private List<InterviewContentBookmark> bookmarks = new ArrayList<>();
+
+    public Long getHeadId() {
+        return head_id;
+    }
+
+    public void disconnectTail() {
+        this.tail_id = null;
+        this.hasTail = false;
+    }
 }

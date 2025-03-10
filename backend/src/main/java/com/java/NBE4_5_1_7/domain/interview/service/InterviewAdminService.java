@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -135,9 +134,17 @@ public class InterviewAdminService {
         InterviewContent content = interviewContentAdminRepository.findById(interviewContentId)
                 .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
 
+        Long headId = content.getHeadId();
         List<InterviewContent> relatedQuestions = getTailContents(content.getInterview_content_id());
 
-        // 모든 연관된 질문 삭제
+        if (headId != null) {
+            InterviewContent headQuestion = interviewContentAdminRepository.findById(headId).orElse(null);
+            if (headQuestion != null) {
+                headQuestion.disconnectTail();
+                interviewContentAdminRepository.save(headQuestion);
+            }
+        }
+
         interviewContentAdminRepository.deleteAll(relatedQuestions);
         interviewContentAdminRepository.delete(content);
     }
