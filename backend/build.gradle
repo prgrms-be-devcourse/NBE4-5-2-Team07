@@ -60,8 +60,9 @@ dependencies {
 	implementation 'org.redisson:redisson-spring-boot-starter:3.16.3'
 
 	// chat
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.data:spring-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
 }
 
 tasks.named('test') {
