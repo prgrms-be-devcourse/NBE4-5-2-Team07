@@ -21,4 +21,8 @@ public class StudyMemoLikeService {
         StudyMemo studyMemo = studyMemoRepository.findById(studyMemoId).orElse(null);
         studyMemoLikeRepository.save(new StudyMemoLike(member, studyMemo));
     }
+
+    public void deleteLike(Long studyMemoId) {
+        studyMemoLikeRepository.deleteById(Math.toIntExact(studyMemoId));
+    }
 }
