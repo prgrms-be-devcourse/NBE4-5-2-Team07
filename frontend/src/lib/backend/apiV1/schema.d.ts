@@ -27,10 +27,50 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * 학습 콘텐츠 상세 조회
+         * @description 지정된 ID의 학습 콘텐츠 정보를 조회합니다.
+         */
         get: operations["getStudyContentById"];
+        /**
+         * 학습 콘텐츠 수정
+         * @description 지정된 ID의 학습 콘텐츠를 수정합니다.
+         */
         put: operations["updateStudyContent_1"];
         post?: never;
+        /**
+         * 학습 콘텐츠 삭제
+         * @description 지정된 ID의 학습 콘텐츠를 삭제합니다.
+         */
         delete: operations["deleteStudyContent"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/interview/{interviewContentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 면접 질문 ID 조회
+         * @description 면접 질문 ID를 이용하여 해당 데이터를 조회합니다.
+         */
+        get: operations["getInterviewContentById"];
+        /**
+         * 특정 면접 질문 수정
+         * @description 면접 질문 ID를 기준으로 카테고리, 키워드, 질문, 모범 답안을 수정합니다.
+         */
+        put: operations["updateInterviewContent"];
+        post?: never;
+        /**
+         * 특정 면접 질문 삭제
+         * @description 면접 질문 ID를 기준으로 해당 질문과 모든 꼬리 질문을 삭제합니다.
+         */
+        delete: operations["deleteInterviewContent"];
         options?: never;
         head?: never;
         patch?: never;
@@ -132,6 +172,53 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/study": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 학습 콘텐츠 등록
+         * @description     새로운 학습 콘텐츠를 등록합니다.
+         *         - `firstCategory`는 기존에 존재하는 카테고리 중에서만 선택 가능합니다.
+         *         - `secondCategory`, `title`, `body`는 빈 문자열 또는 `null`일 수 없습니다.
+         *
+         */
+        post: operations["createStudyContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/interview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * 면접 질문 등록
+         * @description 새로운 면접 질문을 등록합니다. 기존 질문의 꼬리 질문으로 추가할 수도 있습니다.
+         *
+         *     - `headId`가 `null`이면 새로운 머리 질문이 됩니다.
+         *     - `headId`가 존재하면, 해당 질문의 마지막 질문인지(`has_tail = 0`) 확인 후 꼬리 질문으로 추가합니다.
+         *
+         */
+        post: operations["createInterviewContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/interview/start": {
         parameters: {
             query?: never;
@@ -174,22 +261,6 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["evaluateInterview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/V1/chat": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getAllChatRooms"];
-        put?: never;
-        post: operations["addChatRoom"];
         delete?: never;
         options?: never;
         head?: never;
@@ -491,6 +562,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * 첫 번째 카테고리별 학습 콘텐츠 조회
+         * @description 지정된 첫 번째 카테고리에 속하는 학습 콘텐츠를 페이징하여 조회합니다.
+         */
         get: operations["getPagedStudyContentsByFirstCategory"];
         put?: never;
         post?: never;
@@ -507,6 +582,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * 첫 번째 + 두 번째 카테고리별 학습 콘텐츠 조회
+         * @description 지정된 첫 번째 및 두 번째 카테고리에 속하는 학습 콘텐츠를 페이징하여 조회합니다.
+         */
         get: operations["getPagedStudyContentsByCategories"];
         put?: never;
         post?: never;
@@ -523,6 +602,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /**
+         * 모든 카테고리 조회
+         * @description 첫 번째 및 두 번째 카테고리 목록을 조회합니다.
+         */
         get: operations["getAllCategory_1"];
         put?: never;
         post?: never;
@@ -532,17 +615,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/V1/chat/{roomId}": {
+    "/api/v1/admin/interview/{interviewContentId}/related": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getChatRoom"];
+        /**
+         * 연관된 면접 질문 조회
+         * @description 특정 면접 질문 ID를 기준으로 관련된 모든 꼬리 질문을 조회합니다.
+         */
+        get: operations["getRelatedInterviewContents"];
         put?: never;
         post?: never;
-        delete: operations["deleteChatRoom"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/interview/category/{category}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 카테고리의 모든 질문 조회
+         * @description 선택한 카테고리에 속하는 모든 면접 질문 데이터를 조회합니다.
+         */
+        get: operations["getInterviewsByCategory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/interview/category/{category}/{keyword}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 특정 카테고리의 키워드에 해당하는 모든 질문 조회
+         * @description 선택한 카테고리 내에서 특정 키워드를 포함하는 면접 질문을 조회합니다.
+         */
+        get: operations["getInterviewsByCategoryAndKeyword"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/interview/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 카테고리별 키워드 조회
+         * @description 각 카테고리 내 키워드 목록을 조회합니다.
+         */
+        get: operations["getCategoryKeywords"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -627,6 +774,36 @@ export interface components {
             secondCategory?: string;
             updateContent?: string;
         };
+        InterviewContentAdminRequestDto: {
+            /** Format: int64 */
+            headId?: number;
+            /** Format: int64 */
+            tailId?: number;
+            hasTail?: boolean;
+            keyword?: string;
+            /** @enum {string} */
+            category?: "DATABASE" | "NETWORK" | "OperatingSystem" | "SPRING";
+            question?: string;
+            modelAnswer?: string;
+            head?: boolean;
+        };
+        InterviewContentAdminResponseDto: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            headId?: number;
+            /** Format: int64 */
+            tailId?: number;
+            hasTail?: boolean;
+            keyword?: string;
+            /** @enum {string} */
+            category?: "DATABASE" | "NETWORK" | "OperatingSystem" | "SPRING";
+            question?: string;
+            modelAnswer?: string;
+            /** Format: int64 */
+            likeCount?: number;
+            head?: boolean;
+        };
         RsDataString: {
             code: string;
             msg: string;
@@ -679,6 +856,36 @@ export interface components {
             modelAnswer?: string;
             public?: boolean;
         };
+        StudyContentCreateRequestDto: {
+            /**
+             * @description 첫 번째 카테고리 (기존에 존재하는 카테고리 중에서 선택)
+             * @example Database
+             */
+            firstCategory?: string;
+            /**
+             * @description 두 번째 카테고리
+             * @example SQL
+             */
+            secondCategory?: string;
+            /**
+             * @description 제목
+             * @example 데이터베이스의 기본 개념
+             */
+            title?: string;
+            /**
+             * @description 내용
+             * @example 데이터베이스는 데이터를 효율적으로 저장, 검색, 관리할 수 있도록 설계된 구조입니다.
+             */
+            body?: string;
+        };
+        StudyContentDetailDto: {
+            /** Format: int64 */
+            id?: number;
+            title?: string;
+            body?: string;
+            firstCategory?: string;
+            secondCategory?: string;
+        };
         InterviewStartDto: {
             interviewType?: string;
         };
@@ -692,15 +899,6 @@ export interface components {
         Message: {
             role?: string;
             content?: string;
-        };
-        ChatRoomRequestDto: {
-            /** Format: int64 */
-            roomId?: number;
-            message?: string;
-        };
-        ChatRoomResponseDto: {
-            /** Format: int64 */
-            roomId?: number;
         };
         StudyMemoRequestDto: {
             /** Format: int64 */
@@ -740,46 +938,38 @@ export interface components {
             answer?: string;
         };
         PageStudyContentDetailDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
-            first?: boolean;
-            last?: boolean;
-            /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int64 */
+            totalElements?: number;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         PageableObject: {
-            paged?: boolean;
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
             /** Format: int32 */
             pageSize?: number;
             /** Format: int32 */
             pageNumber?: number;
+            paged?: boolean;
             unpaged?: boolean;
-            /** Format: int64 */
-            offset?: number;
-            sort?: components["schemas"]["SortObject"];
         };
         SortObject: {
+            empty?: boolean;
             sorted?: boolean;
             unsorted?: boolean;
-            empty?: boolean;
-        };
-        StudyContentDetailDto: {
-            /** Format: int64 */
-            id?: number;
-            title?: string;
-            body?: string;
-            firstCategory?: string;
-            secondCategory?: string;
         };
         InterviewCommentResponseDto: {
             /** Format: int64 */
@@ -789,17 +979,23 @@ export interface components {
             interviewContentId?: number;
             public?: boolean;
         };
-        ChatMessage: {
+        PageInterviewContentAdminResponseDto: {
+            /** Format: int32 */
+            totalPages?: number;
             /** Format: int64 */
-            id?: number;
-            message?: string;
-            /** Format: date-time */
-            sendAt?: string;
-        };
-        ChatMessageResponseDto: {
-            /** Format: int64 */
-            roomId?: number;
-            chatMessages?: components["schemas"]["ChatMessage"][];
+            totalElements?: number;
+            /** Format: int32 */
+            size?: number;
+            content?: components["schemas"]["InterviewContentAdminResponseDto"][];
+            /** Format: int32 */
+            number?: number;
+            sort?: components["schemas"]["SortObject"];
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            empty?: boolean;
         };
         Empty: Record<string, never>;
         RsDataEmpty: {
@@ -936,6 +1132,105 @@ export interface operations {
                 content: {
                     "*/*": string;
                 };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getInterviewContentById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description 조회할 면접 질문 ID
+                 * @example 1
+                 */
+                interviewContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InterviewContentAdminResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    updateInterviewContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interviewContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InterviewContentAdminRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InterviewContentAdminResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    deleteInterviewContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                interviewContentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Internal Server Error */
             500: {
@@ -1204,6 +1499,72 @@ export interface operations {
             };
         };
     };
+    createStudyContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudyContentCreateRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StudyContentDetailDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    createInterviewContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InterviewContentAdminRequestDto"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InterviewContentAdminResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
     startInterview: {
         parameters: {
             query?: never;
@@ -1290,68 +1651,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    getAllChatRooms: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ChatRoomResponseDto"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["RsDataVoid"];
-                };
-            };
-        };
-    };
-    addChatRoom: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChatRoomRequestDto"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ChatRoomResponseDto"];
                 };
             };
             /** @description Internal Server Error */
@@ -2089,12 +2388,16 @@ export interface operations {
             };
         };
     };
-    getChatRoom: {
+    getRelatedInterviewContents: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                roomId: number;
+                /**
+                 * @description 조회할 면접 질문 ID
+                 * @example 1
+                 */
+                interviewContentId: number;
             };
             cookie?: never;
         };
@@ -2106,7 +2409,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ChatMessageResponseDto"];
+                    "*/*": components["schemas"]["InterviewContentAdminResponseDto"][];
                 };
             };
             /** @description Internal Server Error */
@@ -2120,12 +2423,19 @@ export interface operations {
             };
         };
     };
-    deleteChatRoom: {
+    getInterviewsByCategory: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                size?: number;
+            };
             header?: never;
             path: {
-                roomId: number;
+                /**
+                 * @description 조회할 카테고리
+                 * @example DATABASE
+                 */
+                category: "DATABASE" | "NETWORK" | "OperatingSystem" | "SPRING";
             };
             cookie?: never;
         };
@@ -2137,7 +2447,81 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": string;
+                    "*/*": components["schemas"]["PageInterviewContentAdminResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getInterviewsByCategoryAndKeyword: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description 조회할 카테고리
+                 * @example DATABASE
+                 */
+                category: "DATABASE" | "NETWORK" | "OperatingSystem" | "SPRING";
+                /**
+                 * @description 조회할 키워드
+                 * @example sequence
+                 */
+                keyword: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageInterviewContentAdminResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getCategoryKeywords: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: string[];
+                    };
                 };
             };
             /** @description Internal Server Error */
@@ -2213,9 +2597,6 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                noteId: number;
-            };
             path: {
                 noteId: number;
             };
