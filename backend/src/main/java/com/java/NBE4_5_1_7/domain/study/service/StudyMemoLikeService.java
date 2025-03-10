@@ -25,4 +25,8 @@ public class StudyMemoLikeService {
     public void deleteLike(Long studyMemoId) {
         studyMemoLikeRepository.deleteById(Math.toIntExact(studyMemoId));
     }
+
+    public int getLikeCount(Long studyMemoId) {
+        return studyMemoLikeRepository.countByStudyMemoId(studyMemoId);
+    }
 }

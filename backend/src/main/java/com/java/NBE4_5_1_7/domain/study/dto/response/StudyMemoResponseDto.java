@@ -17,10 +17,12 @@ public class StudyMemoResponseDto {
 	private String firstCategory;
 	private String title;
 	private String body;
+	private int likeCount;
 
-	public StudyMemoResponseDto(StudyMemo studyMemo) {
+	public StudyMemoResponseDto(StudyMemo studyMemo, int likeCount) {
 		this.memoId = studyMemo.getId();
 		this.memoContent = studyMemo.getMemoContent();
 		this.studyContentId = studyMemo.getStudyContent().getStudy_content_id();
+		this.likeCount = likeCount;
 	}
 }
