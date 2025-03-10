@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/admin/interview")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class InterviewAdminController {
 
     private final InterviewAdminService interviewAdminService;
