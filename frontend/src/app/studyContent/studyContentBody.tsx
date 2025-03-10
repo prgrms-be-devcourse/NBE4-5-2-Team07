@@ -63,6 +63,10 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
     const handleMemoChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setMemo(event.target.value);
     };
+    const handleGetMemoList = async () => {
+        router.push(`studyContent/memoList/${selectedContentId}`);
+    };
+
     // 체크박스 상태 변경 핸들러
     const handlePublishedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsPublished(event.target.checked);
@@ -86,7 +90,8 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
             }
             const data = await response.json();
             if (data.memoContent) {
-                setIsPublished(data.isPublished);
+                // 가져온 데이터에서 isPublished가 true이면 체크된 상태로 설정
+                setIsPublished(data.isPublished ?? true);
                 setMemo(data.memoContent); // 가져온 메모 내용으로 상태 업데이트
             } else {
                 alert("메모가 없습니다.");
@@ -110,7 +115,7 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                     },
                     body: JSON.stringify({
                         content: memo,
-                        isPublished : isPublished,
+                        isPublished: isPublished,
                     }),
                 }
             );
@@ -204,11 +209,14 @@ const StudyContentBody = ({selectedCategory}: { selectedCategory: any }) => {
                     onChange={handleMemoChange}
                 />
                 <div className={styles.memoBtnBox}>
-                <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
+                    <button onClick={handleMemoCreate} className={styles.memoSaveBtn}>
                         저장
                     </button>
                     <button onClick={handleMemoCheck} className={styles.memoSaveBtn}>
                         나의 메모 조회
+                    </button>
+                    <button onClick={handleGetMemoList} className={styles.memoSaveBtn}>
+                        메모 참고하기
                     </button>
                 </div>
             </div>

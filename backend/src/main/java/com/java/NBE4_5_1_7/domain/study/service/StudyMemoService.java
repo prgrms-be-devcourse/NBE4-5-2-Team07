@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class StudyMemoService {
     private final StudyMemoRepository studyMemoRepository;
     private final StudyContentRepository studyContentRepository;
-    private final StudyMemoLikeService  studyMemoLikeService;
+    private final StudyMemoLikeService studyMemoLikeService;
     private final MemberService memberService;
 
     // 멤버, 학습 컨텐츠 ID, 메모 내용 저장, 중복 작성 시 수정하게끔 변경
@@ -108,7 +108,7 @@ public class StudyMemoService {
         List<StudyMemo> studyMemo = studyMemoRepository.findByStudyContent(studyContent);
         int likeCount = studyMemoLikeService.getLikeCount(studyContentId);
         return studyMemo.stream()
-                .map(memo -> new StudyMemoResponseDto(memo,likeCount))
+                .map(memo -> new StudyMemoResponseDto(memo, likeCount))
                 .toList();
     }
 }
