@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface StudyMemoLikeRepository extends JpaRepository<StudyMemoLike, Integer> {
-    @Query("SELECT COUNT(s) FROM StudyMemoLike s WHERE s.studyMemo.id = :studyMemoId AND s.studyMemo.isPublished = 1")
+    @Query("SELECT COUNT(s) FROM StudyMemoLike s WHERE s.studyMemo.id = :studyMemoId AND s.studyMemo.isPublished = true")
     int countByStudyMemoId(Long studyMemoId);
 }
