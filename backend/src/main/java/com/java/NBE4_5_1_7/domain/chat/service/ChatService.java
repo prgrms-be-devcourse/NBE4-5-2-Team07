@@ -1,6 +1,5 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ public class ChatService {
 	private final Map<Long, Long> messageTimestamp = new HashMap<>();
 
 	/// 메시지 저장
-	public void saveMessage(Long roomId, String sender, String content, LocalDateTime timestamp) {
+	public void saveMessage(Long roomId, String sender, String content, String timestamp) {
 		Message message = new Message(roomId, sender, content, timestamp);
 
 		messageStorage.putIfAbsent(roomId, new ArrayList<>());

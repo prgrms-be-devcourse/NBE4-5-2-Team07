@@ -1,7 +1,5 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,7 @@ public class ChatPublisher {
 	}
 
 	/// 메시지를 관리자가 받도록 전달하고, 24시간 뒤 삭제 설정
-	public void sendMessageToAdmin(Long roomId, String message, LocalDateTime timestamp) {
+	public void sendMessageToAdmin(Long roomId, String message, String timestamp) {
 		chatService.saveMessage(roomId, "ADMIN", message, timestamp);
 		messagingTemplate.convertAndSend("/topic/admin/chat/" + roomId, message);
 	}
