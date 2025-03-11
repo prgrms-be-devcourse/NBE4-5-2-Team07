@@ -1,9 +1,14 @@
 package com.java.NBE4_5_1_7.domain.community.post.service;
 
+import com.java.NBE4_5_1_7.domain.community.comment.dto.AddCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.community.comment.dto.CommentResponseDto;
+import com.java.NBE4_5_1_7.domain.community.comment.dto.EditCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.community.comment.entity.Comment;
+import com.java.NBE4_5_1_7.domain.community.comment.repository.CommentRepository;
 import com.java.NBE4_5_1_7.domain.community.like.repository.PostLikeRepository;
 import com.java.NBE4_5_1_7.domain.community.post.dto.AddPostRequestDto;
+import com.java.NBE4_5_1_7.domain.community.post.dto.EditPostRequestDto;
+import com.java.NBE4_5_1_7.domain.community.post.dto.PostListResponseDto;
 import com.java.NBE4_5_1_7.domain.community.post.dto.PostResponseDto;
 import com.java.NBE4_5_1_7.domain.community.post.entity.Post;
 import com.java.NBE4_5_1_7.domain.community.post.repository.PostRepository;
@@ -11,10 +16,13 @@ import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -24,6 +32,20 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PostLikeRepository likeRepository;
+    private final CommentRepository commentRepository;
+
+    public PostResponseDto showPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        return PostResponseDto.builder()
+                .id(postId)
+                .authorName(maskLastCharacter(post.getAuthor().getNickname()))
+                .postTime(post.getCreatedAt())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .like(likeRepository.countByPostPostId(postId))
+                .comments(getComments(post))
+                .build();
+    }
 
     public PostResponseDto addPost(Long memberId, AddPostRequestDto postRequestDto) {
         Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
@@ -45,14 +67,183 @@ public class PostService {
                 .build();
     }
 
+    public PostResponseDto editPost(Long memberId, EditPostRequestDto editPostRequestDto) {
+        Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+
+        Post post = postRepository.findById(editPostRequestDto.getPostId()).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+
+        if (!post.getAuthor().getId().equals(author.getId())) {
+            throw new RuntimeException("자신이 작성한 게시글만 수정이 가능합니다.");
+        }
+
+        post.update(editPostRequestDto);
+
+        return PostResponseDto.builder()
+                .id(post.getPostId())
+                .authorName(maskLastCharacter(author.getNickname()))
+                .postTime(post.getUpdatedAt())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .like(likeRepository.countByPostPostId(post.getPostId()))
+                .comments(getComments(post))
+                .build();
+    }
+
+    public Long deletePost(Long memberId, Long postId) {
+        Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+
+        if (!post.getAuthor().getId().equals(author.getId())) {
+            throw new RuntimeException("자신이 작성한 게시글만 수정이 가능합니다.");
+        }
+
+        postRepository.deleteById(postId);
+        return postId;
+    }
+
+    public Page<PostListResponseDto> getPostList(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllPostList(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+
+
+    // 좋아요 많은 순
+    public Page<PostListResponseDto> getPostLikeDesc(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllOrderByLikesDesc(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+    // 좋아요 적은 순
+    public Page<PostListResponseDto> getPostLikeAsc(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllOrderByLikesAsc(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+    // 댓글 많은 순
+    public Page<PostListResponseDto> getPostCommentDesc(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllOrderByCommentsDesc(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+    // 댓글 적은 순
+    public Page<PostListResponseDto> getPostCommentAsc(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllOrderByCommentsAsc(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+    // 최근 작성 글
+    public Page<PostListResponseDto> getPostCreatedAtDesc(int page, int size) {
+        Page<PostListResponseDto> result = postRepository.findAllOrderByCreatedAtDesc(PageRequest.of(page, size));
+        return result.map(dto -> {
+            dto.setAuthor(maskLastCharacter(dto.getAuthor()));
+            return dto;
+        });
+    }
+
+    public CommentResponseDto addComment(Long memberId, AddCommentRequestDto dto) {
+        // 게시글 조회
+        Post post = postRepository.findById(dto.getArticleId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 작성자(Member) 조회
+        Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤머를 찾을 수 없습니다."));
+
+        // 대댓글일 경우 부모 댓글 조회 (없으면 null)
+        Comment parent = null;
+        if (dto.getParentId() != null) {
+            parent = commentRepository.findById(dto.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+        }
+
+        Comment comment = Comment.builder()
+                .comment(dto.getComment())
+                .post(post)
+                .author(author)
+                .parent(parent)
+                .build();
+
+        Comment saved = commentRepository.save(comment);
+
+        return new CommentResponseDto(
+                post.getPostId(),
+                saved.getId(),
+                saved.getAuthor().getNickname(), // 또는 author.getNickname() 등 실제 필드에 맞게 수정
+                saved.getCreatedDate(),
+                saved.getComment()
+        );
+    }
+
+    public CommentResponseDto editComment(Long memberId, EditCommentRequestDto dto) {
+        Comment comment = commentRepository.findById(dto.getCommentId())
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        // 본인 작성 댓글이 아닌 경우 수정 불가 처리
+        if (!comment.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("Not authorized to edit comment");
+        }
+
+        comment.update(dto.getComment());
+        Comment updated = commentRepository.save(comment);
+
+        return new CommentResponseDto(
+                comment.getPost().getPostId(),
+                updated.getId(),
+                updated.getAuthor().getUsername(),
+                updated.getCreatedDate(),
+                updated.getComment()
+        );
+    }
+
+    public void deleteComment(Long memberId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        // 본인 작성 댓글이 아닌 경우 삭제 불가 처리
+        if (!comment.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("Not authorized to delete comment");
+        }
+
+        commentRepository.delete(comment);
+    }
+
+    public List<CommentResponseDto> showReComments(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        List<Comment> reComments = comment.getChildren();
+        return reComments.stream().map(reComment -> new CommentResponseDto(
+                comment.getPost().getPostId(),
+                reComment.getId(),
+                maskLastCharacter(reComment.getAuthor().getNickname()),
+                reComment.getCreatedDate(),
+                reComment.getComment()
+        )).collect(Collectors.toList());
+    }
+
+
+
     public List<CommentResponseDto> getComments(Post post) {
         if (post == null || post.getComments() == null) {
             return Collections.emptyList();
         }
 
         return post.getComments().stream()
+                .filter(comment -> comment.getParent() == null) // 기본 댓글만 필터링
                 .map(comment -> new CommentResponseDto(
                         comment.getPost().getPostId(),           // 게시글 ID
+                        comment.getId(),
                         maskLastCharacter(comment.getAuthor().getNickname()),                // 댓글 작성자 이름
                         comment.getCreatedDate(),                     // 댓글 작성 시간
                         comment.getComment()                          // 댓글 내용

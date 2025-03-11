@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.community.post.entity;
 
 import com.java.NBE4_5_1_7.domain.community.comment.entity.Comment;
+import com.java.NBE4_5_1_7.domain.community.post.dto.EditPostRequestDto;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +48,9 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("id asc") // 댓글 정렬
     private List<Comment> comments;
+
+    public void update(EditPostRequestDto editPostRequestDto) {
+        this.title = editPostRequestDto.getTitle();
+        this.content = editPostRequestDto.getContent();
+    }
 }
