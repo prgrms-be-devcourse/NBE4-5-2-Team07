@@ -26,7 +26,7 @@ public class DevInitData {
 
     @Bean
     public ApplicationRunner devApplicationRunner() {
-        return _ -> {
+        return event -> {
             generateApiJsonFile();
             executeCommand();
         };

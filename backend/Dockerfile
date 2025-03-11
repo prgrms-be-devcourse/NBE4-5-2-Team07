@@ -1,3 +1,3 @@
-FROM openjdk:23-jdk-slim
+FROM amazoncorretto:21-jdk-slim
 ADD /build/libs/*.jar app.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

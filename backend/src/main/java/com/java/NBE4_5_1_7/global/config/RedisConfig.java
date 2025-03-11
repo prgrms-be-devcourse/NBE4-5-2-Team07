@@ -25,7 +25,7 @@ public class RedisConfig {
 		container.setConnectionFactory(connectionFactory);
 
 		// 채널 패턴에 맞는 메시지를 수신하면, 채팅 메시지를 처리하도록 설정
-		container.addMessageListener((message, _) -> {
+		container.addMessageListener((message, pattern) -> {
 			String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
 			String messageContent = new String(message.getBody(), StandardCharsets.UTF_8);
 			chatSubscriber.receiveMessage(messageContent, channel);
