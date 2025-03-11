@@ -15,8 +15,8 @@ public class ChatPublisher {
 	}
 
 	/// 메시지를 관리자가 받도록 전달하고, 24시간 뒤 삭제 설정
-	public void sendMessageToAdmin(Long roomId, String message) {
-		chatService.saveMessage(roomId, "ADMIN", message);
+	public void sendMessageToAdmin(Long roomId, String message, String timestamp) {
+		chatService.saveMessage(roomId, "ADMIN", message, timestamp);
 		messagingTemplate.convertAndSend("/topic/admin/chat/" + roomId, message);
 	}
 }
