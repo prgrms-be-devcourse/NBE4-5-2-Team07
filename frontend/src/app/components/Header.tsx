@@ -100,16 +100,18 @@ export default function Header() {
                     CS 전공지식 학습하기
                   </Link>
 
-                  {/* Interview Dropdown */}
-                  <div className="relative flex items-center h-full">
+                  {/* Interview Dropdown - 문제 수정한 부분 */}
+                  <div
+                    className="relative flex items-center h-full"
+                    onMouseEnter={() => setInterviewDropdownOpen(true)}
+                    onMouseLeave={() => setInterviewDropdownOpen(false)}
+                  >
                     <button
                       className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${
                         pathname.startsWith("/interview")
                           ? "text-white bg-indigo-600 dark:bg-indigo-500"
                           : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
-                      onMouseEnter={() => setInterviewDropdownOpen(true)}
-                      onMouseLeave={() => setInterviewDropdownOpen(false)}
                       onClick={() => router.push("/interview/all")}
                     >
                       기술 면접 대비하기
@@ -128,13 +130,9 @@ export default function Header() {
                         ></path>
                       </svg>
                     </button>
-                    {/* Dropdown Menu */}
+                    {/* Dropdown Menu - 간격 제거하고 부모에 이벤트 위임 */}
                     {interviewDropdownOpen && (
-                      <div
-                        className="absolute left-0 top-full mt-1 w-60 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10"
-                        onMouseEnter={() => setInterviewDropdownOpen(true)}
-                        onMouseLeave={() => setInterviewDropdownOpen(false)}
-                      >
+                      <div className="absolute left-0 top-full w-60 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
                         <div
                           className="py-1"
                           role="menu"
