@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import styles from "../styles/mypage.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { components } from "@/lib/backend/apiV1/schema";
@@ -18,8 +17,26 @@ interface MemoData {
   [category: string]: Memo[];
 }
 
+interface PostListResponseDto {
+  postId: number;
+  title: string;
+  author: string;
+  createdAt: string;
+}
+
+interface PostResponseDto {
+  id: number;
+  authorName: string;
+  postTime: string;
+  title: string;
+  content: string;
+  like: number;
+  comments: any[];
+}
+
 const ClientPage = () => {
   const [showNoteList, setShowNoteList] = useState(false);
+  const [showPostList, setShowPostList] = useState(false);
   const [memoDropdownOpen, setMemoDropdownOpen] = useState(false);
   const [answerDropdownOpen, setAnswerDropdownOpen] = useState(false);
   const [selectedMemoCategory, setSelectedMemoCategory] = useState("");
@@ -35,6 +52,14 @@ const ClientPage = () => {
   const [memoData, setMemoData] = useState<MemoData>({});
   const [updatedMemo, setUpdatedMemo] = useState("");
 
+  // New states for My Posts functionality
+  const [myPosts, setMyPosts] = useState<PostListResponseDto[]>([]);
+  const [selectedPostItem, setSelectedPostItem] =
+    useState<PostResponseDto | null>(null);
+  const [editingPost, setEditingPost] = useState(false);
+  const [editPostTitle, setEditPostTitle] = useState("");
+  const [editPostContent, setEditPostContent] = useState("");
+
   const memoCategory = [
     "컴퓨터구조",
     "자료구조",
@@ -46,9 +71,7 @@ const ClientPage = () => {
   ];
   const answerCategory = ["데이터베이스", "네트워크", "운영체제", "스프링"];
 
-  {
-    /* 노트 조회 API */
-  }
+  // API functions remain unchanged
   const fetchNoteList = async () => {
     try {
       const response = await fetch(`http://localhost:8080/interview/bookmark`, {
@@ -70,9 +93,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 노트 삭제 API */
-  }
   const deleteNote = async () => {
     if (!selectedNoteItem) return;
 
@@ -100,9 +120,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 메모 조회 API */
-  }
   const fetchStudyMemo = async (category: string) => {
     try {
       const response = await fetch(
@@ -135,9 +152,7 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 메모 수정 API */
-  }
+  // 수정 시 백엔드 StudyMemoRequestDto에 맞게 memoId와 memoContent 전송
   const updateMemo = async () => {
     if (!selectedMemoItem) return;
 
@@ -145,8 +160,8 @@ const ClientPage = () => {
     if (!isConfirmed) return;
 
     const updatedDto = {
-      memoContent: updatedMemo,
       memoId: selectedMemoItem.memoId,
+      memoContent: updatedMemo,
     };
 
     try {
@@ -185,9 +200,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 메모 삭제 API */
-  }
   const deleteMemo = async () => {
     if (!selectedMemoItem) return;
 
@@ -223,9 +235,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 기술면접 조회 API */
-  }
   const fetchInterviewComment = async (category: string) => {
     try {
       const response = await fetch(
@@ -251,9 +260,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 기술면접 수정 API */
-  }
   const updateComment = async () => {
     if (!selectedCommentItem) return;
 
@@ -307,9 +313,6 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 기술면접 삭제 API */
-  }
   const deleteComment = async () => {
     if (!selectedCommentItem) return;
 
@@ -346,20 +349,111 @@ const ClientPage = () => {
     }
   };
 
-  {
-    /* 핸들러 */
-  }
+  const fetchMyPosts = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/community/post/my?page=0&size=10`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responseData: PostListResponseDto[] = await response.json();
+      setMyPosts(responseData || []);
+    } catch (error) {
+      console.error("Error fetching my posts: ", error);
+    }
+  };
+
+  const fetchPostDetails = async (postId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/community/article?id=${postId}`,
+        {
+          credentials: "include",
+        }
+      );
+      if (!response.ok)
+        throw new Error("게시글 상세 정보를 불러오는데 실패했습니다.");
+      const data: PostResponseDto = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
+  const handleSavePostEdit = async () => {
+    if (!selectedPostItem) return;
+    const dto = {
+      postId: selectedPostItem.id,
+      title: editPostTitle,
+      content: editPostContent,
+    };
+    try {
+      const response = await fetch(
+        `http://localhost:8080/community/article/edit`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(dto),
+        }
+      );
+      if (!response.ok) throw new Error("게시글 수정에 실패했습니다.");
+      alert("게시글이 수정되었습니다.");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeletePost = async (postId: number) => {
+    const confirmed = window.confirm("해당 게시글을 삭제하시겠습니까?");
+    if (!confirmed) return;
+    try {
+      const response = await fetch(
+        `http://localhost:8080/community/article/delete?postId=${postId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("게시글 삭제에 실패했습니다.");
+      alert("게시글이 삭제되었습니다.");
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Event handlers remain unchanged
   const handleNoteItemSelect = (note: Note) => {
     setSelectedNoteItem(note);
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
+    setSelectedPostItem(null);
   };
 
   const handleShowNoteList = () => {
     if (!showNoteList) {
       setShowNoteList(true);
+      setShowPostList(false);
       setSelectedCommentCategory("");
       setSelectedMemoCategory("");
+      setSelectedCommentItem(null);
+      setSelectedMemoItem(null);
+      setSelectedPostItem(null);
+    }
+  };
+
+  const handleShowPostList = () => {
+    if (!showPostList) {
+      setShowPostList(true);
+      setShowNoteList(false);
+      setSelectedCommentCategory("");
+      setSelectedMemoCategory("");
+      setSelectedNoteItem(null);
       setSelectedCommentItem(null);
       setSelectedMemoItem(null);
     }
@@ -371,7 +465,9 @@ const ClientPage = () => {
     setSelectedNoteItem(null);
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
+    setSelectedPostItem(null);
     setShowNoteList(false);
+    setShowPostList(false);
 
     fetchStudyMemo(category);
   };
@@ -381,7 +477,9 @@ const ClientPage = () => {
     setSelectedMemoCategory("");
     setSelectedCommentItem(null);
     setSelectedMemoItem(null);
+    setSelectedPostItem(null);
     setShowNoteList(false);
+    setShowPostList(false);
 
     fetchInterviewComment(category);
   };
@@ -389,6 +487,7 @@ const ClientPage = () => {
   const handleCommentItemSelect = (comment: Comment) => {
     setSelectedNoteItem(null);
     setSelectedMemoItem(null);
+    setSelectedPostItem(null);
     setSelectedCommentItem(comment);
     setUpdatedComment(comment.comment!!);
     setIsPublic(comment.public!!);
@@ -397,8 +496,43 @@ const ClientPage = () => {
   const handleMemoItemSelect = (memo: Memo) => {
     setSelectedNoteItem(null);
     setSelectedCommentItem(null);
+    setSelectedPostItem(null);
     setSelectedMemoItem(memo);
     setUpdatedMemo(memo.memoContent!!);
+  };
+
+  const handlePostItemSelect = async (postId: number) => {
+    const data = await fetchPostDetails(postId);
+    if (data) {
+      setSelectedNoteItem(null);
+      setSelectedCommentItem(null);
+      setSelectedMemoItem(null);
+      setSelectedPostItem(data);
+      setEditingPost(false);
+    }
+  };
+
+  const handleEditPostClick = async (postId: number) => {
+    const data = await fetchPostDetails(postId);
+    if (data) {
+      setSelectedPostItem(data);
+      setEditPostTitle(data.title);
+      setEditPostContent(data.content);
+      setEditingPost(true);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+    return new Intl.DateTimeFormat("ko", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
   };
 
   useEffect(() => {
@@ -407,12 +541,242 @@ const ClientPage = () => {
     }
   }, [showNoteList]);
 
+  useEffect(() => {
+    if (showPostList) {
+      fetchMyPosts();
+    }
+  }, [showPostList]);
+
+  // Inline CSS for improved UI
+  const styles = {
+    container: {
+      display: "grid",
+      gridTemplateColumns: "280px 350px 1fr",
+      gap: "24px",
+      padding: "32px",
+      width: "1800px",
+      margin: "0 auto",
+      height: "100vh",
+      fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+    },
+    card: {
+      backgroundColor: "#ffffff",
+      borderRadius: "12px",
+      boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+      padding: "20px",
+      height: "800px",
+      overflowY: "auto",
+    },
+    navCard: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "16px",
+      height: "800px",
+    },
+    listCard: {
+      height: "800px",
+      overflowY: "auto",
+    },
+    contentCard: {
+      height: "800px",
+      overflowY: "auto",
+      padding: "30px",
+      minWidth: "800px",
+    },
+    button: {
+      padding: "10px 16px",
+      borderRadius: "6px",
+      border: "none",
+      backgroundColor: "#f5f5f5",
+      color: "#333",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      textAlign: "left" as const,
+    },
+    selectedButton: {
+      backgroundColor: "#3b82f6",
+      color: "white",
+    },
+    dropdownButton: {
+      padding: "10px 16px",
+      borderRadius: "6px",
+      border: "none",
+      backgroundColor: "#f5f5f5",
+      color: "#333",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    dropdownList: {
+      marginLeft: "8px",
+      listStyle: "none",
+      padding: "0",
+    },
+    dropdownItem: {
+      padding: "8px 16px",
+      marginTop: "4px",
+      borderRadius: "4px",
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      backgroundColor: "#f0f0f0",
+    },
+    dropdownItemSelected: {
+      backgroundColor: "#bfdbfe",
+      color: "#1e40af",
+    },
+    listContainer: {
+      listStyle: "none",
+      padding: "0",
+      margin: "0",
+    },
+    listItem: {
+      padding: "12px 16px",
+      borderRadius: "6px",
+      marginBottom: "8px",
+      cursor: "pointer",
+      backgroundColor: "#f5f5f5",
+      transition: "all 0.2s ease",
+      color: "#333",
+    },
+    listItemSelected: {
+      backgroundColor: "#3b82f6",
+      color: "white",
+    },
+    noItems: {
+      textAlign: "center" as const,
+      padding: "20px",
+      color: "#888",
+      fontStyle: "italic",
+    },
+    title: {
+      fontSize: "1.75rem",
+      fontWeight: 600,
+      marginBottom: "20px",
+      color: "#111",
+      lineHeight: "1.3",
+    },
+    subtitle: {
+      fontSize: "1.2rem",
+      fontWeight: 600,
+      marginBottom: "12px",
+      color: "#333",
+    },
+    details: {
+      marginBottom: "20px",
+      lineHeight: "1.6",
+    },
+    meta: {
+      fontSize: "0.9rem",
+      color: "#666",
+      marginBottom: "12px",
+    },
+    formGroup: {
+      marginBottom: "16px",
+    },
+    label: {
+      display: "block",
+      marginBottom: "8px",
+      fontWeight: 500,
+      color: "#333",
+    },
+    input: {
+      width: "100%",
+      padding: "10px",
+      borderRadius: "6px",
+      border: "1px solid #ddd",
+      fontSize: "1rem",
+    },
+    textarea: {
+      width: "100%",
+      padding: "16px",
+      borderRadius: "8px",
+      border: "1px solid #ddd",
+      fontSize: "1rem",
+      resize: "vertical",
+      minHeight: "180px",
+      fontFamily: "inherit",
+      marginBottom: "16px",
+    },
+    checkbox: {
+      marginRight: "8px",
+    },
+    checkboxLabel: {
+      fontSize: "0.9rem",
+      marginBottom: "16px",
+      display: "inline-flex",
+      alignItems: "center",
+    },
+    actionButtons: {
+      display: "flex",
+      gap: "8px",
+      marginTop: "12px",
+    },
+    saveButton: {
+      padding: "8px 16px",
+      borderRadius: "6px",
+      border: "none",
+      backgroundColor: "#3b82f6",
+      color: "white",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+    },
+    updateButton: {
+      padding: "8px 16px",
+      borderRadius: "6px",
+      border: "none",
+      backgroundColor: "#10b981",
+      color: "white",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+    },
+    deleteButton: {
+      padding: "8px 16px",
+      borderRadius: "6px",
+      border: "none",
+      backgroundColor: "#ef4444",
+      color: "white",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+    },
+    cancelButton: {
+      padding: "8px 16px",
+      borderRadius: "6px",
+      border: "1px solid #ddd",
+      backgroundColor: "white",
+      color: "#333",
+      fontWeight: 500,
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+    },
+    contentSection: {
+      marginBottom: "30px",
+      padding: "24px",
+      backgroundColor: "#f9f9f9",
+      borderRadius: "10px",
+      lineHeight: "1.8",
+      minHeight: "300px",
+    },
+    markdownContent: {
+      lineHeight: "1.6",
+    },
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={`${styles.card} ${styles.small}`}>
-        {/* 내 노트 버튼 */}
+    <div style={styles.container}>
+      {/* Navigation Card */}
+      <div style={{ ...styles.card, ...styles.navCard }}>
         <button
-          className={`${styles.btn} ${showNoteList ? styles.selectedBtn : ""}`}
+          style={{
+            ...styles.button,
+            ...(showNoteList ? styles.selectedButton : {}),
+          }}
           onClick={() => {
             handleShowNoteList();
             fetchNoteList();
@@ -421,22 +785,37 @@ const ClientPage = () => {
           내 노트
         </button>
 
-        {/* 학습 메모 드롭다운 */}
         <button
-          className={styles.btn}
+          style={{
+            ...styles.button,
+            ...(showPostList ? styles.selectedButton : {}),
+          }}
+          onClick={() => {
+            handleShowPostList();
+            fetchMyPosts();
+          }}
+        >
+          내 글
+        </button>
+
+        <button
+          style={styles.dropdownButton}
           onClick={() => setMemoDropdownOpen((prevState) => !prevState)}
         >
           작성한 학습 메모 {memoDropdownOpen ? "▲" : "▼"}
         </button>
         {memoDropdownOpen && (
-          <ul className={`${styles.dropdownList} ${styles.small}`}>
+          <ul style={styles.dropdownList}>
             {memoCategory.map((category, index) => (
               <li
                 key={index}
                 onClick={() => handleMemoCategorySelect(category)}
-                className={`${styles.dropdownItem} ${
-                  selectedMemoCategory === category ? styles.selected : ""
-                }`}
+                style={{
+                  ...styles.dropdownItem,
+                  ...(selectedMemoCategory === category
+                    ? styles.dropdownItemSelected
+                    : {}),
+                }}
               >
                 {category}
               </li>
@@ -444,22 +823,24 @@ const ClientPage = () => {
           </ul>
         )}
 
-        {/* 기술 면접 답변 드롭다운 */}
         <button
-          className={styles.btn}
+          style={styles.dropdownButton}
           onClick={() => setAnswerDropdownOpen((prevState) => !prevState)}
         >
           작성한 기술 면접 답변 {answerDropdownOpen ? "▲" : "▼"}
         </button>
         {answerDropdownOpen && (
-          <ul className={`${styles.dropdownList} ${styles.small}`}>
+          <ul style={styles.dropdownList}>
             {answerCategory.map((category, index) => (
               <li
                 key={index}
                 onClick={() => handleCommentCategorySelect(category)}
-                className={`${styles.dropdownItem} ${
-                  selectedCommentCategory === category ? styles.selected : ""
-                }`}
+                style={{
+                  ...styles.dropdownItem,
+                  ...(selectedCommentCategory === category
+                    ? styles.dropdownItemSelected
+                    : {}),
+                }}
               >
                 {category}
               </li>
@@ -467,167 +848,248 @@ const ClientPage = () => {
           </ul>
         )}
       </div>
-      {/* 선택한 카테고리의 아이템 목록 */}
-      <div className={`${styles.card} ${styles.small}`}>
-        <ul>
-          {/* 내 노트 목록 */}
-          {showNoteList ? (
-            notes.length > 0 ? (
-              <ul>
-                {notes.map((note) => (
-                  <li
-                    key={note.contentId}
-                    onClick={() => handleNoteItemSelect(note)}
-                    className={`${styles.listItem} ${
-                      selectedNoteItem?.contentId === note.contentId
-                        ? styles.selected
-                        : ""
-                    }`}
-                  >
-                    {note.question}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.noItems}>항목이 없습니다.</p>
-            )
-          ) : /* 학습 메모 목록 */
-          selectedMemoCategory && memoData[selectedMemoCategory] ? (
-            memoData[selectedMemoCategory].map((memo) => (
+
+      {/* List Card */}
+      <div style={{ ...styles.card, ...styles.listCard }}>
+        {/* 내 노트 목록 */}
+        {showNoteList ? (
+          notes.length > 0 ? (
+            <ul style={styles.listContainer}>
+              {notes.map((note) => (
+                <li
+                  key={note.contentId}
+                  onClick={() => handleNoteItemSelect(note)}
+                  style={{
+                    ...styles.listItem,
+                    ...(selectedNoteItem?.contentId === note.contentId
+                      ? styles.listItemSelected
+                      : {}),
+                  }}
+                >
+                  {note.question}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={styles.noItems}>항목이 없습니다.</p>
+          )
+        ) : showPostList ? (
+          myPosts.length > 0 ? (
+            <ul style={styles.listContainer}>
+              {myPosts.map((post) => (
+                <li
+                  key={post.postId}
+                  onClick={() => handlePostItemSelect(post.postId)}
+                  style={{
+                    ...styles.listItem,
+                    ...(selectedPostItem && selectedPostItem.id === post.postId
+                      ? styles.listItemSelected
+                      : {}),
+                  }}
+                >
+                  {post.title}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={styles.noItems}>작성한 글이 없습니다.</p>
+          )
+        ) : selectedMemoCategory && memoData[selectedMemoCategory] ? (
+          <ul style={styles.listContainer}>
+            {memoData[selectedMemoCategory].map((memo) => (
               <li
                 key={memo.memoId}
                 onClick={() => handleMemoItemSelect(memo)}
-                className={`${styles.listItem} ${
-                  selectedMemoItem?.memoId === memo.memoId
-                    ? styles.selected
-                    : ""
-                }`}
+                style={{
+                  ...styles.listItem,
+                  ...(selectedMemoItem?.memoId === memo.memoId
+                    ? styles.listItemSelected
+                    : {}),
+                }}
               >
                 {memo.title}
               </li>
-            ))
-          ) : /* 기술 면접 답변 목록 */
-          selectedCommentCategory && interviewData[selectedCommentCategory] ? (
-            interviewData[selectedCommentCategory].length > 0 ? (
-              interviewData[selectedCommentCategory].map((comment) => (
+            ))}
+          </ul>
+        ) : selectedCommentCategory &&
+          interviewData[selectedCommentCategory] ? (
+          interviewData[selectedCommentCategory].length > 0 ? (
+            <ul style={styles.listContainer}>
+              {interviewData[selectedCommentCategory].map((comment) => (
                 <li
                   key={comment.commentId}
                   onClick={() => handleCommentItemSelect(comment)}
-                  className={`${styles.listItem} ${
-                    selectedCommentItem?.commentId === comment.commentId
-                      ? styles.selected
-                      : ""
-                  }`}
+                  style={{
+                    ...styles.listItem,
+                    ...(selectedCommentItem?.commentId === comment.commentId
+                      ? styles.listItemSelected
+                      : {}),
+                  }}
                 >
                   {comment.interviewContentTitle}
                 </li>
-              ))
-            ) : (
-              <p className={styles.noItems}>항목이 없습니다.</p>
-            )
+              ))}
+            </ul>
           ) : (
-            <p className={styles.noItems}>항목이 없습니다.</p>
-          )}
-        </ul>
+            <p style={styles.noItems}>항목이 없습니다.</p>
+          )
+        ) : (
+          <p style={styles.noItems}>항목이 없습니다.</p>
+        )}
       </div>
-      {/* 상세 내용 */}
-      <div className={`${styles.card} ${styles.large}`}>
+
+      {/* Content Card */}
+      <div style={{ ...styles.card, ...styles.contentCard }}>
         {selectedNoteItem ? (
           <>
-            <div className={styles.largeText}>
-              <strong>{selectedNoteItem.question}</strong>
-              <button className={styles.noteDeleteButton} onClick={deleteNote}>
+            <h2 style={styles.title}>{selectedNoteItem.question}</h2>
+            <div style={styles.actionButtons}>
+              <button style={styles.deleteButton} onClick={deleteNote}>
                 내 노트에서 삭제
               </button>
             </div>
-            <br />
-            <div className={styles.text}>{selectedNoteItem.answer}</div>
+            <div style={styles.contentSection}>{selectedNoteItem.answer}</div>
           </>
-        ) : selectedMemoItem ? (
+        ) : selectedPostItem ? (
           <>
-            <strong className={styles.largeText}>
-              {selectedMemoItem.title}
-            </strong>
-            <br />
-            <span className={styles.text}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "")}
-              </ReactMarkdown>
-            </span>
-            <br />
-            <div className={styles.bottom}>
-              {selectedMemoItem && (
-                <div>
-                  <strong className={styles.text}>내 메모</strong>
-                  <span className={styles.actionButtons}>
-                    <button
-                      className={styles.updateButton}
-                      onClick={updateMemo}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className={styles.deleteButton}
-                      onClick={deleteMemo}
-                    >
-                      삭제
-                    </button>
-                  </span>
-                  <textarea
-                    value={updatedMemo}
-                    onChange={(e) => setUpdatedMemo(e.target.value)}
-                    rows={5}
-                    className={styles.textarea}
+            {editingPost ? (
+              <div>
+                <h2 style={styles.title}>게시글 수정</h2>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>제목</label>
+                  <input
+                    type="text"
+                    value={editPostTitle}
+                    onChange={(e) => setEditPostTitle(e.target.value)}
+                    style={styles.input}
                   />
                 </div>
-              )}
-            </div>
-            <br />
-          </>
-        ) : selectedCommentItem ? (
-          <>
-            <strong className={styles.largeText}>
-              {selectedCommentItem.interviewContentTitle}
-            </strong>
-            <br />
-            <div className={styles.text}>{selectedCommentItem.modelAnswer}</div>
-            <br />
-            <div className={styles.bottom}>
-              <strong className={styles.text}>내 답변</strong>
-              <input
-                type="checkbox"
-                checked={isPublic}
-                className={styles.checkbox}
-                onChange={() => setIsPublic((prev) => !prev)}
-              />
-              <label className={styles.label}>공개</label>
-              {selectedCommentItem && (
-                <span className={styles.actionButtons}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>내용</label>
+                  <textarea
+                    value={editPostContent}
+                    onChange={(e) => setEditPostContent(e.target.value)}
+                    rows={6}
+                    style={styles.textarea}
+                  />
+                </div>
+                <div style={styles.actionButtons}>
                   <button
-                    className={styles.updateButton}
-                    onClick={updateComment}
+                    onClick={handleSavePostEdit}
+                    style={styles.saveButton}
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingPost(false);
+                      setSelectedPostItem(null);
+                      window.location.reload();
+                    }}
+                    style={styles.cancelButton}
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 style={styles.title}>{selectedPostItem.title}</h2>
+                <p style={styles.meta}>
+                  {formatDate(selectedPostItem.postTime)}
+                </p>
+                <div style={styles.contentSection}>
+                  {selectedPostItem.content}
+                </div>
+                <div style={styles.actionButtons}>
+                  <button
+                    style={styles.updateButton}
+                    onClick={() => handleEditPostClick(selectedPostItem.id)}
                   >
                     수정
                   </button>
                   <button
-                    className={styles.deleteButton}
-                    onClick={deleteComment}
+                    style={styles.deleteButton}
+                    onClick={() => handleDeletePost(selectedPostItem.id)}
                   >
                     삭제
                   </button>
-                </span>
-              )}
+                </div>
+              </>
+            )}
+          </>
+        ) : selectedMemoItem ? (
+          <>
+            <h2 style={styles.title}>{selectedMemoItem.title}</h2>
+            <div style={styles.contentSection}>
+              {/* 메모 내용 표시 시 memoContent 사용 */}
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  p: ({ node, ...props }) => (
+                    <p style={{ marginBottom: "16px" }} {...props} />
+                  ),
+                }}
+              >
+                {selectedMemoItem?.memoContent?.replace(/<br\s*\/?>/gi, "") ||
+                  ""}
+              </ReactMarkdown>
+            </div>
+            <div style={styles.formGroup}>
+              <h3 style={styles.subtitle}>내 메모</h3>
+              <textarea
+                value={updatedMemo}
+                onChange={(e) => setUpdatedMemo(e.target.value)}
+                rows={5}
+                style={styles.textarea}
+              />
+              <div style={styles.actionButtons}>
+                <button style={styles.updateButton} onClick={updateMemo}>
+                  수정
+                </button>
+                <button style={styles.deleteButton} onClick={deleteMemo}>
+                  삭제
+                </button>
+              </div>
+            </div>
+          </>
+        ) : selectedCommentItem ? (
+          <>
+            <h2 style={styles.title}>
+              {selectedCommentItem.interviewContentTitle}
+            </h2>
+            <div style={styles.contentSection}>
+              {selectedCommentItem.modelAnswer}
+            </div>
+            <div style={styles.formGroup}>
+              <h3 style={styles.subtitle}>내 답변</h3>
+              <label style={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  style={styles.checkbox}
+                  onChange={() => setIsPublic((prev) => !prev)}
+                />
+                공개
+              </label>
               <textarea
                 value={updatedComment}
                 onChange={(e) => setUpdatedComment(e.target.value)}
                 rows={5}
-                className={styles.textarea}
+                style={styles.textarea}
               />
+              <div style={styles.actionButtons}>
+                <button style={styles.updateButton} onClick={updateComment}>
+                  수정
+                </button>
+                <button style={styles.deleteButton} onClick={deleteComment}>
+                  삭제
+                </button>
+              </div>
             </div>
-            <br />
           </>
         ) : (
-          <p className={styles.noItems}>항목이 없습니다.</p>
+          <p style={styles.noItems}>항목을 선택해주세요.</p>
         )}
       </div>
     </div>

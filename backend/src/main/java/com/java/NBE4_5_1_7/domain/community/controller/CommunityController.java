@@ -25,12 +25,12 @@ public class CommunityController {
     private final MemberService memberService;
 
     @PostMapping("/article/post")
-    public ResponseEntity<PostResponseDto> articlePost(AddPostRequestDto postRequestDto) {
+    public ResponseEntity<PostResponseDto> articlePost(@RequestBody AddPostRequestDto postRequestDto) {
         return ResponseEntity.ok(postService.addPost(memberService.getIdFromRq(), postRequestDto));
     }
 
     @PostMapping("/article/edit")
-    public ResponseEntity<PostResponseDto> articleEdit(EditPostRequestDto editRequestDto) {
+    public ResponseEntity<PostResponseDto> articleEdit(@RequestBody EditPostRequestDto editRequestDto) {
         return ResponseEntity.ok(postService.editPost(memberService.getIdFromRq(), editRequestDto));
     }
 
@@ -41,7 +41,7 @@ public class CommunityController {
 
     @GetMapping("/article")
     public ResponseEntity<PostResponseDto> showPost(@RequestParam("id") Long id) {
-        return ResponseEntity.ok(postService.showPost(id));
+        return ResponseEntity.ok(postService.showPost(id, memberService.getIdFromRq()));
     }
 
     @GetMapping("/article/list/title")
@@ -141,7 +141,7 @@ public class CommunityController {
 
     @GetMapping("/comment/re")
     public ResponseEntity<List<CommentResponseDto>> showReComments(@RequestParam Long commentId) {
-        return ResponseEntity.ok(postService.showReComments(commentId));
+        return ResponseEntity.ok(postService.showReComments(commentId, memberService.getIdFromRq()));
     }
 
     @GetMapping("/post/like")
@@ -154,4 +154,5 @@ public class CommunityController {
                                                             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(postService.myPost(memberService.getIdFromRq(), page, size));
     }
+
 }

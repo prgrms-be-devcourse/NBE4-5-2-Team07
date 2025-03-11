@@ -1140,6 +1140,7 @@ export interface components {
             comment?: string;
             /** Format: int32 */
             reCommentCount?: number;
+            myComment?: boolean;
         };
         AddCommentRequestDto: {
             /** Format: int64 */
@@ -1290,10 +1291,10 @@ export interface components {
             message?: string;
         };
         PagePostListResponseDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
@@ -1302,32 +1303,32 @@ export interface components {
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         PageableObject: {
             /** Format: int64 */
             offset?: number;
             sort?: components["schemas"]["SortObject"];
+            unpaged?: boolean;
             paged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
             /** Format: int32 */
             pageSize?: number;
-            unpaged?: boolean;
         };
         SortObject: {
             empty?: boolean;
-            unsorted?: boolean;
             sorted?: boolean;
+            unsorted?: boolean;
         };
         PageStudyContentDetailDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
@@ -1336,9 +1337,9 @@ export interface components {
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         InterviewCommentResponseDto: {
@@ -1350,10 +1351,10 @@ export interface components {
             public?: boolean;
         };
         PageInterviewContentAdminResponseDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
@@ -1362,9 +1363,9 @@ export interface components {
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         Empty: Record<string, never>;
@@ -1867,14 +1868,16 @@ export interface operations {
     };
     articlePost: {
         parameters: {
-            query: {
-                postRequestDto: components["schemas"]["AddPostRequestDto"];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddPostRequestDto"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
@@ -1898,14 +1901,16 @@ export interface operations {
     };
     articleEdit: {
         parameters: {
-            query: {
-                editRequestDto: components["schemas"]["EditPostRequestDto"];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EditPostRequestDto"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {

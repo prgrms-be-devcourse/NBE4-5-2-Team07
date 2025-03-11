@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.community.post.entity;
 
 import com.java.NBE4_5_1_7.domain.community.comment.entity.Comment;
+import com.java.NBE4_5_1_7.domain.community.like.entity.PostLike;
 import com.java.NBE4_5_1_7.domain.community.post.dto.EditPostRequestDto;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import jakarta.persistence.*;
@@ -48,6 +49,10 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("id asc") // 댓글 정렬
     private List<Comment> comments;
+
+    // 좋아요와의 관계 추가
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PostLike> likes;
 
     public void update(EditPostRequestDto editPostRequestDto) {
         this.title = editPostRequestDto.getTitle();

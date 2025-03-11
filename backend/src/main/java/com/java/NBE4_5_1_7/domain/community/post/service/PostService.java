@@ -41,7 +41,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final RedissonClient redissonClient;
 
-    public PostResponseDto showPost(Long postId) {
+    public PostResponseDto showPost(Long postId, Long currentMemberId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
         return PostResponseDto.builder()
                 .id(postId)
@@ -50,7 +50,7 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .like(likeRepository.countByPostPostId(postId))
-                .comments(getComments(post))
+                .comments(getComments(post, currentMemberId))
                 .build();
     }
 
@@ -70,7 +70,7 @@ public class PostService {
                 .title(savedPost.getTitle())
                 .content(savedPost.getContent())
                 .like(likeRepository.countByPostPostId(savedPost.getPostId()))
-                .comments(getComments(savedPost))
+                .comments(getComments(savedPost, memberId))
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .like(likeRepository.countByPostPostId(post.getPostId()))
-                .comments(getComments(post))
+                .comments(getComments(post, memberId))
                 .build();
     }
 
@@ -189,7 +189,8 @@ public class PostService {
                 saved.getAuthor().getNickname(), // 또는 author.getNickname() 등 실제 필드에 맞게 수정
                 saved.getCreatedDate(),
                 saved.getComment(),
-                0
+                0,
+                true
         );
     }
 
@@ -211,7 +212,8 @@ public class PostService {
                 updated.getAuthor().getUsername(),
                 updated.getCreatedDate(),
                 updated.getComment(),
-                updated.getChildren() != null ? updated.getChildren().size() : 0
+                updated.getChildren() != null ? updated.getChildren().size() : 0,
+                true
         );
     }
 
@@ -227,7 +229,7 @@ public class PostService {
         commentRepository.delete(comment);
     }
 
-    public List<CommentResponseDto> showReComments(Long commentId) {
+    public List<CommentResponseDto> showReComments(Long commentId, Long currentMemberId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
@@ -238,7 +240,8 @@ public class PostService {
                 maskLastCharacter(reComment.getAuthor().getNickname()),
                 reComment.getCreatedDate(),
                 reComment.getComment(),
-                reComment.getChildren() != null ? reComment.getChildren().size() : 0
+                reComment.getChildren() != null ? reComment.getChildren().size() : 0,
+                reComment.getAuthor().getId().equals(currentMemberId)
         )).collect(Collectors.toList());
     }
 
@@ -297,7 +300,7 @@ public class PostService {
 
 
 
-    public List<CommentResponseDto> getComments(Post post) {
+    public List<CommentResponseDto> getComments(Post post, Long currentMemberId) {
         if (post == null || post.getComments() == null) {
             return Collections.emptyList();
         }
@@ -310,7 +313,8 @@ public class PostService {
                         maskLastCharacter(comment.getAuthor().getNickname()),                // 댓글 작성자 이름
                         comment.getCreatedDate(),                     // 댓글 작성 시간
                         comment.getComment(),                          // 댓글 내용
-                        comment.getChildren() != null ? comment.getChildren().size() : 0
+                        comment.getChildren() != null ? comment.getChildren().size() : 0,
+                        comment.getAuthor().getId().equals(currentMemberId)
                 ))
                 .collect(Collectors.toList());
     }
