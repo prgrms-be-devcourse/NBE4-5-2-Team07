@@ -17,4 +17,5 @@ public class CommentResponseDto {
     private LocalDateTime commentTime;
     private String comment;
     private Integer reCommentCount;
+    private boolean myComment;
 }

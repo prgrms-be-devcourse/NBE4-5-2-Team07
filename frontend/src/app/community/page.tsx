@@ -77,11 +77,20 @@ const CommunityListPage: React.FC = () => {
 
   return (
     <div className="w-[1200px] mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          커뮤니티 게시판
-        </h1>
-        <div className="h-1 w-24 bg-blue-600 rounded"></div>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            커뮤니티 게시판
+          </h1>
+          <div className="h-1 w-24 bg-blue-600 rounded"></div>
+        </div>
+        {/* 게시글 작성 버튼 추가 */}
+        <Link
+          href="/community/write"
+          className="px-4 py-2 border border-blue-600 rounded-md text-blue-600 hover:bg-blue-50 transition-colors duration-200 font-medium"
+        >
+          게시글 작성
+        </Link>
       </header>
 
       <div className="mb-6 bg-white p-4 rounded-lg shadow">

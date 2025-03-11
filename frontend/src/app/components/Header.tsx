@@ -83,7 +83,7 @@ export default function Header() {
               </li>
               {/* 드롭다운 메뉴 끝 */}
               <li>
-                <Link href="/contact">로드맵</Link>
+                <Link href="/community">면접 경험 공유하기</Link>
               </li>
               {isLogin && (
                 <li>
