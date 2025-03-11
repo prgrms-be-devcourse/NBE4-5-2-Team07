@@ -3,12 +3,9 @@
   flex-grow: 1;
   margin-left: 20px;
   max-width: 800px;
-}
-
-/* 콘텐츠 리스트 */
-.contentList {
-  list-style: none;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
 }
 
 /* 개별 콘텐츠 아이템 */

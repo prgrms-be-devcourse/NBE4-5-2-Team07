@@ -112,7 +112,7 @@ export default function ContentEditModal({ content, onClose, onUpdate }: Content
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h2>학습 콘텐츠 수정</h2>
+        <h2 className={styles.modalTitle}>학습 콘텐츠 수정</h2>
 
         {error && <p className={styles.errorMessage}>{error}</p>}
 

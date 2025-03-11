@@ -6,6 +6,7 @@
   margin-right: 20px;
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
 }
 
 /* 카테고리 리스트 */
