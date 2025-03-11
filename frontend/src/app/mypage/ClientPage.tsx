@@ -768,327 +768,513 @@ const ClientPage = () => {
   };
 
   return (
-    <div style={styles.container}>
-      {/* Navigation Card */}
-      <div style={{ ...styles.card, ...styles.navCard }}>
-        <button
-          style={{
-            ...styles.button,
-            ...(showNoteList ? styles.selectedButton : {}),
-          }}
-          onClick={() => {
-            handleShowNoteList();
-            fetchNoteList();
-          }}
-        >
-          내 노트
-        </button>
-
-        <button
-          style={{
-            ...styles.button,
-            ...(showPostList ? styles.selectedButton : {}),
-          }}
-          onClick={() => {
-            handleShowPostList();
-            fetchMyPosts();
-          }}
-        >
-          내 글
-        </button>
-
-        <button
-          style={styles.dropdownButton}
-          onClick={() => setMemoDropdownOpen((prevState) => !prevState)}
-        >
-          작성한 학습 메모 {memoDropdownOpen ? "▲" : "▼"}
-        </button>
-        {memoDropdownOpen && (
-          <ul style={styles.dropdownList}>
-            {memoCategory.map((category, index) => (
-              <li
-                key={index}
-                onClick={() => handleMemoCategorySelect(category)}
-                style={{
-                  ...styles.dropdownItem,
-                  ...(selectedMemoCategory === category
-                    ? styles.dropdownItemSelected
-                    : {}),
-                }}
-              >
-                {category}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <button
-          style={styles.dropdownButton}
-          onClick={() => setAnswerDropdownOpen((prevState) => !prevState)}
-        >
-          작성한 기술 면접 답변 {answerDropdownOpen ? "▲" : "▼"}
-        </button>
-        {answerDropdownOpen && (
-          <ul style={styles.dropdownList}>
-            {answerCategory.map((category, index) => (
-              <li
-                key={index}
-                onClick={() => handleCommentCategorySelect(category)}
-                style={{
-                  ...styles.dropdownItem,
-                  ...(selectedCommentCategory === category
-                    ? styles.dropdownItemSelected
-                    : {}),
-                }}
-              >
-                {category}
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950 overflow-hidden relative">
+      {/* 배경 장식 요소 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+        <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-purple-300 dark:bg-purple-700 blur-3xl"></div>
       </div>
 
-      {/* List Card */}
-      <div style={{ ...styles.card, ...styles.listCard }}>
-        {/* 내 노트 목록 */}
-        {showNoteList ? (
-          notes.length > 0 ? (
-            <ul style={styles.listContainer}>
-              {notes.map((note) => (
-                <li
-                  key={note.contentId}
-                  onClick={() => handleNoteItemSelect(note)}
-                  style={{
-                    ...styles.listItem,
-                    ...(selectedNoteItem?.contentId === note.contentId
-                      ? styles.listItemSelected
-                      : {}),
-                  }}
-                >
-                  {note.question}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p style={styles.noItems}>항목이 없습니다.</p>
-          )
-        ) : showPostList ? (
-          myPosts.length > 0 ? (
-            <ul style={styles.listContainer}>
-              {myPosts.map((post) => (
-                <li
-                  key={post.postId}
-                  onClick={() => handlePostItemSelect(post.postId)}
-                  style={{
-                    ...styles.listItem,
-                    ...(selectedPostItem && selectedPostItem.id === post.postId
-                      ? styles.listItemSelected
-                      : {}),
-                  }}
-                >
-                  {post.title}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p style={styles.noItems}>작성한 글이 없습니다.</p>
-          )
-        ) : /* 학습 메모 목록 */
-        selectedMemoCategory && memoData[selectedMemoCategory] ? (
-          <ul style={styles.listContainer}>
-            {memoData[selectedMemoCategory].map((memo) => (
-              <li
-                key={memo.memoId}
-                onClick={() => handleMemoItemSelect(memo)}
-                style={{
-                  ...styles.listItem,
-                  ...(selectedMemoItem?.memoId === memo.memoId
-                    ? styles.listItemSelected
-                    : {}),
-                }}
-              >
-                {memo.title}
-              </li>
-            ))}
-          </ul>
-        ) : /* 기술 면접 답변 목록 */
-        selectedCommentCategory && interviewData[selectedCommentCategory] ? (
-          interviewData[selectedCommentCategory].length > 0 ? (
-            <ul style={styles.listContainer}>
-              {interviewData[selectedCommentCategory].map((comment) => (
-                <li
-                  key={comment.commentId}
-                  onClick={() => handleCommentItemSelect(comment)}
-                  style={{
-                    ...styles.listItem,
-                    ...(selectedCommentItem?.commentId === comment.commentId
-                      ? styles.listItemSelected
-                      : {}),
-                  }}
-                >
-                  {comment.interviewContentTitle}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p style={styles.noItems}>항목이 없습니다.</p>
-          )
-        ) : (
-          <p style={styles.noItems}>항목이 없습니다.</p>
-        )}
+      {/* 코드 파티클 배경 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-gray-800 dark:text-gray-200 text-opacity-30 font-mono text-sm"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: `rotate(${Math.random() * 90 - 45}deg)`,
+            }}
+          >
+            {
+              [
+                "function()",
+                "const data = []",
+                "for(let i=0;)",
+                "if(isValid)",
+                "return result",
+                "{ }",
+                "=> {}",
+                "import",
+                "export",
+                "class",
+              ][Math.floor(Math.random() * 10)]
+            }
+          </div>
+        ))}
       </div>
 
-      {/* Content Card */}
-      <div style={{ ...styles.card, ...styles.contentCard }}>
-        {selectedNoteItem ? (
-          <>
-            <h2 style={styles.title}>{selectedNoteItem.question}</h2>
-            <div style={styles.actionButtons}>
-              <button style={styles.deleteButton} onClick={deleteNote}>
-                내 노트에서 삭제
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-8">
+          내 학습 페이지
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+          {/* Navigation Sidebar */}
+          <div className="md:col-span-3">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col gap-4">
+              <button
+                className={`px-4 py-3 rounded-lg transition-colors text-left ${
+                  showNoteList
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+                onClick={() => {
+                  handleShowNoteList();
+                  fetchNoteList();
+                }}
+              >
+                내 노트
               </button>
-            </div>
-            <div style={styles.contentSection}>{selectedNoteItem.answer}</div>
-          </>
-        ) : selectedPostItem ? (
-          <>
-            {editingPost ? (
-              <div>
-                <h2 style={styles.title}>게시글 수정</h2>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>제목</label>
-                  <input
-                    type="text"
-                    value={editPostTitle}
-                    onChange={(e) => setEditPostTitle(e.target.value)}
-                    style={styles.input}
-                  />
-                </div>
-                <div style={styles.formGroup}>
-                  <label style={styles.label}>내용</label>
-                  <textarea
-                    value={editPostContent}
-                    onChange={(e) => setEditPostContent(e.target.value)}
-                    rows={6}
-                    style={styles.textarea}
-                  />
-                </div>
-                <div style={styles.actionButtons}>
-                  <button
-                    onClick={handleSavePostEdit}
-                    style={styles.saveButton}
-                  >
-                    저장
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingPost(false);
-                      setSelectedPostItem(null);
-                      window.location.reload();
-                    }}
-                    style={styles.cancelButton}
-                  >
-                    취소
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <h2 style={styles.title}>{selectedPostItem.title}</h2>
-                <p style={styles.meta}>
-                  {formatDate(selectedPostItem.postTime)}
-                </p>
-                <div style={styles.contentSection}>
-                  {selectedPostItem.content}
-                </div>
-                <div style={styles.actionButtons}>
-                  <button
-                    style={styles.updateButton}
-                    onClick={() => handleEditPostClick(selectedPostItem.id)}
-                  >
-                    수정
-                  </button>
-                  <button
-                    style={styles.deleteButton}
-                    onClick={() => handleDeletePost(selectedPostItem.id)}
-                  >
-                    삭제
-                  </button>
-                </div>
-              </>
-            )}
-          </>
-        ) : selectedMemoItem ? (
-          <>
-            <h2 style={styles.title}>{selectedMemoItem.title}</h2>
-            <div style={styles.contentSection}>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  p: ({ node, ...props }) => (
-                    <p style={{ marginBottom: "16px" }} {...props} />
-                  ),
+
+              <button
+                className={`px-4 py-3 rounded-lg transition-colors text-left ${
+                  showPostList
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+                onClick={() => {
+                  handleShowPostList();
+                  fetchMyPosts();
                 }}
               >
-                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "") || ""}
-              </ReactMarkdown>
-            </div>
-            <div style={styles.formGroup}>
-              <h3 style={styles.subtitle}>내 메모</h3>
-              <textarea
-                value={updatedMemo}
-                onChange={(e) => setUpdatedMemo(e.target.value)}
-                rows={5}
-                style={styles.textarea}
-              />
-              <div style={styles.actionButtons}>
-                <button style={styles.updateButton} onClick={updateMemo}>
-                  수정
+                내 글
+              </button>
+
+              <div className="relative">
+                <button
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg flex justify-between items-center text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setMemoDropdownOpen(!memoDropdownOpen)}
+                >
+                  <span>작성한 학습 메모</span>
+                  <span>{memoDropdownOpen ? "▲" : "▼"}</span>
                 </button>
-                <button style={styles.deleteButton} onClick={deleteMemo}>
-                  삭제
+                {memoDropdownOpen && (
+                  <div className="mt-2 ml-4 space-y-2">
+                    {memoCategory.map((category, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleMemoCategorySelect(category)}
+                        className={`w-full px-4 py-2 rounded-lg text-left ${
+                          selectedMemoCategory === category
+                            ? "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300"
+                            : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="relative">
+                <button
+                  className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg flex justify-between items-center text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setAnswerDropdownOpen(!answerDropdownOpen)}
+                >
+                  <span>작성한 기술 면접 답변</span>
+                  <span>{answerDropdownOpen ? "▲" : "▼"}</span>
                 </button>
+                {answerDropdownOpen && (
+                  <div className="mt-2 ml-4 space-y-2">
+                    {answerCategory.map((category, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleCommentCategorySelect(category)}
+                        className={`w-full px-4 py-2 rounded-lg text-left ${
+                          selectedCommentCategory === category
+                            ? "bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300"
+                            : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          </>
-        ) : selectedCommentItem ? (
-          <>
-            <h2 style={styles.title}>
-              {selectedCommentItem.interviewContentTitle}
-            </h2>
-            <div style={styles.contentSection}>
-              {selectedCommentItem.modelAnswer}
+          </div>
+
+          {/* Item List */}
+          <div className="md:col-span-3">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 h-[600px] overflow-y-auto">
+              {/* 내 노트 목록 */}
+              {showNoteList ? (
+                notes.length > 0 ? (
+                  <div className="space-y-2">
+                    {notes.map((note) => (
+                      <button
+                        key={note.contentId}
+                        onClick={() => handleNoteItemSelect(note)}
+                        className={`w-full px-4 py-3 rounded-lg text-left transition-colors ${
+                          selectedNoteItem?.contentId === note.contentId
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                      >
+                        {note.question}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-gray-500 dark:text-gray-400 italic">
+                      항목이 없습니다.
+                    </p>
+                  </div>
+                )
+              ) : showPostList ? (
+                myPosts.length > 0 ? (
+                  <div className="space-y-2">
+                    {myPosts.map((post) => (
+                      <button
+                        key={post.postId}
+                        onClick={() => handlePostItemSelect(post.postId)}
+                        className={`w-full px-4 py-3 rounded-lg text-left transition-colors ${
+                          selectedPostItem &&
+                          selectedPostItem.id === post.postId
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                      >
+                        {post.title}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-gray-500 dark:text-gray-400 italic">
+                      작성한 글이 없습니다.
+                    </p>
+                  </div>
+                )
+              ) : selectedMemoCategory && memoData[selectedMemoCategory] ? (
+                <div className="space-y-2">
+                  {memoData[selectedMemoCategory].map((memo) => (
+                    <button
+                      key={memo.memoId}
+                      onClick={() => handleMemoItemSelect(memo)}
+                      className={`w-full px-4 py-3 rounded-lg text-left transition-colors ${
+                        selectedMemoItem?.memoId === memo.memoId
+                          ? "bg-indigo-600 text-white"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                      }`}
+                    >
+                      {memo.title}
+                    </button>
+                  ))}
+                </div>
+              ) : selectedCommentCategory &&
+                interviewData[selectedCommentCategory] ? (
+                interviewData[selectedCommentCategory].length > 0 ? (
+                  <div className="space-y-2">
+                    {interviewData[selectedCommentCategory].map((comment) => (
+                      <button
+                        key={comment.commentId}
+                        onClick={() => handleCommentItemSelect(comment)}
+                        className={`w-full px-4 py-3 rounded-lg text-left transition-colors ${
+                          selectedCommentItem?.commentId === comment.commentId
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                      >
+                        {comment.interviewContentTitle}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-gray-500 dark:text-gray-400 italic">
+                      항목이 없습니다.
+                    </p>
+                  </div>
+                )
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500 dark:text-gray-400 italic">
+                    카테고리를 선택해주세요.
+                  </p>
+                </div>
+              )}
             </div>
-            <div style={styles.formGroup}>
-              <h3 style={styles.subtitle}>내 답변</h3>
-              <label style={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={isPublic}
-                  style={styles.checkbox}
-                  onChange={() => setIsPublic((prev) => !prev)}
-                />
-                공개
-              </label>
-              <textarea
-                value={updatedComment}
-                onChange={(e) => setUpdatedComment(e.target.value)}
-                rows={5}
-                style={styles.textarea}
-              />
-              <div style={styles.actionButtons}>
-                <button style={styles.updateButton} onClick={updateComment}>
-                  수정
-                </button>
-                <button style={styles.deleteButton} onClick={deleteComment}>
-                  삭제
-                </button>
-              </div>
+          </div>
+
+          {/* Content Detail */}
+          <div className="md:col-span-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 h-[600px] overflow-y-auto">
+              {selectedNoteItem ? (
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-4">
+                    {selectedNoteItem.question}
+                  </h2>
+                  <div className="flex mb-4">
+                    <button
+                      onClick={deleteNote}
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md shadow-red-500/20 transition-colors"
+                    >
+                      내 노트에서 삭제
+                    </button>
+                  </div>
+                  <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl shadow-inner">
+                    {selectedNoteItem.answer}
+                  </div>
+                </div>
+              ) : selectedPostItem ? (
+                editingPost ? (
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-4">
+                      게시글 수정
+                    </h2>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                        제목
+                      </label>
+                      <input
+                        type="text"
+                        value={editPostTitle}
+                        onChange={(e) => setEditPostTitle(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                        내용
+                      </label>
+                      <textarea
+                        value={editPostContent}
+                        onChange={(e) => setEditPostContent(e.target.value)}
+                        rows={10}
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+                      />
+                    </div>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={handleSavePostEdit}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-500/20 transition-colors"
+                      >
+                        저장
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingPost(false);
+                          setSelectedPostItem(null);
+                        }}
+                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-2">
+                      {selectedPostItem.title}
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                      {formatDate(selectedPostItem.postTime)}
+                    </p>
+                    <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl shadow-inner min-h-[300px] mb-6">
+                      {selectedPostItem.content}
+                    </div>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => handleEditPostClick(selectedPostItem.id)}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-500/20 transition-colors"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDeletePost(selectedPostItem.id)}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md shadow-red-500/20 transition-colors"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                )
+              ) : selectedMemoItem ? (
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-4">
+                    {selectedMemoItem.title}
+                  </h2>
+                  <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl shadow-inner mb-6">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ node, ...props }) => (
+                          <p
+                            className="text-gray-800 dark:text-gray-200 text-base leading-relaxed mb-4"
+                            {...props}
+                          />
+                        ),
+                        h1: ({ node, ...props }) => (
+                          <h1
+                            className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4"
+                            {...props}
+                          />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2
+                            className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3"
+                            {...props}
+                          />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2"
+                            {...props}
+                          />
+                        ),
+                        ul: ({ node, ...props }) => (
+                          <ul className="list-disc pl-6 mb-4" {...props} />
+                        ),
+                        ol: ({ node, ...props }) => (
+                          <ol className="list-decimal pl-6 mb-4" {...props} />
+                        ),
+                        li: ({ node, ...props }) => (
+                          <li className="mb-1" {...props} />
+                        ),
+                        a: ({ node, ...props }) => (
+                          <a
+                            className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                            {...props}
+                          />
+                        ),
+                        blockquote: ({ node, ...props }) => (
+                          <blockquote
+                            className="border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-4"
+                            {...props}
+                          />
+                        ),
+                        code: ({
+                          node,
+                          inline,
+                          ...props
+                        }: {
+                          node?: any;
+                          inline?: boolean;
+                          [key: string]: any;
+                        }) =>
+                          inline ? (
+                            <code
+                              className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm"
+                              {...props}
+                            />
+                          ) : (
+                            <code
+                              className="block bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-sm overflow-auto my-4"
+                              {...props}
+                            />
+                          ),
+                      }}
+                    >
+                      {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "") ||
+                        ""}
+                    </ReactMarkdown>
+                  </div>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                      내 메모
+                    </h3>
+                    <textarea
+                      value={updatedMemo}
+                      onChange={(e) => setUpdatedMemo(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white min-h-[120px] resize-none mb-4"
+                    />
+                    <div className="flex gap-4">
+                      <button
+                        onClick={updateMemo}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-500/20 transition-colors"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={deleteMemo}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md shadow-red-500/20 transition-colors"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : selectedCommentItem ? (
+                <div>
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-4">
+                    {selectedCommentItem.interviewContentTitle}
+                  </h2>
+                  <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl shadow-inner mb-6">
+                    {selectedCommentItem.modelAnswer}
+                  </div>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                      내 답변
+                    </h3>
+                    <div className="flex items-center mb-4">
+                      <input
+                        type="checkbox"
+                        id="isPublic"
+                        checked={isPublic}
+                        onChange={() => setIsPublic(!isPublic)}
+                        className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 mr-2"
+                      />
+                      <label
+                        htmlFor="isPublic"
+                        className="text-gray-700 dark:text-gray-300"
+                      >
+                        공개
+                      </label>
+                    </div>
+                    <textarea
+                      value={updatedComment}
+                      onChange={(e) => setUpdatedComment(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white min-h-[120px] resize-none mb-4"
+                    />
+                    <div className="flex gap-4">
+                      <button
+                        onClick={updateComment}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-500/20 transition-colors"
+                      >
+                        수정
+                      </button>
+                      <button
+                        onClick={deleteComment}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md shadow-red-500/20 transition-colors"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <svg
+                      className="w-16 h-16 text-indigo-400 mx-auto mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      ></path>
+                    </svg>
+                    <p className="text-lg text-gray-600 dark:text-gray-400">
+                      왼쪽 메뉴에서 항목을 선택해주세요.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          </>
-        ) : (
-          <p style={styles.noItems}>항목을 선택해주세요.</p>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );
