@@ -36,14 +36,13 @@ const FloatingChat = () => {
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log("✅ WebSocket 연결됨");
+        console.log("WebSocket 연결됨");
         setIsConnected(true);
         clientRef.current = stompClient;
 
-        // 채팅방 구독 (상담원의 메시지 수신)
+        // 채팅 구독
         stompClient.subscribe(`/topic/chat/${roomId}`, (messageOutput) => {
           const newMessage = JSON.parse(messageOutput.body);
-          console.log("📩 수신된 메시지:", newMessage);
 
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -60,7 +59,7 @@ const FloatingChat = () => {
         }, 60000);
       },
       onDisconnect: () => {
-        console.log("❌ WebSocket 연결 해제됨");
+        console.log("WebSocket 연결 해제됨");
         setIsConnected(false);
         clientRef.current = null;
       },
@@ -80,9 +79,7 @@ const FloatingChat = () => {
   useEffect(() => {
     if (!isOpen || !isConnected || systemMessageSent) return;
 
-    sendSystemMessage(
-      "안녕하세요! 😊 고객 상담 채팅창입니다. 무엇을 도와드릴까요?"
-    );
+    sendSystemMessage("안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?");
     setSystemMessageSent(true);
   }, [isOpen, isConnected, systemMessageSent]);
 
@@ -124,7 +121,7 @@ const FloatingChat = () => {
         const now = new Date();
         const diff = (now.getTime() - lastUserMessageTime.getTime()) / 1000;
 
-        // 3분 후 대화 종료 예정
+        // 3분 후 대화 종료 예정 메시지 전송
         if (diff > 180 && !isSessionEnded) {
           sendSystemMessage(
             "⏳ 대화가 종료될 예정입니다. 계속 상담을 원하시면 메시지를 입력해주세요."
@@ -163,16 +160,17 @@ const FloatingChat = () => {
 
     setMessage("");
     setLastUserMessageTime(new Date());
+    setIsSessionEnded(false);
   };
 
   const sendSystemMessage = (content: string) => {
     if (!clientRef.current) {
-      console.warn("⏳ WebSocket 연결 대기 중... 1초 후 재시도");
+      console.warn("WebSocket 연결 대기 중... 1초 후 재시도");
       return;
     }
 
     if (!clientRef.current.connected) {
-      console.warn("⚠️ STOMP WebSocket이 아직 활성화되지 않았습니다.");
+      console.warn("STOMP WebSocket이 아직 활성화되지 않았습니다.");
       return;
     }
 
@@ -188,9 +186,8 @@ const FloatingChat = () => {
         destination: `/app/chat/system/${roomId}`,
         body: JSON.stringify(systemMessageObj),
       });
-      console.log("✅ 시스템 메시지 전송 완료:", systemMessageObj);
     } catch (error) {
-      console.error("❌ STOMP 메시지 전송 실패:", error);
+      console.error("STOMP 메시지 전송 실패:", error);
     }
   };
 
