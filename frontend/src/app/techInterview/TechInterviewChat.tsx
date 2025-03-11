@@ -154,7 +154,7 @@ export default function TechInterviewChat() {
         {/* 폭을 50vw로 고정하고 중앙 정렬 */}
         <div className="bg-white rounded-xl shadow-md p-8 w-[50vw] text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            {user.username}님, 안녕하세요! <br />
+            안녕하세요! <br />
             기술 면접을 담당하는 AI 면접관 입니다.
           </h1>
           <p className="text-gray-600 mb-6">
