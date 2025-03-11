@@ -197,7 +197,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                   <div className="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-1">
                     {category.firstCategory}
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text">
                     {category.secondCategory}
                   </h2>
                 </div>

@@ -120,7 +120,7 @@ const CommunityListPage: React.FC = () => {
           <header className="mb-8 flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-                커뮤니티 게시판
+                면접 경험을 공유해주세요
               </h1>
               <div className="h-1 w-24 bg-indigo-600 rounded"></div>
             </div>
