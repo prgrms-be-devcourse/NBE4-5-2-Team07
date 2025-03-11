@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "../../../styles/admin/modal/contentEditModal.module.css";
 
 const API_URL = "http://localhost:8080/api/v1/admin/study";
 
@@ -26,7 +25,11 @@ interface ContentEditModalProps {
   onUpdate: (updatedContent: StudyContentDetailDto) => void;
 }
 
-export default function ContentEditModal({ content, onClose, onUpdate }: ContentEditModalProps) {
+export default function ContentEditModal({
+  content,
+  onClose,
+  onUpdate,
+}: ContentEditModalProps) {
   const [title, setTitle] = useState(content.title);
   const [firstCategory, setFirstCategory] = useState(content.firstCategory);
   const [secondCategory, setSecondCategory] = useState(content.secondCategory);
@@ -89,7 +92,9 @@ export default function ContentEditModal({ content, onClose, onUpdate }: Content
       }
 
       if (!response.ok) {
-        throw new Error(responseData.message || responseData || "수정에 실패했습니다.");
+        throw new Error(
+          responseData.message || responseData || "수정에 실패했습니다."
+        );
       }
 
       const updatedContent: StudyContentDetailDto = {
@@ -110,59 +115,107 @@ export default function ContentEditModal({ content, onClose, onUpdate }: Content
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <h2 className={styles.modalTitle}>학습 콘텐츠 수정</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center backdrop-blur-sm">
+      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animation-fadeIn">
+        {/* 배경 장식 효과 */}
+        <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 rounded-full bg-yellow-300 dark:bg-yellow-800 opacity-20 blur-xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-24 h-24 rounded-full bg-pink-300 dark:bg-pink-800 opacity-20 blur-xl"></div>
 
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        <div className="relative p-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 text-center mb-4">
+            학습 콘텐츠 수정
+          </h2>
 
-        <label>제목:</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className={styles.inputField}
-        />
-
-        <label>첫 번째 카테고리:</label>
-        <select
-          value={firstCategory}
-          onChange={(e) => setFirstCategory(e.target.value)}
-          className={styles.selectField}
-        >
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))
-          ) : (
-            <option disabled>카테고리를 불러오는 중...</option>
+          {error && (
+            <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+              <p className="font-medium">오류</p>
+              <p>{error}</p>
+            </div>
           )}
-        </select>
 
-        <label>두 번째 카테고리:</label>
-        <input
-          type="text"
-          value={secondCategory}
-          onChange={(e) => setSecondCategory(e.target.value)}
-          className={styles.inputField}
-          placeholder="새로운 카테고리를 입력하세요"
-        />
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                제목:
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
 
-        <label>내용:</label>
-        <textarea
-          value={updateContent}
-          onChange={(e) => setUpdateContent(e.target.value)}
-          className={styles.textareaField}
-          rows={5}
-        />
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                첫 번째 카테고리:
+              </label>
+              <select
+                value={firstCategory}
+                onChange={(e) => setFirstCategory(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white appearance-none bg-no-repeat bg-right"
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                  backgroundSize: "1.5em 1.5em",
+                  paddingRight: "2.5rem",
+                }}
+              >
+                {categories.length > 0 ? (
+                  categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>카테고리를 불러오는 중...</option>
+                )}
+              </select>
+            </div>
 
-        <div className={styles.buttonGroup}>
-          <button onClick={handleSave} disabled={loading} className={styles.saveButton}>
-            {loading ? "저장 중..." : "저장"}
-          </button>
-          <button onClick={onClose} className={styles.cancelButton}>취소</button>
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                두 번째 카테고리:
+              </label>
+              <input
+                type="text"
+                value={secondCategory}
+                onChange={(e) => setSecondCategory(e.target.value)}
+                placeholder="새로운 카테고리를 입력하세요"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                내용:
+              </label>
+              <textarea
+                value={updateContent}
+                onChange={(e) => setUpdateContent(e.target.value)}
+                rows={5}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className={`flex-1 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-2 px-6 font-medium transition-all shadow-lg shadow-indigo-500/20 ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? "저장 중..." : "저장"}
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2 px-6 font-medium transition-all"
+            >
+              취소
+            </button>
+          </div>
         </div>
       </div>
     </div>
