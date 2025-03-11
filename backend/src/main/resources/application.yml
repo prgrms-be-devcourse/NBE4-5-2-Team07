@@ -85,3 +85,8 @@ springdoc:
           request.credentials = 'include';
           return request;
       }
+
+imp:
+  code: ${imp.code}
+  key: ${imp.api-key}
+  secret_key: ${imp.secret-key}
