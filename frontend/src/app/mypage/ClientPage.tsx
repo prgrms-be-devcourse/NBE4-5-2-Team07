@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { components } from "@/lib/backend/apiV1/schema";
@@ -152,7 +152,6 @@ const ClientPage = () => {
     }
   };
 
-  // 수정 시 백엔드 StudyMemoRequestDto에 맞게 memoId와 memoContent 전송
   const updateMemo = async () => {
     if (!selectedMemoItem) return;
 
@@ -160,8 +159,8 @@ const ClientPage = () => {
     if (!isConfirmed) return;
 
     const updatedDto = {
-      memoId: selectedMemoItem.memoId,
       memoContent: updatedMemo,
+      memoId: selectedMemoItem.memoId,
     };
 
     try {
@@ -548,7 +547,7 @@ const ClientPage = () => {
   }, [showPostList]);
 
   // Inline CSS for improved UI
-  const styles = {
+  const styles: Record<string, CSSProperties> = {
     container: {
       display: "grid",
       gridTemplateColumns: "280px 350px 1fr",
@@ -564,12 +563,12 @@ const ClientPage = () => {
       borderRadius: "12px",
       boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
       padding: "20px",
-      height: "800px",
+      height: "800px", // 고정 높이
       overflowY: "auto",
     },
     navCard: {
       display: "flex",
-      flexDirection: "column" as const,
+      flexDirection: "column",
       gap: "16px",
       height: "800px",
     },
@@ -581,7 +580,7 @@ const ClientPage = () => {
       height: "800px",
       overflowY: "auto",
       padding: "30px",
-      minWidth: "800px",
+      minWidth: "800px", // 콘텐츠 영역 최소 너비 설정
     },
     button: {
       padding: "10px 16px",
@@ -592,7 +591,7 @@ const ClientPage = () => {
       fontWeight: 500,
       cursor: "pointer",
       transition: "all 0.2s ease",
-      textAlign: "left" as const,
+      textAlign: "left",
     },
     selectedButton: {
       backgroundColor: "#3b82f6",
@@ -647,7 +646,7 @@ const ClientPage = () => {
       color: "white",
     },
     noItems: {
-      textAlign: "center" as const,
+      textAlign: "center",
       padding: "20px",
       color: "#888",
       fontStyle: "italic",
@@ -761,7 +760,7 @@ const ClientPage = () => {
       backgroundColor: "#f9f9f9",
       borderRadius: "10px",
       lineHeight: "1.8",
-      minHeight: "300px",
+      minHeight: "300px", // 콘텐츠 섹션 최소 높이
     },
     markdownContent: {
       lineHeight: "1.6",
@@ -894,7 +893,8 @@ const ClientPage = () => {
           ) : (
             <p style={styles.noItems}>작성한 글이 없습니다.</p>
           )
-        ) : selectedMemoCategory && memoData[selectedMemoCategory] ? (
+        ) : /* 학습 메모 목록 */
+        selectedMemoCategory && memoData[selectedMemoCategory] ? (
           <ul style={styles.listContainer}>
             {memoData[selectedMemoCategory].map((memo) => (
               <li
@@ -911,8 +911,8 @@ const ClientPage = () => {
               </li>
             ))}
           </ul>
-        ) : selectedCommentCategory &&
-          interviewData[selectedCommentCategory] ? (
+        ) : /* 기술 면접 답변 목록 */
+        selectedCommentCategory && interviewData[selectedCommentCategory] ? (
           interviewData[selectedCommentCategory].length > 0 ? (
             <ul style={styles.listContainer}>
               {interviewData[selectedCommentCategory].map((comment) => (
@@ -1022,7 +1022,6 @@ const ClientPage = () => {
           <>
             <h2 style={styles.title}>{selectedMemoItem.title}</h2>
             <div style={styles.contentSection}>
-              {/* 메모 내용 표시 시 memoContent 사용 */}
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -1031,8 +1030,7 @@ const ClientPage = () => {
                   ),
                 }}
               >
-                {selectedMemoItem?.memoContent?.replace(/<br\s*\/?>/gi, "") ||
-                  ""}
+                {selectedMemoItem?.body?.replace(/<br\s*\/?>/gi, "") || ""}
               </ReactMarkdown>
             </div>
             <div style={styles.formGroup}>
