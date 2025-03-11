@@ -188,7 +188,8 @@ public class PostService {
                 saved.getId(),
                 saved.getAuthor().getNickname(), // 또는 author.getNickname() 등 실제 필드에 맞게 수정
                 saved.getCreatedDate(),
-                saved.getComment()
+                saved.getComment(),
+                0
         );
     }
 
@@ -209,7 +210,8 @@ public class PostService {
                 updated.getId(),
                 updated.getAuthor().getUsername(),
                 updated.getCreatedDate(),
-                updated.getComment()
+                updated.getComment(),
+                updated.getChildren() != null ? updated.getChildren().size() : 0
         );
     }
 
@@ -235,7 +237,8 @@ public class PostService {
                 reComment.getId(),
                 maskLastCharacter(reComment.getAuthor().getNickname()),
                 reComment.getCreatedDate(),
-                reComment.getComment()
+                reComment.getComment(),
+                reComment.getChildren() != null ? reComment.getChildren().size() : 0
         )).collect(Collectors.toList());
     }
 
@@ -306,7 +309,8 @@ public class PostService {
                         comment.getId(),
                         maskLastCharacter(comment.getAuthor().getNickname()),                // 댓글 작성자 이름
                         comment.getCreatedDate(),                     // 댓글 작성 시간
-                        comment.getComment()                          // 댓글 내용
+                        comment.getComment(),                          // 댓글 내용
+                        comment.getChildren() != null ? comment.getChildren().size() : 0
                 ))
                 .collect(Collectors.toList());
     }

@@ -1138,6 +1138,8 @@ export interface components {
             /** Format: date-time */
             commentTime?: string;
             comment?: string;
+            /** Format: int32 */
+            reCommentCount?: number;
         };
         AddCommentRequestDto: {
             /** Format: int64 */
@@ -1295,31 +1297,31 @@ export interface components {
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
             size?: number;
             content?: components["schemas"]["PostListResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         PageableObject: {
-            unpaged?: boolean;
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
             paged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
             /** Format: int32 */
             pageSize?: number;
-            /** Format: int64 */
-            offset?: number;
-            sort?: components["schemas"]["SortObject"];
+            unpaged?: boolean;
         };
         SortObject: {
+            empty?: boolean;
             unsorted?: boolean;
             sorted?: boolean;
-            empty?: boolean;
         };
         PageStudyContentDetailDto: {
             /** Format: int64 */
@@ -1329,14 +1331,14 @@ export interface components {
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         InterviewCommentResponseDto: {
@@ -1355,14 +1357,14 @@ export interface components {
             first?: boolean;
             last?: boolean;
             /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
             size?: number;
             content?: components["schemas"]["InterviewContentAdminResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         Empty: Record<string, never>;
