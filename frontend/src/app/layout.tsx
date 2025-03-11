@@ -4,6 +4,7 @@ import ClientLayout from "./ClientLayout";
 import localFont from "next/font/local";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import ChatWidget from "./chat/ChatWidget";
 
 config.autoAddCss = false;
 
@@ -32,6 +33,7 @@ export default async function RootLayout({
     >
       <body className={`min-h-[100dvh] flex flex-col ${pretendard.className}`}>
         <ClientLayout>{children}</ClientLayout>
+        <ChatWidget />
       </body>
     </html>
   );

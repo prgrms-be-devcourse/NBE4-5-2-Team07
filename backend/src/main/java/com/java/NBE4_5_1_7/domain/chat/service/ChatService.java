@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +18,15 @@ public class ChatService {
 	private final Map<Long, Long> messageTimestamp = new HashMap<>();
 
 	/// 메시지 저장
-	public void saveMessage(Long roomId, String sender, String messageContent) {
-		Message message = new Message(sender, messageContent);
+	public void saveMessage(Long roomId, String sender, String content, LocalDateTime timestamp) {
+		Message message = new Message(roomId, sender, content, timestamp);
 
 		messageStorage.putIfAbsent(roomId, new ArrayList<>());
 		messageStorage.get(roomId).add(message);
 		messageTimestamp.put(roomId, System.currentTimeMillis());
+
+		System.out.println("메시지 저장 완료. 방 ID: " + roomId + ", 메시지: " + content);
+		System.out.println("현재 메시지 목록: " + messageStorage.get(roomId));
 	}
 
 	/// 24시간이 지난 메시지 삭제
@@ -39,8 +43,9 @@ public class ChatService {
 		});
 	}
 
-	/// 채팅방 메시지 조회
+	/// 메시지 조회
 	public List<Message> getMessage(Long roomId) {
-		return messageStorage.get(roomId);
+		List<Message> messages = messageStorage.getOrDefault(roomId, new ArrayList<>());
+		return messages;
 	}
 }
