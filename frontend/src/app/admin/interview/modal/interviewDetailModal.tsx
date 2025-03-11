@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "../../../styles/admin/modal/contentDetailModal.module.css";
+import InterviewCreateModal from "./interviewCreateModal";
 
 const API_URL = "http://localhost:8080/api/v1/admin/interview";
 
@@ -24,6 +25,7 @@ const InterviewDetailModal: React.FC<InterviewDetailModalProps> = ({ interview, 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [historyStack, setHistoryStack] = useState<InterviewContent[]>([]);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         const fetchRelatedQuestions = async () => {
@@ -108,7 +110,14 @@ const InterviewDetailModal: React.FC<InterviewDetailModalProps> = ({ interview, 
                         ))}
                     </ul>
                 ) : (
-                    <p>연관된 꼬리 질문이 없습니다.</p>
+                    <div className={styles.noRelatedQuestions}>
+                        <button
+                            className={styles.addTailButton}
+                            onClick={() => setShowCreateModal(true)}
+                        >
+                            꼬리 질문 생성
+                        </button>
+                    </div>
                 )}
 
                 <div className={styles.modalFooter}>
@@ -125,6 +134,30 @@ const InterviewDetailModal: React.FC<InterviewDetailModalProps> = ({ interview, 
                     </button>
                 </div>
             </div>
+
+            {showCreateModal && (
+                <InterviewCreateModal
+                    onClose={() => setShowCreateModal(false)}
+                    onCreate={(newInterview) => {
+                        setRelatedQuestions((prev) => [
+                            ...prev,
+                            {
+                                id: 0, // 임시 값
+                                headId: interview.id,
+                                tailId: null,
+                                isHead: false,
+                                hasTail: false,
+                                keyword: newInterview.keyword,
+                                category: newInterview.category,
+                                question: newInterview.question,
+                                modelAnswer: newInterview.modelAnswer,
+                                likeCount: 0,
+                            },
+                        ]);
+                    }}
+                    headId={interview.id}
+                />
+            )}
         </div>
     );
 };
