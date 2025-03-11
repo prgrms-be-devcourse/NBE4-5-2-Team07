@@ -15,8 +15,8 @@ const FloatingChat = () => {
     null
   );
   const [isConnected, setIsConnected] = useState(false);
-  const [systemMessageSent, setSystemMessageSent] = useState(false); // 시스템 메시지 중복 전송 방지용
-  const [isSessionEnded, setIsSessionEnded] = useState(false); // 상담 종료 상태
+  const [systemMessageSent, setSystemMessageSent] = useState(false);
+  const [isSessionEnded, setIsSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const clientRef = useRef<Client | null>(null);
 
@@ -142,7 +142,6 @@ const FloatingChat = () => {
     return () => clearInterval(interval);
   }, [lastUserMessageTime, isSessionEnded]);
 
-  // 메시지 보내기
   const sendMessage = () => {
     if (!clientRef.current || message.trim() === "") return;
 
