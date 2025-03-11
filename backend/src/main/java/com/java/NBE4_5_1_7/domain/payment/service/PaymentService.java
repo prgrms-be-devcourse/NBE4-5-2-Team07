@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class PaymentService {
         iamportClient = new IamportClient(apiKey, apiSecret);
     }
 
-    // 결제 검증
+    // 결제 검증 (DB 저장은 하지 않음)
     public PaymentResponseDto verifyPayment(PaymentRequestDto requestDto) {
         Member member = memberService.getMemberFromRq();
         try {
@@ -53,31 +54,34 @@ public class PaymentService {
 
             Payment payment = paymentResponse.getResponse();
             PaymentResponseDto responseDto = new PaymentResponseDto(payment, member);
-            if ("paid".equals(payment.getStatus())) {
-                saveOrder(responseDto, member);
-            }
 
+            // 결제 상태가 'paid'이면 DB에 저장은 하지 않음, 검증만
             return responseDto;
         } catch (Exception e) {
             throw new RuntimeException("결제 검증 중 오류 발생: " + e.getMessage());
         }
     }
 
-    // DB에 결제 정보 저장
-    private void saveOrder(PaymentResponseDto paymentResponse, Member member) {
-        // 주문 중복 검증
-        Optional<Order> existingOrder = orderRepository.findByMerchantUid(paymentResponse.getMerchantUid());
+    // 웹훅에서 결제 상태 처리
+    @Transactional
+    public void handleWebhook(Map<String, Object> payload) {
+        String impUid = (String) payload.get("imp_uid");  // 웹훅에서 imp_uid 가져오기
+        if (impUid == null) {
+            throw new IllegalArgumentException("존재하지 않는 imp 번호 입니다.");
+        }
 
-        Order order = existingOrder.orElse(new Order());
-        order.setMerchantUid(paymentResponse.getMerchantUid());
-        order.setImpUid(paymentResponse.getImpUid());
-        order.setAmount(paymentResponse.getAmount());
-        order.setStatus(paymentResponse.getStatus());
-        order.setMember(member);
+        // 포트원 API를 호출해 결제 정보 조회
+        IamportResponse<Payment> paymentResponse = getPaymentData(impUid);
 
-        orderRepository.save(order);
+        if (paymentResponse == null || paymentResponse.getResponse() == null) {
+            throw new RuntimeException("결제 정보 조회 실패");
+        }
+
+        Payment payment = paymentResponse.getResponse();
+        updatePaymentStatus(payment);  // 결제 상태 업데이트
     }
 
+    // 결제 상태 업데이트
     @Transactional
     public void updatePaymentStatus(Payment payment) {
         Optional<Order> paymentEntityOptional = orderRepository.findByImpUid(payment.getImpUid());
@@ -87,14 +91,17 @@ public class PaymentService {
             paymentEntity.setStatus(payment.getStatus());  // 결제 상태 업데이트
             paymentEntity.setAmount(payment.getAmount());
             orderRepository.save(paymentEntity);
+        } else {
+            log.error("결제 정보가 존재하지 않음: " + payment.getImpUid());
         }
     }
 
+    // 아임포트 결제 정보 조회
     public IamportResponse<Payment> getPaymentData(String impUid) {
         try {
             return iamportClient.paymentByImpUid(impUid);
         } catch (IamportResponseException | IOException e) {
-            e.printStackTrace();
+            log.error("아임포트 API 호출 실패: " + e.getMessage());
             return null;
         }
     }
