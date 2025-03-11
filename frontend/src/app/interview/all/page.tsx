@@ -358,7 +358,7 @@ export default function InterviewAllPage() {
       </div>
 
       {/* Main content container */}
-      <div className="container mx-auto max-w-full px-0 py-12 relative z-10">
+      <div className="container mx-auto px-4 py-8 lg:py-12 relative z-10">
         {listLoading && (
           <div className="flex justify-center mx-auto max-w-full items-center h-24">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
