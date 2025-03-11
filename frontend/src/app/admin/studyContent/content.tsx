@@ -32,7 +32,10 @@ export default function Content({ selectedFirstCategory, selectedSecondCategory 
   const [deleteContent, setDeleteContent] = useState<StudyContentDetailDto | null>(null);
 
   useEffect(() => {
-    if (!selectedFirstCategory) return;
+    if (!selectedFirstCategory) {
+      setContents([]);
+      return;
+    }
 
     let url = `${API_URL}/category/${encodeURIComponent(selectedFirstCategory)}`;
     if (selectedSecondCategory) {
@@ -53,7 +56,10 @@ export default function Content({ selectedFirstCategory, selectedSecondCategory 
         setContents(data.content as StudyContentDetailDto[]);
         setTotalPages(data.totalPages);
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        console.error("콘텐츠 불러오기 실패:", err);
+        setError(err.message);
+      });
   }, [selectedFirstCategory, selectedSecondCategory, currentPage, pageSize]);
 
   const handleUpdateContent = (updatedContent: StudyContentDetailDto) => {
