@@ -1,121 +1,65 @@
-"use client";
-import React, { useEffect } from "react";
+"use client"; // Next.js 사용 시 필요
 
-// 아임포트 스크립트 로드
-declare global {
-    interface Window {
-        IMP?: Iamport;
-    }
-}
+import { useEffect } from "react";
 
-const PaymentPage: React.FC = () => {
-    // 아임포트 코드 (환경 변수로 관리)
-    const impCode = "imp82187830";
+const PaymentPage = () => {
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.iamport.kr/v1/iamport.js";
+        script.async = true;
+        document.body.appendChild(script);
+    }, []);
 
-    // 결제 처리 함수
-    const handlePayment = (pg: string, payMethod: string) => {
+    const requestPay = () => {
         if (!window.IMP) {
             alert("아임포트 스크립트가 로드되지 않았습니다.");
             return;
         }
 
-        console.log("handlePayment");
-        console.log(pg);
-        console.log(payMethod);
+        const IMP = window.IMP;
+        IMP.init("imp82187830"); // 아임포트 가맹점 식별코드 입력
 
-        const order = {
-            productId: 1,
-            productName: "상품1",
-            price: 3000,
-            quantity: 1,
-        };
-
-        // 결제 요청
-        window.IMP.init(impCode);
-        window.IMP.request_pay(
+        IMP.request_pay(
             {
-                pg: "kakaopay", // 올바른 카카오페이 PG사 사용
-                pay_method: payMethod,
-                merchant_uid: `mid_${new Date().getTime()}`, // 주문번호 생성
-                name: "상품1",
-                amount: 3000, // 결제 금액
-                buyer_email: "test@example.com", // 구매자 이메일
-                buyer_name: "김민규", // 구매자 이름
-                buyer_tel: "010-1234-5678", // 구매자 전화번호
-                buyer_addr: "서울특별시 강남구 역삼동", // 구매자 주소
-                buyer_postcode: "123-456", // 구매자 우편번호
+                pg: "html5_inicis", // ✅ 올바른 PG 값 사용!
+                pay_method: "card",
+                merchant_uid: "order_" + new Date().getTime(), // 고유 주문번호
+                name: "테스트 결제", // 상품명
+                amount: 100, // 결제 금액
+                buyer_email: "user@example.com",
+                buyer_name: "홍길동",
+                buyer_tel: "010-1234-5678",
+                buyer_addr: "서울특별시 강남구 삼성동",
+                buyer_postcode: "12345",
             },
-            (rsp: any) => {
+            async (rsp: any) => {
                 if (rsp.success) {
-                    // 결제 성공 시
-                    fetch(`api/v1/payment/validation/${rsp.imp_uid}`, {
-                        method: "POST",
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (order.price === data.response.amount) {
-                                // order.impUid = rsp.imp_uid;
-                                // order.merchantUid = rsp.merchant_uid;
-
-                                fetch("api/v1/payment/order", {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(order),
-                                })
-                                    .then((res) => res.json())
-                                    .then(() => {
-                                        const msg = `결제가 완료되었습니다.\n고유ID: ${rsp.imp_uid}\n상점 거래ID: ${rsp.merchant_uid}\n결제 금액: ${rsp.paid_amount}\n카드 승인번호: ${rsp.apply_num}`;
-                                        alert(msg);
-                                    })
-                                    .catch(() => {
-                                        alert("주문정보 저장을 실패 했습니다.");
-                                    });
-                            }
-                        })
-                        .catch(() => {
-                            alert("결제에 실패하였습니다. " + rsp.error_msg);
+                    console.log("결제 응답 객체:", rsp); // 🔍 디버깅용 콘솔 로그 추가
+                    alert("결제 성공! imp_uid: " + rsp.imp_uid);
+                    try {
+                        const response = await fetch("http://localhost:8080/api/v1/payments/verify", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imp_uid: rsp.imp_uid,
+                            }),
                         });
+
+                        const data = await response.json();
+                        console.log("결제 검증 결과:", data);
+                    } catch (error) {
+                        console.error("결제 검증 실패:", error);
+                    }
                 } else {
-                    alert(rsp.error_msg);
+                    alert("결제 실패: " + rsp.error_msg);
                 }
             }
         );
     };
 
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://cdn.iamport.kr/js/iamport.payment-1.2.0.js";
-        script.async = true;
-        document.body.appendChild(script);
-
-        // 클린업: 스크립트 제거
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
-
     return (
         <div>
-            <h1>결제 페이지</h1>
-            <div className="card text-center">
-                <div className="card-body">
-                    <h5 className="card-title mb-4">결제하기😎😎</h5>
-                    <button
-                        id="cardPay"
-                        onClick={() => handlePayment("html5_inicis.INIpayTest", "card")}
-                    >
-                        카드 결제
-                    </button>
-                    <button
-                        id="kakaoPay"
-                        onClick={() => handlePayment("kakaopay", "card")}
-                    >
-                        카카오페이 결제
-                    </button>
-                </div>
-            </div>
+            <button onClick={requestPay}>결제하기</button>
         </div>
     );
 };
