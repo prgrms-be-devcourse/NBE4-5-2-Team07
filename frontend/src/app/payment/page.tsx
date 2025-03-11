@@ -26,11 +26,11 @@ const PaymentPage = () => {
                 merchant_uid: "order_" + new Date().getTime(), // 고유 주문번호
                 name: "테스트 결제", // 상품명
                 amount: 100, // 결제 금액
-                buyer_email: "user@example.com",
-                buyer_name: "홍길동",
-                buyer_tel: "010-1234-5678",
-                buyer_addr: "서울특별시 강남구 삼성동",
-                buyer_postcode: "12345",
+                buyer_email: "",
+                buyer_name: "",
+                buyer_tel: "",
+                buyer_addr: "",
+                buyer_postcode: "",
             },
             async (rsp: any) => {
                 if (rsp.success) {
@@ -39,6 +39,7 @@ const PaymentPage = () => {
                     try {
                         const response = await fetch("http://localhost:8080/api/v1/payments/verify", {
                             method: "POST",
+                            credentials: "include",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 imp_uid: rsp.imp_uid,

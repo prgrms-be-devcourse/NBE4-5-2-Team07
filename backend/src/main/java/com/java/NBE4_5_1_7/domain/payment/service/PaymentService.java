@@ -7,14 +7,17 @@ import com.java.NBE4_5_1_7.domain.payment.dto.responseDto.PaymentResponseDto;
 import com.java.NBE4_5_1_7.domain.payment.entity.Order;
 import com.java.NBE4_5_1_7.domain.payment.repository.OrderRepository;
 import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -73,5 +76,26 @@ public class PaymentService {
         order.setMember(member);
 
         orderRepository.save(order);
+    }
+
+    @Transactional
+    public void updatePaymentStatus(Payment payment) {
+        Optional<Order> paymentEntityOptional = orderRepository.findByImpUid(payment.getImpUid());
+
+        if (paymentEntityOptional.isPresent()) {
+            Order paymentEntity = paymentEntityOptional.get();
+            paymentEntity.setStatus(payment.getStatus());  // 결제 상태 업데이트
+            paymentEntity.setAmount(payment.getAmount());
+            orderRepository.save(paymentEntity);
+        }
+    }
+
+    public IamportResponse<Payment> getPaymentData(String impUid) {
+        try {
+            return iamportClient.paymentByImpUid(impUid);
+        } catch (IamportResponseException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
