@@ -290,11 +290,11 @@ const CommunityDetailPage: React.FC = () => {
       );
 
     return (
-      <ul className="divide-y divide-gray-200">
+      <ul className="divide-y divide-indigo-100 dark:divide-indigo-800">
         {post.comments.map((comment) => (
           <li key={comment.commentId} className="py-4">
             <div className="flex items-start">
-              <div className="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
+              <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold mr-3">
                 {comment.commentAuthorName.charAt(0).toUpperCase()}
               </div>
               <div className="flex-grow">
@@ -302,7 +302,7 @@ const CommunityDetailPage: React.FC = () => {
                   <span className="font-medium mr-2">
                     {comment.commentAuthorName}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {formatDate(comment.commentTime)}
                   </span>
                 </div>
@@ -312,12 +312,12 @@ const CommunityDetailPage: React.FC = () => {
                       type="text"
                       value={editingText}
                       onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full bg-gray-100 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full bg-indigo-50 dark:bg-indigo-900 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
                     />
                     <div className="mt-2 flex gap-2">
                       <button
                         onClick={() => handleEditComment(comment.commentId)}
-                        className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+                        className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-sm shadow-lg shadow-indigo-500/20"
                       >
                         저장
                       </button>
@@ -326,18 +326,20 @@ const CommunityDetailPage: React.FC = () => {
                           setEditingCommentId(null);
                           setEditingText("");
                         }}
-                        className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-400"
+                        className="px-3 py-1 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-400 dark:hover:bg-gray-600"
                       >
                         취소
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-1 text-gray-800">{comment.comment}</div>
+                  <div className="mt-1 text-gray-800 dark:text-gray-200">
+                    {comment.comment}
+                  </div>
                 )}
                 <div className="mt-2 flex items-center text-sm">
                   <button
-                    className="mr-4 text-gray-600 hover:text-blue-600 font-medium flex items-center"
+                    className="mr-4 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium flex items-center"
                     onClick={() =>
                       setShowReplyInput((prev) => ({
                         ...prev,
@@ -363,7 +365,7 @@ const CommunityDetailPage: React.FC = () => {
                   </button>
 
                   <button
-                    className="mr-4 text-gray-600 hover:text-blue-600 font-medium flex items-center"
+                    className="mr-4 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium flex items-center"
                     onClick={() => toggleReplies(comment.commentId)}
                   >
                     <svg
@@ -396,7 +398,7 @@ const CommunityDetailPage: React.FC = () => {
                     editingCommentId !== comment.commentId && (
                       <>
                         <button
-                          className="mr-2 text-green-600 hover:text-green-800 font-medium"
+                          className="mr-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 font-medium"
                           onClick={() => {
                             setEditingCommentId(comment.commentId);
                             setEditingText(comment.comment);
@@ -405,7 +407,7 @@ const CommunityDetailPage: React.FC = () => {
                           수정
                         </button>
                         <button
-                          className="text-red-600 hover:text-red-800 font-medium"
+                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
                           onClick={() => handleDeleteComment(comment.commentId)}
                         >
                           삭제
@@ -416,7 +418,7 @@ const CommunityDetailPage: React.FC = () => {
 
                 {showReplyInput[comment.commentId] && (
                   <div className="mt-3 flex items-start">
-                    <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold mr-3">
                       {comment.commentAuthorName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-grow relative">
@@ -430,15 +432,15 @@ const CommunityDetailPage: React.FC = () => {
                             [comment.commentId]: e.target.value,
                           }))
                         }
-                        className="w-full bg-gray-100 rounded-full py-2 px-4 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
+                        className="w-full bg-indigo-50 dark:bg-indigo-900 rounded-full py-2 px-4 pr-16 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-none dark:text-white"
                       />
                       <button
                         onClick={() => handleAddReply(comment.commentId)}
                         disabled={!replyComment[comment.commentId]?.trim()}
                         className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
                           replyComment[comment.commentId]?.trim()
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                         }`}
                       >
                         게시
@@ -449,11 +451,11 @@ const CommunityDetailPage: React.FC = () => {
 
                 {showReplies[comment.commentId] &&
                   replies[comment.commentId] && (
-                    <div className="mt-3 ml-8 border-l-2 border-gray-200 pl-4 space-y-4">
+                    <div className="mt-3 ml-8 border-l-2 border-indigo-200 dark:border-indigo-700 pl-4 space-y-4">
                       {replies[comment.commentId].map((reply) => (
                         <div key={reply.commentId} className="flex flex-col">
                           <div className="flex items-center w-full">
-                            <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
+                            <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold mr-3">
                               {reply.commentAuthorName.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-grow">
@@ -461,7 +463,7 @@ const CommunityDetailPage: React.FC = () => {
                                 <span className="font-medium mr-2">
                                   {reply.commentAuthorName}
                                 </span>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
                                   {formatDate(reply.commentTime)}
                                 </span>
                               </div>
@@ -473,14 +475,14 @@ const CommunityDetailPage: React.FC = () => {
                                     onChange={(e) =>
                                       setEditingText(e.target.value)
                                     }
-                                    className="w-full bg-gray-100 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-indigo-50 dark:bg-indigo-900 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
                                   />
                                   <div className="mt-2 flex gap-2">
                                     <button
                                       onClick={() =>
                                         handleEditComment(reply.commentId)
                                       }
-                                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+                                      className="px-3 py-1 bg-indigo-600 text-white rounded-full text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
                                     >
                                       저장
                                     </button>
@@ -489,14 +491,14 @@ const CommunityDetailPage: React.FC = () => {
                                         setEditingCommentId(null);
                                         setEditingText("");
                                       }}
-                                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-400"
+                                      className="px-3 py-1 bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-400 dark:hover:bg-gray-600"
                                     >
                                       취소
                                     </button>
                                   </div>
                                 </div>
                               ) : (
-                                <div className="mt-1 text-gray-800">
+                                <div className="mt-1 text-gray-800 dark:text-gray-200">
                                   {reply.comment}
                                 </div>
                               )}
@@ -505,7 +507,7 @@ const CommunityDetailPage: React.FC = () => {
                               editingCommentId !== reply.commentId && (
                                 <div className="flex flex-col ml-2">
                                   <button
-                                    className="text-green-600 hover:text-green-800 font-medium mb-1"
+                                    className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 font-medium mb-1"
                                     onClick={() => {
                                       setEditingCommentId(reply.commentId);
                                       setEditingText(reply.comment);
@@ -514,7 +516,7 @@ const CommunityDetailPage: React.FC = () => {
                                     수정
                                   </button>
                                   <button
-                                    className="text-red-600 hover:text-red-800 font-medium"
+                                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
                                     onClick={() =>
                                       handleDeleteComment(reply.commentId)
                                     }
@@ -537,153 +539,194 @@ const CommunityDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="w-[1200px] mx-auto px-4 py-8">
-      <div className="mb-4">
-        <Link
-          href="/community"
-          className="inline-flex items-center px-4 py-2 border border-blue-600 rounded-md text-blue-600 hover:bg-blue-50 transition-colors duration-200 font-medium text-sm"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            ></path>
-          </svg>
-          목록으로 돌아가기
-        </Link>
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950 overflow-hidden relative">
+      {/* Background decoration elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+        <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-purple-300 dark:bg-purple-700 blur-3xl"></div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : post ? (
-        <>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                {post.title}
-              </h1>
-
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold mr-3">
-                    {post.authorName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">
-                      {post.authorName}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {formatDate(post.postTime)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <button
-                    onClick={handleLike}
-                    className="inline-flex items-center gap-1 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    <svg
-                      className="w-5 h-5 text-red-500"
-                      fill={like > 0 ? "currentColor" : "none"}
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                      ></path>
-                    </svg>
-                    <span className="font-medium">{like}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="prose max-w-none text-gray-800">
-                {post.content}
-              </div>
-            </div>
+      {/* Code particles decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-gray-800 dark:text-gray-200 text-opacity-30 font-mono text-sm"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: `rotate(${Math.random() * 90 - 45}deg)`,
+            }}
+          >
+            {
+              [
+                "function()",
+                "const data = []",
+                "for(let i=0;)",
+                "if(isValid)",
+                "return result",
+                "{ }",
+                "=> {}",
+                "import",
+                "export",
+                "class",
+              ][Math.floor(Math.random() * 10)]
+            }
           </div>
+        ))}
+      </div>
 
-          {errorMsg && (
-            <div className="mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-              <p className="font-medium">오류</p>
-              <p>{errorMsg}</p>
-            </div>
-          )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="mb-4">
+          <Link
+            href="/community"
+            className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-indigo-200 dark:border-indigo-700 rounded-full text-indigo-600 dark:text-indigo-400 transition-colors duration-200 font-medium text-sm shadow-lg"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
+            목록으로 돌아가기
+          </Link>
+        </div>
 
-          <div className="mt-8 bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-6">
-                댓글 {post.comments?.length || 0}개
-              </h2>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : post ? (
+          <>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+              <div className="p-6">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-4">
+                  {post.title}
+                </h1>
 
-              <div className="mb-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
-                    U
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-indigo-100 dark:border-indigo-800">
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-3">
+                      {post.authorName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800 dark:text-gray-200">
+                        {post.authorName}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {formatDate(post.postTime)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-grow relative">
-                    <input
-                      type="text"
-                      placeholder="댓글 추가..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      className="w-full bg-gray-100 rounded-full py-2 px-4 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
-                    />
+
+                  <div className="flex items-center">
                     <button
-                      onClick={handleAddComment}
-                      disabled={!newComment.trim()}
-                      className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
-                        newComment.trim()
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
+                      onClick={handleLike}
+                      className="inline-flex items-center gap-1 px-4 py-2 bg-white dark:bg-gray-700 border border-indigo-200 dark:border-indigo-700 rounded-full hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors shadow-lg"
                     >
-                      게시
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill={like > 0 ? "currentColor" : "none"}
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        ></path>
+                      </svg>
+                      <span className="font-medium text-gray-800 dark:text-gray-200">
+                        {like}
+                      </span>
                     </button>
                   </div>
                 </div>
-              </div>
 
-              {renderComments()}
+                <div className="prose max-w-none text-gray-800 dark:text-gray-200">
+                  {post.content}
+                </div>
+              </div>
             </div>
+
+            {errorMsg && (
+              <div className="mt-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4 rounded-lg shadow-lg">
+                <p className="font-medium">오류</p>
+                <p>{errorMsg}</p>
+              </div>
+            )}
+
+            <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-6">
+                  댓글 {post.comments?.length || 0}개
+                </h2>
+
+                <div className="mb-6">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-800 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-3">
+                      U
+                    </div>
+                    <div className="flex-grow relative">
+                      <input
+                        type="text"
+                        placeholder="댓글 추가..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        className="w-full bg-indigo-50 dark:bg-indigo-900 rounded-full py-2 px-4 pr-16 focus:outline-none focus:ring-2 focus:ring-indigo-500 border-none dark:text-white"
+                      />
+                      <button
+                        onClick={handleAddComment}
+                        disabled={!newComment.trim()}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
+                          newComment.trim()
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        게시
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {renderComments()}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="bg-indigo-50 dark:bg-indigo-900 rounded-lg p-8 text-center shadow-xl">
+            <svg
+              className="w-16 h-16 text-indigo-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+            <p className="text-lg font-medium text-indigo-600 dark:text-indigo-300">
+              게시글 정보를 불러오는데 실패했습니다.
+            </p>
           </div>
-        </>
-      ) : (
-        <div className="bg-gray-50 rounded-lg p-8 text-center">
-          <svg
-            className="w-16 h-16 text-gray-400 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            ></path>
-          </svg>
-          <p className="text-lg font-medium text-gray-600">
-            게시글 정보를 불러오는데 실패했습니다.
-          </p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
