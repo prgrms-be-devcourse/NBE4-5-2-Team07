@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,12 +24,18 @@ public class InterviewContentDataInit {
 
     @PostConstruct
     public void dataInit() {
-        importCsvData();
-        updateHasTailField();
+        if (repository.count() == 0) {
+            importCsvData();
+            updateHasTailField();
+        } else {
+            System.out.println("초기 질문 데이터가 이미 존재");
+        }
     }
 
-
     public void importCsvData() {
+        List<InterviewContent> headData = new ArrayList<>();
+        List<InterviewContent> tailData = new ArrayList<>();
+
         try {
             // resources 폴더에 위치한 CSV 파일을 불러옴
             File csvFile = new File("data/기술면접컨텐츠데이터-종합.csv");
@@ -37,38 +45,36 @@ public class InterviewContentDataInit {
             String[] line;
             boolean isFirstLine = true;
             while ((line = csvReader.readNext()) != null) {
-                // 첫 번째 라인은 헤더이므로 건너뜁니다.
+                // 첫 번째 라인은 헤더이므로 건너뜀
                 if (isFirstLine) {
                     isFirstLine = false;
                     continue;
                 }
-                // CSV 파일의 컬럼 순서: 번호,상위질문번호,카테고리,키워드,질문,답변,상위질문사용가능
-                // 번호는 엔티티의 식별자(자동 생성)로 사용하지 않으므로 무시합니다.
+
                 String headIdStr = line[1];
-                Long headId = null;
-                if (!"NULL".equalsIgnoreCase(headIdStr)) {
-                    headId = Long.parseLong(headIdStr);
-                }
-                String categoryStr = line[2];
+                Long headId = !"NULL".equalsIgnoreCase(headIdStr) ? Long.parseLong(headIdStr) : null;
+
                 InterviewCategory category;
-                // CSV의 '카테고리' 값이 "Database"인 경우 InterviewCategory.DATABASE 사용
-                if ("Database".equalsIgnoreCase(categoryStr)) {
-                    category = InterviewCategory.DATABASE;
-                } else if ("Network".equalsIgnoreCase(categoryStr)) {
-                    category = InterviewCategory.NETWORK;
-                } else if ("OperatingSystem".equalsIgnoreCase(categoryStr)) {
-                    category = InterviewCategory.OperatingSystem;
-                } else if ("Spring".equalsIgnoreCase(categoryStr)) {
-                    category = InterviewCategory.SPRING;
-                } else {
-                    // 기본값: DATABASE (필요에 따라 수정)
-                    category = null;
-                    System.out.println("category 설정 오류로 인해 null 값 적용.");
+                switch (line[2].toLowerCase()) {
+                    case "database" -> category = InterviewCategory.DATABASE;
+                    case "network" -> category = InterviewCategory.NETWORK;
+                    case "operatingsystem" -> category = InterviewCategory.OperatingSystem;
+                    case "spring" -> category = InterviewCategory.SPRING;
+                    default -> {
+                        category = null;
+                        System.out.println("category 설정 오류로 인해 null 값 적용.");
+                    }
                 }
+
                 String keyword = line[3];
                 String question = line[4];
                 String modelAnswer = line[5];
                 boolean isHead = "TRUE".equalsIgnoreCase(line[6]);
+
+                // 중복 방지
+                if (repository.existsByQuestion(question)) {
+                    continue;
+                }
 
                 InterviewContent content = new InterviewContent();
                 content.setHead_id(headId);
@@ -78,9 +84,17 @@ public class InterviewContentDataInit {
                 content.setModelAnswer(modelAnswer);
                 content.setHead(isHead);
 
-                repository.save(content);
+                if (isHead) {
+                    headData.add(content);
+                } else {
+                    tailData.add(content);
+                }
             }
             csvReader.close();
+
+            repository.saveAll(headData);
+            repository.saveAll(tailData);
+
         } catch (Exception e) {
             throw new RuntimeException("CSV 데이터를 DB에 저장하는데 실패했습니다.", e);
         }
@@ -88,11 +102,14 @@ public class InterviewContentDataInit {
 
     @Transactional
     public void updateHasTailField() {
-        repository.findAll().stream().filter(interview -> interview.getHead_id() != null).forEach(tail -> {
-            InterviewContent head = repository.findById(tail.getHead_id()).orElseThrow(() -> new RuntimeException("해당 컨텐츠를 찾을 수 없습니다."));
-            head.setHasTail(true);
-            head.setTail_id(tail.getInterview_content_id());
-            repository.save(head);
-        });
+        repository.findAll().stream()
+                .filter(interview -> interview.getHead_id() != null)
+                .forEach(tail -> {
+                    repository.findById(tail.getHead_id()).ifPresent(head -> {
+                        head.setHasTail(true);
+                        head.setTail_id(tail.getInterview_content_id());
+                        repository.save(head);
+                    });
+                });
     }
 }

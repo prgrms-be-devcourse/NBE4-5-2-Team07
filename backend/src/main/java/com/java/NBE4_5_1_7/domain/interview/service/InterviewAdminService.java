@@ -140,7 +140,7 @@ public class InterviewAdminService {
         if (headId != null) {
             InterviewContent headQuestion = interviewContentAdminRepository.findById(headId).orElse(null);
             if (headQuestion != null) {
-                headQuestion.disconnectTail();
+                headQuestion.removeTail();
                 interviewContentAdminRepository.save(headQuestion);
             }
         }
@@ -160,5 +160,37 @@ public class InterviewAdminService {
             }
         }
         return result;
+    }
+
+    @Transactional
+    public InterviewContentAdminResponseDto createInterviewContent(InterviewContentAdminRequestDto requestDto) {
+        // 머리 질문인지 확인
+        if (requestDto.getHeadId() == null) {
+            InterviewContent newHeadContent = InterviewContent.createNewHead(
+                    requestDto.getQuestion(),
+                    requestDto.getModelAnswer(),
+                    requestDto.getCategory(),
+                    requestDto.getKeyword()
+            );
+
+            interviewContentAdminRepository.save(newHeadContent);
+            return new InterviewContentAdminResponseDto(newHeadContent, 0L);
+        }
+
+        // 꼬리 질문을 붙힐 머리 질문 정보 가져오기
+        InterviewContent headContent = interviewContentAdminRepository.findById(requestDto.getHeadId())
+                .orElseThrow(() -> new ServiceException("404", "해당 ID의 면접 질문을 찾을 수 없습니다."));
+
+        // 머리 질문이 중간 질문인지 확인 (중간 질문에는 추가 불가능)
+        if (headContent.isHasTail()) {
+            throw new ServiceException("400", "중간 질문에는 꼬리 질문을 추가할 수 없습니다. 마지막 질문에만 추가할 수 있습니다.");
+        }
+
+        // 질문 생성
+        InterviewContent newTailContent = InterviewContent.createTail(headContent, requestDto);
+        interviewContentAdminRepository.save(headContent);
+        interviewContentAdminRepository.save(newTailContent);
+
+        return new InterviewContentAdminResponseDto(newTailContent, 0L);
     }
 }

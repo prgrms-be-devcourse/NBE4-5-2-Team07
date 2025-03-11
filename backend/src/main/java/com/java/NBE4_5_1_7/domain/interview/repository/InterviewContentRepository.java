@@ -1,6 +1,5 @@
 package com.java.NBE4_5_1_7.domain.interview.repository;
 
-
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +20,6 @@ public interface InterviewContentRepository extends JpaRepository<InterviewConte
 
     @Query("select ic.interview_content_id from InterviewContent ic where ic.keyword in :keywords and ic.head = true and ic.head_id is null")
     List<Long> findInterviewKeyword(@Param("keywords") List<String> keywords);
+
+    boolean existsByQuestion(String question);
 }

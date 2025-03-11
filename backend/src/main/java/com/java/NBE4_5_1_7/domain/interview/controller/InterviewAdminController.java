@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "면접 질문 관리", description = "관리자가 면접 질문을 관리하는 API")
+@Tag(name = "면접 질문 관리", description = "관리자용 API")
 @RestController
 @RequestMapping("/api/v1/admin/interview")
 @RequiredArgsConstructor
@@ -84,5 +84,17 @@ public class InterviewAdminController {
             @PathVariable Long interviewContentId) {
         interviewAdminService.deleteInterviewContentWithAllTails(interviewContentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "면접 질문 등록", description = """
+        새로운 면접 질문을 등록합니다. 기존 질문의 꼬리 질문으로 추가할 수도 있습니다.
+        
+        - `headId`가 `null`이면 새로운 머리 질문이 됩니다.
+        - `headId`가 존재하면, 해당 질문의 마지막 질문인지(`has_tail = 0`) 확인 후 꼬리 질문으로 추가합니다.
+        """)
+    @PostMapping
+    public ResponseEntity<InterviewContentAdminResponseDto> createInterviewContent(
+            @RequestBody InterviewContentAdminRequestDto requestDto) {
+        return ResponseEntity.ok(interviewAdminService.createInterviewContent(requestDto));
     }
 }
