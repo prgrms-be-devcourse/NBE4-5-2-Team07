@@ -5,6 +5,8 @@ import com.java.NBE4_5_1_7.domain.community.comment.dto.CommentResponseDto;
 import com.java.NBE4_5_1_7.domain.community.comment.dto.EditCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.community.comment.entity.Comment;
 import com.java.NBE4_5_1_7.domain.community.comment.repository.CommentRepository;
+import com.java.NBE4_5_1_7.domain.community.like.dto.LikeResponseDto;
+import com.java.NBE4_5_1_7.domain.community.like.entity.PostLike;
 import com.java.NBE4_5_1_7.domain.community.like.repository.PostLikeRepository;
 import com.java.NBE4_5_1_7.domain.community.post.dto.AddPostRequestDto;
 import com.java.NBE4_5_1_7.domain.community.post.dto.EditPostRequestDto;
@@ -16,13 +18,17 @@ import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.connection.RedisInvalidSubscriptionException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -33,6 +39,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostLikeRepository likeRepository;
     private final CommentRepository commentRepository;
+    private final RedissonClient redissonClient;
 
     public PostResponseDto showPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
@@ -229,6 +236,59 @@ public class PostService {
                 maskLastCharacter(reComment.getAuthor().getNickname()),
                 reComment.getCreatedDate(),
                 reComment.getComment()
+        )).collect(Collectors.toList());
+    }
+
+    public LikeResponseDto postLike(Long memberId, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+
+        //좋아요 기능 구현
+        //분산락 획득 -> 인터뷰 질문에 대한 좋아요 처리를 위해 락 사용
+        String lockKey = "lock:post:like" + postId;
+        RLock lock = redissonClient.getLock(lockKey);
+
+        boolean isLocked = false;
+
+        try {
+            isLocked = lock.tryLock(5, 10, TimeUnit.SECONDS);
+            if (!isLocked) {
+                throw new RuntimeException("시스템이 바빠 요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.");
+            }
+
+            Optional<PostLike> existingLike = likeRepository.findByPostAndMember(post, member);
+            if (existingLike.isPresent()) {
+                likeRepository.delete(existingLike.get());
+                return new LikeResponseDto(postId, likeRepository.countByPostPostId(postId), "좋아요 취소");
+            } else {
+                PostLike postLike = PostLike.builder()
+                        .post(post)
+                        .member(member)
+                        .build();
+
+                likeRepository.save(postLike);
+                return new LikeResponseDto(postId, likeRepository.countByPostPostId(postId), "좋아요 추가");
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("락 획득 중 인터럽트 발생");
+        } finally {
+            if (isLocked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    public List<PostListResponseDto> myPost(Long memberId, int page, int size) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        List<Post> myPostList = postRepository.findAllByAuthor_Id(member.getId());
+
+        return myPostList.stream().map(post -> new PostListResponseDto(
+                post.getPostId(),
+                post.getTitle(),
+                maskLastCharacter(post.getAuthor().getNickname()),
+                post.getCreatedAt()
         )).collect(Collectors.toList());
     }
 

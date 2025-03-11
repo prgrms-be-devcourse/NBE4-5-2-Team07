@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 필요한 필드만 조회 (postId, title, author.username, createdAt)
@@ -58,4 +60,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p " +
             "ORDER BY p.createdAt DESC")
     Page<PostListResponseDto> findAllOrderByCreatedAtDesc(Pageable pageable);
+
+    List<Post> findAllByAuthor_Id(Long memberId);
 }

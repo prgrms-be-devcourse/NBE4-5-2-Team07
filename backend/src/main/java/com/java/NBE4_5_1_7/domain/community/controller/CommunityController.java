@@ -3,6 +3,7 @@ package com.java.NBE4_5_1_7.domain.community.controller;
 import com.java.NBE4_5_1_7.domain.community.comment.dto.AddCommentRequestDto;
 import com.java.NBE4_5_1_7.domain.community.comment.dto.CommentResponseDto;
 import com.java.NBE4_5_1_7.domain.community.comment.dto.EditCommentRequestDto;
+import com.java.NBE4_5_1_7.domain.community.like.dto.LikeResponseDto;
 import com.java.NBE4_5_1_7.domain.community.post.dto.AddPostRequestDto;
 import com.java.NBE4_5_1_7.domain.community.post.dto.EditPostRequestDto;
 import com.java.NBE4_5_1_7.domain.community.post.dto.PostListResponseDto;
@@ -143,5 +144,14 @@ public class CommunityController {
         return ResponseEntity.ok(postService.showReComments(commentId));
     }
 
+    @GetMapping("/post/like")
+    public ResponseEntity<LikeResponseDto> postLike(@RequestParam Long postId) {
+        return ResponseEntity.ok(postService.postLike(memberService.getIdFromRq(), postId));
+    }
 
+    @GetMapping("/post/my")
+    public ResponseEntity<List<PostListResponseDto>> myPost(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(postService.myPost(memberService.getIdFromRq(), page, size));
+    }
 }
