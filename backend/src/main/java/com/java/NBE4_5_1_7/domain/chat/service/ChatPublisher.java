@@ -1,19 +1,22 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
-import org.redisson.api.RTopic;
-import org.redisson.api.RedissonClient;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
-/// 메시지를 Redis에 발행
+/// 관리자가 메세지를 받는 로직
 @Service
-@RequiredArgsConstructor
 public class ChatPublisher {
-	private final RedissonClient redissonClient;
+	private final SimpMessagingTemplate messagingTemplate;
+	private final ChatService chatService;
 
-	public void sendMessage(Long roomId, Long senderId, String message) {
-		RTopic topic = redissonClient.getTopic("chatroom-" + roomId);
-		topic.publish(senderId + ": " + message);
+	public ChatPublisher(SimpMessagingTemplate messagingTemplate, ChatService chatService) {
+		this.messagingTemplate = messagingTemplate;
+		this.chatService = chatService;
+	}
+
+	/// 메시지를 관리자가 받도록 전달하고, 24시간 뒤 삭제 설정
+	public void sendMessageToAdmin(Long roomId, String message) {
+		chatService.saveMessage(roomId, "ADMIN", message);
+		messagingTemplate.convertAndSend("/topic/admin/chat/" + roomId, message);
 	}
 }
