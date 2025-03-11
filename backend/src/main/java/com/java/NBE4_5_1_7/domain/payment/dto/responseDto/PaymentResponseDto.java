@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.payment.dto.responseDto;
 
+import com.java.NBE4_5_1_7.domain.member.entity.Member;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,14 +20,16 @@ public class PaymentResponseDto {
     private boolean success;
     private String card_name;
 
-    public PaymentResponseDto(Payment payment) {
+    public PaymentResponseDto(Payment payment, Member member) {
         this.impUid = payment.getImpUid();
         this.merchantUid = payment.getMerchantUid();
-        this.buyerName = payment.getBuyerName();
-        this.buyerEmail = payment.getBuyerEmail();
+        this.buyerName = member.getNickname();
+//        this.buyerEmail = payment.getBuyerEmail();
         this.amount = payment.getAmount();
         this.status = payment.getStatus();
         this.pay_method = payment.getPayMethod();
+        this.success = true;
+        this.card_name = payment.getCardName();
     }
 }
 

@@ -1,7 +1,5 @@
 package com.java.NBE4_5_1_7.domain.payment.controller;
 
-import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 import com.java.NBE4_5_1_7.domain.payment.dto.reqestDto.PaymentRequestDto;
 import com.java.NBE4_5_1_7.domain.payment.dto.responseDto.PaymentResponseDto;
 import com.java.NBE4_5_1_7.domain.payment.service.PaymentService;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
 public class PaymentController {
-    private final MemberService memberService;
     private final PaymentService paymentService;
 
     @PostMapping("/verify")
