@@ -13,6 +13,9 @@ security:
     client-id: 슬랙 캔버스 확인
   jwt:
     secret-key: 슬랙 캔버스 확인
+openai:
+  api:
+    key: 슬랙 캔버스 확인
 ```
 ## 커밋 컨벤션
 | 커밋 유형 | 코드 | 사용 설명 |
