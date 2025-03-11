@@ -1291,55 +1291,55 @@ export interface components {
             message?: string;
         };
         PagePostListResponseDto: {
-            /** Format: int32 */
-            totalPages?: number;
             /** Format: int64 */
             totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
             first?: boolean;
             last?: boolean;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["PostListResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         PageableObject: {
+            /** Format: int64 */
+            offset?: number;
+            sort?: components["schemas"]["SortObject"];
             unpaged?: boolean;
             paged?: boolean;
             /** Format: int32 */
             pageNumber?: number;
             /** Format: int32 */
             pageSize?: number;
-            /** Format: int64 */
-            offset?: number;
-            sort?: components["schemas"]["SortObject"];
         };
         SortObject: {
+            empty?: boolean;
             unsorted?: boolean;
             sorted?: boolean;
-            empty?: boolean;
         };
         PageStudyContentDetailDto: {
-            /** Format: int32 */
-            totalPages?: number;
             /** Format: int64 */
             totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
             first?: boolean;
             last?: boolean;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         InterviewCommentResponseDto: {
@@ -1351,21 +1351,21 @@ export interface components {
             public?: boolean;
         };
         PageInterviewContentAdminResponseDto: {
-            /** Format: int32 */
-            totalPages?: number;
             /** Format: int64 */
             totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
             first?: boolean;
             last?: boolean;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["InterviewContentAdminResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
             empty?: boolean;
         };
         Empty: Record<string, never>;

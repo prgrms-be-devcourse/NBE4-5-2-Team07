@@ -1,3 +1,4 @@
+// // export default CommunityDetailPage;
 // "use client";
 // import React, { useEffect, useState } from "react";
 // import { useParams, useRouter } from "next/navigation";
@@ -10,6 +11,7 @@
 //   commentTime: string;
 //   comment: string;
 //   reCommentCount: number;
+//   myComment: boolean;
 // }
 
 // interface PostResponseDto {
@@ -26,6 +28,11 @@
 //   articleId: number;
 //   comment: string;
 //   parentId: number | null; // top-level이면 null
+// }
+
+// interface EditCommentRequestDto {
+//   commentId: number;
+//   comment: string;
 // }
 
 // const CommunityDetailPage: React.FC = () => {
@@ -52,6 +59,9 @@
 //   const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>(
 //     {}
 //   );
+//   // 수정 모드 관련 상태
+//   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+//   const [editingText, setEditingText] = useState("");
 
 //   const fetchPostDetail = async () => {
 //     if (!postId) return;
@@ -59,9 +69,7 @@
 //     try {
 //       const response = await fetch(
 //         `http://localhost:8080/community/article?id=${postId}`,
-//         {
-//           credentials: "include",
-//         }
+//         { credentials: "include" }
 //       );
 //       if (!response.ok) {
 //         throw new Error("게시글 상세 정보를 불러오는데 실패했습니다.");
@@ -85,9 +93,7 @@
 //     try {
 //       const response = await fetch(
 //         `http://localhost:8080/community/post/like?postId=${postId}`,
-//         {
-//           credentials: "include",
-//         }
+//         { credentials: "include" }
 //       );
 //       if (!response.ok) {
 //         throw new Error("좋아요에 실패했습니다.");
@@ -162,20 +168,68 @@
 //     }
 //   };
 
+//   // 댓글 수정
+//   const handleEditComment = async (commentId: number) => {
+//     if (!editingText.trim()) return;
+//     setErrorMsg(null);
+//     const dto: EditCommentRequestDto = {
+//       commentId,
+//       comment: editingText,
+//     };
+
+//     try {
+//       const response = await fetch(
+//         "http://localhost:8080/community/comment/edit",
+//         {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           credentials: "include",
+//           body: JSON.stringify(dto),
+//         }
+//       );
+//       if (!response.ok) {
+//         throw new Error("댓글 수정에 실패했습니다.");
+//       }
+//       setEditingCommentId(null);
+//       setEditingText("");
+//       setRefresh((prev) => !prev);
+//     } catch (error: any) {
+//       console.error(error);
+//       setErrorMsg(error.message);
+//     }
+//   };
+
+//   // 댓글 삭제
+//   const handleDeleteComment = async (commentId: number) => {
+//     setErrorMsg(null);
+//     try {
+//       const response = await fetch(
+//         `http://localhost:8080/community/comment/delete?commentId=${commentId}`,
+//         {
+//           method: "POST",
+//           credentials: "include",
+//         }
+//       );
+//       if (!response.ok) {
+//         throw new Error("댓글 삭제에 실패했습니다.");
+//       }
+//       setRefresh((prev) => !prev);
+//     } catch (error: any) {
+//       console.error(error);
+//       setErrorMsg(error.message);
+//     }
+//   };
+
 //   // 대댓글 보기/숨기기 토글 및 데이터 불러오기
 //   const toggleReplies = async (commentId: number) => {
 //     if (showReplies[commentId]) {
-//       // 이미 표시중이면 숨김
 //       setShowReplies((prev) => ({ ...prev, [commentId]: false }));
 //     } else {
-//       // 아직 대댓글이 로드되지 않았다면 불러오기
 //       if (!replies[commentId]) {
 //         try {
 //           const response = await fetch(
 //             `http://localhost:8080/community/comment/re?commentId=${commentId}`,
-//             {
-//               credentials: "include",
-//             }
+//             { credentials: "include" }
 //           );
 //           if (!response.ok) {
 //             throw new Error("대댓글을 불러오는데 실패했습니다.");
@@ -231,11 +285,9 @@
 //         {post.comments.map((comment) => (
 //           <li key={comment.commentId} className="py-4">
 //             <div className="flex items-start">
-//               {/* 아바타 아이콘 */}
 //               <div className="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
 //                 {comment.commentAuthorName.charAt(0).toUpperCase()}
 //               </div>
-
 //               <div className="flex-grow">
 //                 <div className="flex items-center">
 //                   <span className="font-medium mr-2">
@@ -245,9 +297,35 @@
 //                     {formatDate(comment.commentTime)}
 //                   </span>
 //                 </div>
-
-//                 <div className="mt-1 text-gray-800">{comment.comment}</div>
-
+//                 {editingCommentId === comment.commentId ? (
+//                   <div className="mt-1">
+//                     <input
+//                       type="text"
+//                       value={editingText}
+//                       onChange={(e) => setEditingText(e.target.value)}
+//                       className="w-full bg-gray-100 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                     />
+//                     <div className="mt-2 flex gap-2">
+//                       <button
+//                         onClick={() => handleEditComment(comment.commentId)}
+//                         className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+//                       >
+//                         저장
+//                       </button>
+//                       <button
+//                         onClick={() => {
+//                           setEditingCommentId(null);
+//                           setEditingText("");
+//                         }}
+//                         className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-400"
+//                       >
+//                         취소
+//                       </button>
+//                     </div>
+//                   </div>
+//                 ) : (
+//                   <div className="mt-1 text-gray-800">{comment.comment}</div>
+//                 )}
 //                 <div className="mt-2 flex items-center text-sm">
 //                   <button
 //                     className="mr-4 text-gray-600 hover:text-blue-600 font-medium flex items-center"
@@ -276,7 +354,7 @@
 //                   </button>
 
 //                   <button
-//                     className="text-gray-600 hover:text-blue-600 font-medium flex items-center"
+//                     className="mr-4 text-gray-600 hover:text-blue-600 font-medium flex items-center"
 //                     onClick={() => toggleReplies(comment.commentId)}
 //                   >
 //                     <svg
@@ -304,9 +382,29 @@
 //                     </svg>
 //                     {comment.reCommentCount}개의 답글
 //                   </button>
+
+//                   {comment.myComment &&
+//                     editingCommentId !== comment.commentId && (
+//                       <>
+//                         <button
+//                           className="mr-2 text-green-600 hover:text-green-800 font-medium"
+//                           onClick={() => {
+//                             setEditingCommentId(comment.commentId);
+//                             setEditingText(comment.comment);
+//                           }}
+//                         >
+//                           수정
+//                         </button>
+//                         <button
+//                           className="text-red-600 hover:text-red-800 font-medium"
+//                           onClick={() => handleDeleteComment(comment.commentId)}
+//                         >
+//                           삭제
+//                         </button>
+//                       </>
+//                     )}
 //                 </div>
 
-//                 {/* 답글 작성 폼 */}
 //                 {showReplyInput[comment.commentId] && (
 //                   <div className="mt-3 flex items-start">
 //                     <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
@@ -340,7 +438,6 @@
 //                   </div>
 //                 )}
 
-//                 {/* 대댓글 목록 */}
 //                 {showReplies[comment.commentId] &&
 //                   replies[comment.commentId] && (
 //                     <div className="mt-3 ml-8 border-l-2 border-gray-200 pl-4 space-y-4">
@@ -528,6 +625,7 @@
 
 // export default CommunityDetailPage;
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -587,7 +685,7 @@ const CommunityDetailPage: React.FC = () => {
   const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>(
     {}
   );
-  // 수정 모드 관련 상태
+  // 수정 모드 관련 상태 (댓글과 대댓글 모두 동일하게 처리)
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
 
@@ -597,7 +695,9 @@ const CommunityDetailPage: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:8080/community/article?id=${postId}`,
-        { credentials: "include" }
+        {
+          credentials: "include",
+        }
       );
       if (!response.ok) {
         throw new Error("게시글 상세 정보를 불러오는데 실패했습니다.");
@@ -621,7 +721,9 @@ const CommunityDetailPage: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:8080/community/post/like?postId=${postId}`,
-        { credentials: "include" }
+        {
+          credentials: "include",
+        }
       );
       if (!response.ok) {
         throw new Error("좋아요에 실패했습니다.");
@@ -696,7 +798,7 @@ const CommunityDetailPage: React.FC = () => {
     }
   };
 
-  // 댓글 수정
+  // 댓글 수정 (부모 댓글 및 대댓글 모두 동일)
   const handleEditComment = async (commentId: number) => {
     if (!editingText.trim()) return;
     setErrorMsg(null);
@@ -727,7 +829,7 @@ const CommunityDetailPage: React.FC = () => {
     }
   };
 
-  // 댓글 삭제
+  // 댓글 삭제 (부모 댓글 및 대댓글 모두 동일)
   const handleDeleteComment = async (commentId: number) => {
     setErrorMsg(null);
     try {
@@ -757,7 +859,9 @@ const CommunityDetailPage: React.FC = () => {
         try {
           const response = await fetch(
             `http://localhost:8080/community/comment/re?commentId=${commentId}`,
-            { credentials: "include" }
+            {
+              credentials: "include",
+            }
           );
           if (!response.ok) {
             throw new Error("대댓글을 불러오는데 실패했습니다.");
@@ -773,7 +877,9 @@ const CommunityDetailPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
     return new Intl.DateTimeFormat("ko", {
       year: "numeric",
       month: "long",
@@ -970,22 +1076,78 @@ const CommunityDetailPage: React.FC = () => {
                   replies[comment.commentId] && (
                     <div className="mt-3 ml-8 border-l-2 border-gray-200 pl-4 space-y-4">
                       {replies[comment.commentId].map((reply) => (
-                        <div key={reply.commentId} className="flex items-start">
-                          <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
-                            {reply.commentAuthorName.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="flex-grow">
-                            <div className="flex items-center">
-                              <span className="font-medium mr-2">
-                                {reply.commentAuthorName}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {formatDate(reply.commentTime)}
-                              </span>
+                        <div key={reply.commentId} className="flex flex-col">
+                          <div className="flex items-center w-full">
+                            <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold mr-3">
+                              {reply.commentAuthorName.charAt(0).toUpperCase()}
                             </div>
-                            <div className="mt-1 text-gray-800">
-                              {reply.comment}
+                            <div className="flex-grow">
+                              <div className="flex items-center">
+                                <span className="font-medium mr-2">
+                                  {reply.commentAuthorName}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {formatDate(reply.commentTime)}
+                                </span>
+                              </div>
+                              {editingCommentId === reply.commentId ? (
+                                <div className="mt-1">
+                                  <input
+                                    type="text"
+                                    value={editingText}
+                                    onChange={(e) =>
+                                      setEditingText(e.target.value)
+                                    }
+                                    className="w-full bg-gray-100 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  />
+                                  <div className="mt-2 flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleEditComment(reply.commentId)
+                                      }
+                                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+                                    >
+                                      저장
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setEditingCommentId(null);
+                                        setEditingText("");
+                                      }}
+                                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-400"
+                                    >
+                                      취소
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="mt-1 text-gray-800">
+                                  {reply.comment}
+                                </div>
+                              )}
                             </div>
+                            {reply.myComment &&
+                              editingCommentId !== reply.commentId && (
+                                <div className="flex flex-col ml-2">
+                                  <button
+                                    className="text-green-600 hover:text-green-800 font-medium mb-1"
+                                    onClick={() => {
+                                      setEditingCommentId(reply.commentId);
+                                      setEditingText(reply.comment);
+                                    }}
+                                  >
+                                    수정
+                                  </button>
+                                  <button
+                                    className="text-red-600 hover:text-red-800 font-medium"
+                                    onClick={() =>
+                                      handleDeleteComment(reply.commentId)
+                                    }
+                                  >
+                                    삭제
+                                  </button>
+                                </div>
+                              )}
                           </div>
                         </div>
                       ))}
