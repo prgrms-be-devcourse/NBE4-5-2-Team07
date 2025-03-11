@@ -49,7 +49,7 @@ public class PaymentService {
             }
 
             Payment payment = paymentResponse.getResponse();
-            PaymentResponseDto responseDto = new PaymentResponseDto(payment);
+            PaymentResponseDto responseDto = new PaymentResponseDto(payment, member);
             if ("paid".equals(payment.getStatus())) {
                 saveOrder(responseDto, member);
             }
