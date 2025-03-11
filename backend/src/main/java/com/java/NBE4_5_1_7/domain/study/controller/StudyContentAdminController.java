@@ -1,8 +1,11 @@
 package com.java.NBE4_5_1_7.domain.study.controller;
 
 import com.java.NBE4_5_1_7.domain.study.dto.StudyContentDetailDto;
+import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentCreateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.dto.request.StudyContentUpdateRequestDto;
 import com.java.NBE4_5_1_7.domain.study.service.StudyContentAdminService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,51 +20,74 @@ import java.util.Map;
 @RequestMapping("/api/v1/admin/study")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+@Tag(name = "학습 콘텐츠 관리", description = "관리자용 API")
 public class StudyContentAdminController {
 
     private final StudyContentAdminService studyContentAdminService;
 
-    // 모든 카테고리 (첫 번째 카테고리 + 두 번째 카테고리) 조회
+    @Operation(summary = "모든 카테고리 조회", description = "첫 번째 및 두 번째 카테고리 목록을 조회합니다.")
     @GetMapping("/all")
     public ResponseEntity<Map<String, List<String>>> getAllCategory() {
         return ResponseEntity.ok(studyContentAdminService.getAllCategory());
     }
 
-    // 첫 번째 카테고리에 해당하는 학습 콘텐츠 조회
+    @Operation(summary = "첫 번째 카테고리별 학습 콘텐츠 조회", description = "지정된 첫 번째 카테고리에 속하는 학습 콘텐츠를 페이징하여 조회합니다.")
     @GetMapping("/category/{firstCategory}")
-    public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByFirstCategory(@PathVariable String firstCategory, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByFirstCategory(
+            @PathVariable String firstCategory,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        Page<StudyContentDetailDto> studyContents = studyContentAdminService.getPagedStudyContentsByCategory(firstCategory, PageRequest.of(page, size));
+        Page<StudyContentDetailDto> studyContents = studyContentAdminService
+                .getPagedStudyContentsByCategory(firstCategory, PageRequest.of(page, size));
 
         return ResponseEntity.ok(studyContents);
     }
 
-    // 첫 번째 + 두 번째 카테고리에 해당하는 학습 콘텐츠 조회
+    @Operation(summary = "첫 번째 + 두 번째 카테고리별 학습 콘텐츠 조회", description = "지정된 첫 번째 및 두 번째 카테고리에 속하는 학습 콘텐츠를 페이징하여 조회합니다.")
     @GetMapping("/category/{firstCategory}/{secondCategory}")
-    public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByCategories(@PathVariable String firstCategory, @PathVariable String secondCategory, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<StudyContentDetailDto>> getPagedStudyContentsByCategories(
+            @PathVariable String firstCategory,
+            @PathVariable String secondCategory,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        Page<StudyContentDetailDto> studyContents = studyContentAdminService.getPagedStudyContentsByCategories(firstCategory, secondCategory, PageRequest.of(page, size));
+        Page<StudyContentDetailDto> studyContents = studyContentAdminService
+                .getPagedStudyContentsByCategories(firstCategory, secondCategory, PageRequest.of(page, size));
 
         return ResponseEntity.ok(studyContents);
     }
 
-    // 학습 콘텐츠 조회
+    @Operation(summary = "학습 콘텐츠 상세 조회", description = "지정된 ID의 학습 콘텐츠 정보를 조회합니다.")
     @GetMapping("/{studyContentId}")
     public ResponseEntity<StudyContentDetailDto> getStudyContentById(@PathVariable Long studyContentId) {
         return ResponseEntity.ok(studyContentAdminService.getStudyContentById(studyContentId));
     }
 
-    // 학습 콘텐츠 수정
+    @Operation(summary = "학습 콘텐츠 수정", description = "지정된 ID의 학습 콘텐츠를 수정합니다.")
     @PutMapping("/{studyContentId}")
-    public ResponseEntity<String> updateStudyContent(@PathVariable Long studyContentId, @RequestBody StudyContentUpdateRequestDto requestDto) {
+    public ResponseEntity<String> updateStudyContent(
+            @PathVariable Long studyContentId,
+            @RequestBody StudyContentUpdateRequestDto requestDto) {
         studyContentAdminService.updateStudyContent(studyContentId, requestDto);
         return ResponseEntity.ok("update success");
     }
 
-    // 학습 콘텐츠 삭제
+    @Operation(summary = "학습 콘텐츠 삭제", description = "지정된 ID의 학습 콘텐츠를 삭제합니다.")
     @DeleteMapping("/{studyContentId}")
     public ResponseEntity<String> deleteStudyContent(@PathVariable Long studyContentId) {
         studyContentAdminService.deleteStudyContent(studyContentId);
         return ResponseEntity.ok("delete success");
+    }
+
+    @Operation(summary = "학습 콘텐츠 등록", description = """
+                새로운 학습 콘텐츠를 등록합니다.
+                - `firstCategory`는 기존에 존재하는 카테고리 중에서만 선택 가능합니다.
+                - `secondCategory`, `title`, `body`는 빈 문자열 또는 `null`일 수 없습니다.
+            """)
+    @PostMapping
+    public ResponseEntity<StudyContentDetailDto> createStudyContent(
+            @RequestBody StudyContentCreateRequestDto requestDto) {
+        return ResponseEntity.ok(studyContentAdminService.createStudyContent(requestDto));
     }
 }
