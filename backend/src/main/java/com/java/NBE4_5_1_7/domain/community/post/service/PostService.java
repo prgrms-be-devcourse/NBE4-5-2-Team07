@@ -217,6 +217,7 @@ public class PostService {
         );
     }
 
+    @Transactional
     public void deleteComment(Long memberId, Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -226,6 +227,10 @@ public class PostService {
             throw new RuntimeException("Not authorized to delete comment");
         }
 
+        if (comment.getParent() != null) {
+            Comment parent = comment.getParent();
+            parent.getChildren().remove(comment);
+        }
         commentRepository.delete(comment);
     }
 

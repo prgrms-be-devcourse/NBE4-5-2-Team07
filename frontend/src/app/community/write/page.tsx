@@ -49,63 +49,108 @@ const CommunityWritePage: React.FC = () => {
   };
 
   return (
-    <div className="w-[1200px] mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">게시글 작성</h1>
-      {errorMsg && (
-        <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-          {errorMsg}
-        </div>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
-      >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-medium mb-2"
-            htmlFor="title"
+    <div className="min-h-screen w-full max-w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950 overflow-hidden relative">
+      {/* 배경 장식 요소 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+        <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-purple-300 dark:bg-purple-700 blur-3xl"></div>
+      </div>
+
+      {/* 코드 파티클 배경 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-gray-800 dark:text-gray-200 text-opacity-30 font-mono text-sm"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: `rotate(${Math.random() * 90 - 45}deg)`,
+            }}
           >
-            제목
-          </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="제목을 입력하세요."
-          />
+            {
+              [
+                "function()",
+                "const data = []",
+                "for(let i=0;)",
+                "if(isValid)",
+                "return result",
+                "{ }",
+                "=> {}",
+                "import",
+                "export",
+                "class",
+              ][Math.floor(Math.random() * 10)]
+            }
+          </div>
+        ))}
+      </div>
+
+      {/* 메인 컨텐츠 */}
+      <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 relative z-10">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 md:p-10">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+            게시글 작성
+          </h1>
+
+          {errorMsg && (
+            <div className="mb-4 bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4 rounded-lg">
+              {errorMsg}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label
+                className="block text-gray-700 dark:text-gray-300 font-medium mb-2"
+                htmlFor="title"
+              >
+                제목
+              </label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                placeholder="제목을 입력하세요."
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-gray-700 dark:text-gray-300 font-medium mb-2"
+                htmlFor="content"
+              >
+                내용
+              </label>
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                placeholder="내용을 입력하세요."
+                rows={8}
+              />
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`rounded-full px-6 py-3 font-medium transition-all duration-200 shadow-lg ${
+                  loading
+                    ? "bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white"
+                }`}
+              >
+                {loading ? "작성 중..." : "작성"}
+              </button>
+            </div>
+          </form>
         </div>
-        <div className="mb-6">
-          <label
-            className="block text-gray-700 font-medium mb-2"
-            htmlFor="content"
-          >
-            내용
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="내용을 입력하세요."
-            rows={8}
-          />
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded-md font-medium transition-colors duration-200 ${
-              loading
-                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "작성 중..." : "작성"}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };

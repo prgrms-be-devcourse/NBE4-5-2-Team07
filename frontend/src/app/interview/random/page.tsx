@@ -29,7 +29,7 @@ interface RandomResponseDto {
 interface InterviewCommentResponseDto {
   commentId: number;
   comment: string;
-  isPublic: boolean;
+  public: boolean;
   interviewContentId: number;
 }
 
@@ -69,45 +69,6 @@ export default function RandomInterviewPage() {
 
   // 추가 상태: 북마크 응답 메시지
   const [bookmarkMessage, setBookmarkMessage] = useState<string>("");
-
-  // 스타일 객체들
-  const containerStyle: React.CSSProperties = {
-    padding: "1rem",
-    fontFamily: "Arial, sans-serif",
-    display: "flex",
-    justifyContent: "center",
-  };
-
-  const mainBoxStyle: React.CSSProperties = {
-    width: "900px",
-    margin: "0 auto",
-  };
-
-  const questionBoxStyle: React.CSSProperties = {
-    border: "1px solid #ccc",
-    padding: "1.5rem",
-    borderRadius: "10px",
-    backgroundColor: "#f9f9f9",
-  };
-
-  const commentContainerStyle: React.CSSProperties = {
-    backgroundColor: "#fff",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    padding: "1rem",
-    marginTop: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  };
-
-  const tabButtonStyle = (active: boolean): React.CSSProperties => ({
-    flex: 1,
-    padding: "0.5rem",
-    cursor: "pointer",
-    border: active ? "2px solid #2e56bc" : "1px solid #ccc",
-    backgroundColor: active ? "#e8e8e8" : "#fff",
-    textAlign: "center",
-    borderRadius: "6px",
-  });
 
   // (1) 컴포넌트 마운트 시 전체 머리 질문 ID 가져오기
   useEffect(() => {
@@ -206,7 +167,7 @@ export default function RandomInterviewPage() {
     setActiveTab(null);
   };
 
-  // (6) 상위/꼬리 질문 보기 (단, 재조회 방식을 동일하게 사용)
+  // (6) 상위/꼬리 질문 보기 (재조회 방식 동일)
   const fetchInterviewById = async (id: number) => {
     try {
       setLoading(true);
@@ -253,7 +214,7 @@ export default function RandomInterviewPage() {
     setShowAnswer((prev) => !prev);
   };
 
-  // (8) 좋아요 토글 함수 – 좋아요 요청 후 현재 질문을 재조회하여 최신 상태 반영
+  // (8) 좋아요 토글 함수 – 좋아요 요청 후 최신 데이터 재조회
   const handleLikeToggle = async () => {
     if (!currentInterview) return;
     try {
@@ -271,8 +232,7 @@ export default function RandomInterviewPage() {
         }
         throw new Error("좋아요 요청에 실패했습니다.");
       }
-      const message = await res.text();
-      // 좋아요 토글 후, 백엔드에서 최신 데이터를 재조회하여 업데이트
+      // 백엔드에서 최신 데이터를 재조회
       await fetchInterviewById(currentInterview.id);
     } catch (err: any) {
       alert(err.message);
@@ -368,7 +328,7 @@ export default function RandomInterviewPage() {
     }
   };
 
-  // (A-2) 북마크 토글 함수 (이미 구현됨)
+  // (A) 북마크 토글 함수
   const handleBookmark = async () => {
     if (!currentInterview) return;
     try {
@@ -388,30 +348,71 @@ export default function RandomInterviewPage() {
       }
       const message = await res.text();
       setBookmarkMessage(message);
-      alert(message);
     } catch (err: any) {
       alert(err.message);
     }
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={mainBoxStyle}>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950 relative">
+      {/* 배경 장식 요소 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+        <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-purple-300 dark:bg-purple-700 blur-3xl"></div>
+      </div>
+      {/* 코드 파티클 배경 */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-gray-800 dark:text-gray-200 text-opacity-30 font-mono text-sm"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: `rotate(${Math.random() * 90 - 45}deg)`,
+            }}
+          >
+            {
+              [
+                "function()",
+                "const data = []",
+                "for(let i=0;)",
+                "if(isValid)",
+                "return result",
+                "{ }",
+                "=> {}",
+                "import",
+                "export",
+                "class",
+              ][Math.floor(Math.random() * 10)]
+            }
+          </div>
+        ))}
+      </div>
+
+      {/* 메인 컨텐츠 */}
+      <div className="container mx-auto max-w-4xl px-4 py-12 relative z-10">
+        {error && (
+          <div className="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded mb-6">
+            <p className="font-medium">오류 발생:</p>
+            <p>{error}</p>
+          </div>
+        )}
+
         {!isRandomMode && (
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <div className="text-center mt-12">
+            <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text">
+              기술 면접 준비
+            </h1>
+            <p className="text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+              면접 질문을 학습하고 정답을 확인하세요. 나만의 메모를 작성하거나
+              다른 개발자의 답변을 참고할 수 있습니다.
+            </p>
             <button
               onClick={startRandomMode}
               disabled={headIds.length === 0}
-              style={{
-                padding: "0.7rem 1.2rem",
-                fontSize: "1rem",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: "#2e56bc",
-                color: "white",
-                cursor: "pointer",
-              }}
+              className="rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-3 px-8 font-medium text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 mx-auto disabled:opacity-50 disabled:cursor-not-allowed"
             >
               질문 순서 랜덤하게 생성하기
             </button>
@@ -419,326 +420,385 @@ export default function RandomInterviewPage() {
         )}
 
         {isRandomMode && currentInterview && (
-          <div style={{ marginTop: "2rem" }}>
-            {loading && <p>로딩중...</p>}
+          <div className="mt-8">
+            {loading && (
+              <div className="flex justify-center items-center h-24">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+              </div>
+            )}
+
             {!loading && (
-              <div style={questionBoxStyle}>
-                {/* 상단 헤더 영역: 카테고리/키워드와 북마크, 좋아요 버튼 */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "1rem",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#e8e8e8",
-                        borderRadius: "6px",
-                        fontSize: "1.1rem",
-                        fontWeight: "bold",
-                        textAlign: "center",
-                      }}
-                    >
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6 transition-all">
+                {/* 상단 헤더 영역: 카테고리/키워드, 북마크, 좋아요 버튼 */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <div className="px-3 py-1.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-md font-semibold">
                       {currentInterview.category.toUpperCase()} &gt;{" "}
                       {currentInterview.keyword}
                     </div>
                     <button
                       onClick={handleLikeToggle}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        borderRadius: "6px",
-                        border: "none",
-                        backgroundColor: currentInterview.likedByUser
-                          ? "#d9534f"
-                          : "#5cb85c",
-                        color: "white",
-                        cursor: "pointer",
-                      }}
+                      className={`inline-flex items-center px-3 py-1.5 rounded-md text-white transition-colors ${
+                        currentInterview.likedByUser
+                          ? "bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
+                          : "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                      }`}
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill={
+                          currentInterview.likedByUser ? "currentColor" : "none"
+                        }
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
                       {currentInterview.likedByUser
-                        ? `좋아요 취소 (${currentInterview.likeCount})`
-                        : `좋아요 추가 (${currentInterview.likeCount})`}
+                        ? `취소 (${currentInterview.likeCount})`
+                        : `좋아요 (${currentInterview.likeCount})`}
                     </button>
                   </div>
                   <button
                     onClick={handleBookmark}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "none",
-                      backgroundColor: "#5cb85c",
-                      color: "white",
-                      cursor: "pointer",
-                    }}
+                    className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
+                    </svg>
                     내 노트에 추가
                   </button>
                 </div>
 
                 {/* 북마크 응답 메시지 */}
                 {bookmarkMessage && (
-                  <p style={{ marginBottom: "1rem", textAlign: "center" }}>
+                  <div className="text-center text-indigo-600 dark:text-indigo-400 py-2">
                     {bookmarkMessage}
-                  </p>
+                  </div>
                 )}
 
                 {/* 질문 내용 */}
-                <p
-                  style={{
-                    fontSize: "1.2rem",
-                    marginBottom: "0.8rem",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  <strong>질문:</strong> {currentInterview.question}
-                </p>
+                <div className="mb-6">
+                  <h2 className="text-lg font-medium mb-2 text-gray-600 dark:text-gray-400">
+                    질문:
+                  </h2>
+                  <p className="text-xl text-gray-800 dark:text-gray-200 leading-relaxed">
+                    {currentInterview.question}
+                  </p>
+                </div>
 
                 {/* 정답 보기 토글 */}
-                <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+                <div className="flex justify-center mb-6">
                   <button
                     onClick={toggleAnswer}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "none",
-                      backgroundColor: showAnswer ? "#d9534f" : "#5cb85c",
-                      color: "white",
-                      cursor: "pointer",
-                      fontSize: "1rem",
-                    }}
+                    className={`inline-flex items-center px-4 py-2 rounded-md transition-colors ${
+                      showAnswer
+                        ? "bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white"
+                        : "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white"
+                    }`}
                   >
-                    {showAnswer ? "정답 가리기" : "정답 보기"}
+                    {showAnswer ? (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          />
+                        </svg>
+                        정답 가리기
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        정답 보기
+                      </>
+                    )}
                   </button>
                 </div>
+
+                {/* 정답 내용 */}
                 {showAnswer && (
-                  <div
-                    style={{
-                      opacity: showAnswer ? 1 : 0,
-                      transition: "opacity 0.3s ease-in-out",
-                      marginBottom: "0.8rem",
-                    }}
-                  >
-                    <p style={{ fontSize: "1.2rem", lineHeight: "1.4" }}>
-                      <strong>모범 답안:</strong>{" "}
+                  <div className="transition-all duration-300 ease-in-out overflow-hidden max-h-96 opacity-100 mb-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4">
+                    <h2 className="text-lg font-medium mb-2 text-gray-600 dark:text-gray-400">
+                      모범 답안:
+                    </h2>
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
                       {currentInterview.model_answer}
                     </p>
                   </div>
                 )}
 
-                {/* 하단 버튼 그룹 */}
-                <div
-                  style={{
-                    marginTop: "1.5rem",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "0.5rem",
-                    justifyContent: "center",
-                  }}
-                >
+                {/* 탐색 버튼 그룹 */}
+                <div className="flex flex-wrap gap-2 justify-center my-6">
                   {currentInterview.head_id && (
                     <button
                       onClick={handleHeadQuestion}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        borderRadius: "6px",
-                        border: "1px solid #2e56bc",
-                        backgroundColor: "#fff",
-                        color: "#2e56bc",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 11l5-5m0 0l5 5m-5-5v12"
+                        />
+                      </svg>
                       상위 질문 보기
                     </button>
                   )}
                   {currentInterview.tail_id && (
                     <button
                       onClick={handleTailQuestion}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        borderRadius: "6px",
-                        border: "1px solid #2e56bc",
-                        backgroundColor: "#fff",
-                        color: "#2e56bc",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+                        />
+                      </svg>
                       꼬리 질문
                     </button>
                   )}
                   {history.length > 0 && (
                     <button
                       onClick={handlePreviousQuestion}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        borderRadius: "6px",
-                        border: "1px solid #2e56bc",
-                        backgroundColor: "#fff",
-                        color: "#2e56bc",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                        />
+                      </svg>
                       이전 질문 다시보기
                     </button>
                   )}
                   <button
                     onClick={handleNextRandom}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      borderRadius: "6px",
-                      border: "1px solid #2e56bc",
-                      backgroundColor: "#fff",
-                      color: "#2e56bc",
-                      cursor: "pointer",
-                    }}
+                    className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                      />
+                    </svg>
                     다음 질문
                   </button>
                 </div>
 
                 {/* 메모(댓글) 입력 영역 */}
-                <div style={commentContainerStyle}>
-                  <h3 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-                    MEMO
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
+                  <h3 className="text-lg font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text">
+                    나의 메모
                   </h3>
                   <textarea
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="질문에 대한 메모를 남겨보세요..."
-                    style={{
-                      width: "100%",
-                      minHeight: "80px",
-                      padding: "0.5rem",
-                      fontSize: "1rem",
-                      borderRadius: "4px",
-                      border: "1px solid #ccc",
-                      resize: "vertical",
-                    }}
+                    className="w-full min-h-[120px] p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y mb-4"
                   />
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "0.5rem",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    <label style={{ fontSize: "1rem" }}>
-                      공개
+                  <div className="flex flex-wrap justify-between items-center">
+                    <label className="flex items-center text-gray-700 dark:text-gray-300">
                       <input
                         type="checkbox"
                         checked={isPublic}
                         onChange={() => setIsPublic((prev) => !prev)}
-                        style={{
-                          marginLeft: "0.5rem",
-                          marginRight: "1rem",
-                          transform: "scale(1.5)",
-                        }}
+                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2"
                       />
+                      다른 사용자에게 공개
                     </label>
                     <button
                       onClick={handleCommentSubmit}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        fontSize: "1rem",
-                        borderRadius: "6px",
-                        border: "none",
-                        backgroundColor: "#2e56bc",
-                        color: "white",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                     >
-                      SAVE
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                        />
+                      </svg>
+                      저장하기
                     </button>
                   </div>
                 </div>
 
                 {/* 메모 조회 영역 */}
-                <div style={{ ...commentContainerStyle, marginTop: "1.5rem" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "1rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                  <div className="flex border-b border-gray-200 dark:border-gray-700">
                     <button
                       onClick={fetchMyMemos}
-                      style={tabButtonStyle(activeTab === "my")}
+                      className={`flex-1 px-4 py-3 text-center font-medium ${
+                        activeTab === "my"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      }`}
                     >
                       내 메모 보기
                     </button>
                     <button
                       onClick={fetchPublicMemos}
-                      style={tabButtonStyle(activeTab === "public")}
+                      className={`flex-1 px-4 py-3 text-center font-medium ${
+                        activeTab === "public"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      }`}
                     >
                       다른 사람 메모 보기
                     </button>
                   </div>
-                  {loadingMemos && (
-                    <p style={{ textAlign: "center" }}>메모 로딩중...</p>
-                  )}
-                  {memosError && (
-                    <p style={{ color: "red", textAlign: "center" }}>
-                      {memosError}
-                    </p>
-                  )}
-                  {activeTab === "my" && !loadingMemos && (
-                    <>
-                      {myMemos.length > 0 ? (
-                        <ul style={{ listStyle: "none", padding: 0 }}>
-                          {myMemos.map((memo) => (
-                            <li
-                              key={memo.commentId}
-                              style={{
-                                padding: "0.6rem",
-                                borderBottom: "1px solid #eee",
-                              }}
-                            >
-                              {memo.comment}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p style={{ textAlign: "center" }}>
-                          내 메모가 없습니다.
-                        </p>
-                      )}
-                    </>
-                  )}
-                  {activeTab === "public" && !loadingMemos && (
-                    <>
-                      {publicMemos.length > 0 ? (
-                        <ul style={{ listStyle: "none", padding: 0 }}>
-                          {publicMemos.map((memo) => (
-                            <li
-                              key={memo.commentId}
-                              style={{
-                                padding: "0.6rem",
-                                borderBottom: "1px solid #eee",
-                              }}
-                            >
-                              {memo.comment}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p style={{ textAlign: "center" }}>
-                          공개 메모가 없습니다.
-                        </p>
-                      )}
-                    </>
-                  )}
+                  <div className="p-4">
+                    {loadingMemos && (
+                      <div className="flex justify-center items-center h-24">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+                      </div>
+                    )}
+
+                    {memosError && (
+                      <div className="text-red-500 dark:text-red-400 text-center py-4">
+                        {memosError}
+                      </div>
+                    )}
+
+                    {activeTab === "my" && !loadingMemos && (
+                      <>
+                        {myMemos.length > 0 ? (
+                          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {myMemos.map((memo) => (
+                              <li key={memo.commentId} className="py-3">
+                                <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                                  {memo.comment}
+                                </p>
+                                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                  <span
+                                    className={`inline-block w-2 h-2 rounded-full mr-1 ${
+                                      memo.public
+                                        ? "bg-green-500"
+                                        : "bg-yellow-500"
+                                    }`}
+                                  ></span>
+                                  {memo.public ? "공개" : "비공개"}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                            작성한 메모가 없습니다.
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {activeTab === "public" && !loadingMemos && (
+                      <>
+                        {publicMemos.length > 0 ? (
+                          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {publicMemos.map((memo) => (
+                              <li key={memo.commentId} className="py-3">
+                                <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                                  {memo.comment}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                            공개된 메모가 없습니다.
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {!activeTab && !loadingMemos && (
+                      <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+                        탭을 선택하여 메모를 확인하세요.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
