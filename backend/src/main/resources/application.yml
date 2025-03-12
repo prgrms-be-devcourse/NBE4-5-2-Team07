@@ -79,6 +79,13 @@ spring:
           starttls:
             enable: true
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
 redisson:
   # 단일 노드 Redis 환경 설정 (SSL이 필요한 경우 rediss:// 사용)
   address: "redis://localhost:6379"
