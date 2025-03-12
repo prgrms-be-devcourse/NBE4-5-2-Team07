@@ -23,9 +23,6 @@ public class ChatService {
 		messageStorage.putIfAbsent(roomId, new ArrayList<>());
 		messageStorage.get(roomId).add(message);
 		messageTimestamp.put(roomId, System.currentTimeMillis());
-
-		System.out.println("메시지 저장 완료. 방 ID: " + roomId + ", 메시지: " + content);
-		System.out.println("현재 메시지 목록: " + messageStorage.get(roomId));
 	}
 
 	/// 24시간이 지난 메시지 삭제

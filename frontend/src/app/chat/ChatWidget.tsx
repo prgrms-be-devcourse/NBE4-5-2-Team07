@@ -142,7 +142,7 @@ const FloatingChat = () => {
     return () => clearInterval(interval);
   }, [lastUserMessageTime, isSessionEnded]);
 
-  // 메시지 보내기
+  // 사용자 메세지 보내기
   const sendMessage = () => {
     if (!clientRef.current || message.trim() === "") return;
 
@@ -163,6 +163,7 @@ const FloatingChat = () => {
     setIsSessionEnded(false);
   };
 
+  // 시스템 메시지 보내기
   const sendSystemMessage = (content: string) => {
     if (!clientRef.current) {
       console.warn("WebSocket 연결 대기 중... 1초 후 재시도");

@@ -1,14 +1,5 @@
 package com.java.NBE4_5_1_7.global.dataInit;
 
-import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
-import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
-import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
-import com.opencsv.CSVReader;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -16,13 +7,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewCategory;
+import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContent;
+import com.java.NBE4_5_1_7.domain.interview.repository.InterviewContentRepository;
+import com.opencsv.CSVReader;
+
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class InterviewContentDataInit {
     private final InterviewContentRepository repository;
 
-//    @PostConstruct
+   @PostConstruct
     public void dataInit() {
         if (repository.count() == 0) {
             importCsvData();

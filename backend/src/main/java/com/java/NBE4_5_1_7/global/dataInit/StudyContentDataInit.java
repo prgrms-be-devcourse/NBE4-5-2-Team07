@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class StudyContentDataInit {
     private final StudyContentRepository repository;
 
-//    @PostConstruct
+   @PostConstruct
     public void importCsvData() {
         try {
             // 프로젝트 상위 디렉토리의 data 폴더 내 CSV 파일 경로 (파일명은 실제 사용 파일명으로 수정)
