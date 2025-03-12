@@ -6,6 +6,7 @@ import SockJS from "sockjs-client";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
     { sender: string; content: string; timestamp: string }[]
@@ -23,6 +24,17 @@ const FloatingChat = () => {
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
+
+  const resizeTextarea = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    resizeTextarea();
+  }, [message]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -44,11 +56,14 @@ const FloatingChat = () => {
         stompClient.subscribe(`/topic/chat/${roomId}`, (messageOutput) => {
           const newMessage = JSON.parse(messageOutput.body);
 
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
-          ]);
-          setLastUserMessageTime(new Date());
+          // 서버에서 메시지를 보내는 경우만 상태 업데이트
+          if (newMessage.sender === "ADMIN") {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
+            ]);
+            setLastUserMessageTime(new Date());
+          }
         });
 
         // 60초 후 상담원이 연결되지 않으면 메시지 출력
@@ -98,7 +113,7 @@ const FloatingChat = () => {
         return response.json();
       })
       .then((data) => {
-        setMessages((prevMessages) => {
+        setMessages(() => {
           const newMessages = data || [];
           return [...newMessages];
         });
@@ -142,7 +157,7 @@ const FloatingChat = () => {
     return () => clearInterval(interval);
   }, [lastUserMessageTime, isSessionEnded]);
 
-  // 사용자 메세지 보내기
+  // 사용자 메시지 보내기
   const sendMessage = () => {
     if (!clientRef.current || message.trim() === "") return;
 
@@ -153,14 +168,30 @@ const FloatingChat = () => {
       timestamp: new Date().toLocaleString("sv-SE"),
     };
 
-    clientRef.current.publish({
-      destination: `/app/chat/user/${roomId}`,
-      body: JSON.stringify(messageObj),
-    });
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { ...messageObj, timestamp: new Date().toLocaleString("sv-SE") },
+    ]);
+
+    console.log("send Message");
 
     setMessage("");
     setLastUserMessageTime(new Date());
     setIsSessionEnded(false);
+
+    // 서버에 메시지 전송 (비동기)
+    setTimeout(() => {
+      if (clientRef.current) {
+        try {
+          clientRef.current.publish({
+            destination: `/app/chat/user/${roomId}`,
+            body: JSON.stringify(messageObj),
+          });
+        } catch (error) {
+          console.error("STOMP 메시지 전송 실패:", error);
+        }
+      }
+    });
   };
 
   // 시스템 메시지 보내기
@@ -224,7 +255,7 @@ const FloatingChat = () => {
                     return (
                       <div
                         key={index}
-                        className={`p-2 rounded-lg max-w-[80%] ${
+                        className={`p-2 rounded-lg max-w-[80%] whitespace-pre-wrap break-words ${
                           msg.sender === "USER"
                             ? "bg-blue-500 text-white self-end"
                             : "bg-gray-100 text-black self-start"
@@ -241,12 +272,14 @@ const FloatingChat = () => {
             </div>
             {/* 메시지 입력란 */}
             <div className="flex items-center justify-between p-2 bg-white mt-4">
-              <input
-                type="text"
+              <textarea
+                ref={textareaRef}
                 placeholder="메시지를 입력하세요."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full p-2 border rounded-lg mr-2"
+                className="w-full p-2 border rounded-lg mr-2 resize-none"
+                rows={1}
+                style={{ overflow: "hidden", resize: "none" }}
               />
               <button
                 onClick={sendMessage}
