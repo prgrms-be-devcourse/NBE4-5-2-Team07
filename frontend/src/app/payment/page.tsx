@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { usePaymentStore } from "./store/paymentStroe";
-import { useRouter } from "next/navigation"; // ✅ useRouter 사용
-import styles from "../styles/payment.module.css";  // CSS 모듈 가져오기
+import { useRouter } from "next/navigation";
+import styles from "../styles/payment.module.css";
 
 const SubscriptionPayment = () => {
     const router = useRouter();
