@@ -96,11 +96,12 @@ const FloatingChat = () => {
   }, [isOpen, roomId]);
 
   useEffect(() => {
-    if (!isOpen || !isConnected || systemMessageSent) return;
-
-    sendSystemMessage("안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?");
-    setSystemMessageSent(true);
-  }, [isOpen, isConnected, systemMessageSent]);
+    if (isConnected && !systemMessageSentRef.current) {
+      console.log("1");
+      sendSystemMessage("안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?");
+      systemMessageSentRef.current = true; // 한 번만 실행되도록 설정
+    }
+  }, [isOpen, isConnected]);
 
   useEffect(() => {
     if (!isOpen) return;
