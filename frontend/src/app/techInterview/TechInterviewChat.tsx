@@ -120,7 +120,12 @@ export default function TechInterviewChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interviewType: type }),
+        credentials: "include",
       });
+      if (res.status === 403 || res.redirected) {
+        router.push("/payment");
+        return;
+      }
       const data = await res.json();
       const botMessage: Message = { role: "bot", content: data.response };
       setMessages([botMessage]);
@@ -142,7 +147,12 @@ export default function TechInterviewChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answer: input, interviewType }),
+        credentials: "include",
       });
+      if (res.status === 403 || res.redirected) {
+        router.push("/payment");
+        return;
+      }
       const data = await res.json();
       const botMessage: Message = { role: "bot", content: data.response };
       setMessages((prev) => [...prev, botMessage]);
@@ -168,7 +178,12 @@ export default function TechInterviewChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation: messages }),
+        credentials: "include",
       });
+      if (res.status === 403 || res.redirected) {
+        router.push("/payment");
+        return;
+      }
       const data = await res.json();
       localStorage.setItem("evaluationResult", data.response);
       router.push("/techInterview/evaluation");

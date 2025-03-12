@@ -4,6 +4,7 @@ import com.java.NBE4_5_1_7.global.app.AppConfig;
 import com.java.NBE4_5_1_7.global.dto.RsData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -51,4 +52,10 @@ public class GlobalExceptionHandler {
                 );
     }
 
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        // 403 Forbidden 상태와 함께 예외 메시지 전송
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }

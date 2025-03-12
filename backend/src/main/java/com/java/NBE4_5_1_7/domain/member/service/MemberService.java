@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class MemberService {
                 .profileImgUrl(profileImgUrl)
                 .role(Role.USER)
                 .subscriptionPlan(SubscriptionPlan.FREE)
+                .subscribeEndDate(LocalDateTime.now())
                 .build();
 
         return memberRepository.save(member);
