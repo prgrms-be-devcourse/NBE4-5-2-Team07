@@ -6,6 +6,7 @@ import SockJS from "sockjs-client";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
     { sender: string; content: string; timestamp: string }[]
@@ -19,8 +20,6 @@ const FloatingChat = () => {
   const [isSessionEnded, setIsSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const clientRef = useRef<Client | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const systemMessageSentRef = useRef(false);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -58,11 +57,14 @@ const FloatingChat = () => {
         stompClient.subscribe(`/topic/chat/${roomId}`, (messageOutput) => {
           const newMessage = JSON.parse(messageOutput.body);
 
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
-          ]);
-          setLastUserMessageTime(new Date());
+          // 서버에서 메시지를 보내는 경우만 상태 업데이트
+          if (newMessage.sender === "ADMIN") {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
+            ]);
+            setLastUserMessageTime(new Date());
+          }
         });
 
         sendSystemMessage(
