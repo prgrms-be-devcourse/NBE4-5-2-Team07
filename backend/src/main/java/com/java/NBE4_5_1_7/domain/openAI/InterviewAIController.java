@@ -39,6 +39,11 @@ public class InterviewAIController {
 
     @PostMapping("/evaluation")
     public ResponseEntity<String> evaluateInterview(@RequestBody InterviewEvaluationDto dto) {
+        System.out.println("평가 요청");
+        for (Message message : dto.getConversation()) {
+            System.out.println(message.getRole());
+            System.out.println(message.getContent());
+        }
         String evaluation = openAiService.evaluateInterview(dto.getConversation());
         return ResponseEntity.ok(evaluation);
     }
