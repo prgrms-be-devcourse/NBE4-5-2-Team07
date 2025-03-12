@@ -108,4 +108,3 @@ springdoc:
           request.credentials = 'include';
           return request;
       }
-      
