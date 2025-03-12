@@ -37,9 +37,9 @@ public class EmailService {
 				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
 				messageHelper.setFrom(fromEmail);
 				messageHelper.setTo(adminEmail);
-				messageHelper.setSubject("[알림] 새로운 사용자 채팅이 도착했습니다");
-				messageHelper.setText(htmlBody, true); // HTML 텍스트로 설정
-				// 메일 전송
+				messageHelper.setSubject("[DevPrep] 새로운 고객센터 문의가 도착했습니다.");
+				messageHelper.setText(htmlBody, true);
+
 				mailSender.send(mimeMessage);
 			} catch (MessagingException e) {
 				throw new RuntimeException(e);

@@ -6,58 +6,104 @@
     <title>Email Notification</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f9fc;
             color: #333;
-            background-color: #f4f7f6;
             margin: 0;
             padding: 0;
         }
-        .container {
+        .email-container {
             width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         h3 {
-            color: #fff;
+            color: #333;
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
-        p {
+        .message-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 50px;
+            color: #333;
             font-size: 16px;
             line-height: 1.6;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
-        .message-content {
+        .message-box strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        .message-box .timestamp {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+        .link {
+            display: inline-block;
+            padding: 15px 30px;
+            color: white;
             font-size: 18px;
             font-weight: bold;
-            color: #555;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
-        .timestamp {
-            color: #777;
+        .email-footer {
+            margin-top: 120px;
+            font-size: 14px;
+            color: #999;
         }
-        .btn {
-            background-color: #006aff;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+        .logo {
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+        .security-warning {
+            background-color: #fff8f8;
+            border: 1px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 40px;
+            color: #e74c3c;
+            font-size: 16px;
             font-weight: bold;
-            display: inline-block;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background-color: #2e56bc;
+            border-radius: 8px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h3>새로운 채팅 메시지가 도착했습니다!</h3>
-    <p>메시지 내용: <span class="message-content" th:text="${content}"></span></p>
-    <p class="timestamp">보낸 시간: <span th:text="${timestamp}"></span></p>
+<div class="email-container">
+    <!-- 로고 -->
+    <img src="https://i.ibb.co/LXz1HvKW/2025-03-12-10-55-30.png" alt="devPrep-logo" class="logo">
 
-    <a href="http://localhost:3000/admin" class="btn">관리자 페이지로 이동</a>
+    <!-- 보안 경고 메시지 -->
+    <div class="security-warning">
+        <p>중요! 새로운 고객센터 문의가 도착했습니다. 확인 후 적절한 조치를 취해 주세요.</p>
+    </div>
+
+    <!-- 메시지 -->
+    <div class="message-box">
+        <strong><span th:text="${content}"></span></strong>
+        <div class="timestamp" th:text="${timestamp}"></div>
+    </div>
+
+    <!-- 관리자 페이지 링크 -->
+    <a href="http://localhost:3000/admin" class="link">관리자 페이지로 이동하기</a>
+
+    <!-- Footer -->
+    <div class="email-footer">
+        <p>본 이메일은 자동으로 발송된 알림입니다.</p>
+    </div>
 </div>
 </body>
 </html>
