@@ -12,10 +12,13 @@ public class MemberDto {
     private String nickname;
     @NonNull
     private String profileImgUrl;
+    @NonNull
+    private String subscriptPlan;
 
     public MemberDto(Member member) {
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.profileImgUrl = member.getProfileImgUrlOrDefaultUrl();
+        this.subscriptPlan = member.getSubscriptionPlan().toString();
     }
 }
