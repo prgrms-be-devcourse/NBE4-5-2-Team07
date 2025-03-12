@@ -25,6 +25,7 @@ public class PaymentController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(@RequestBody Map<String, Object> payload) {
+        System.out.println("안와?");
         paymentService.handleWebhook(payload);
         return ResponseEntity.ok("웹훅 조회 성공");
     }
