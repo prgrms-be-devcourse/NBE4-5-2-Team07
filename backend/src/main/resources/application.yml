@@ -53,10 +53,18 @@ spring:
               user-name-attribute: id
   logging:
     level:
-      org.hibernate.SQL: DEBUG
-      org.hibernate.orm.jdbc.bind: TRACE
-      org.hibernate.orm.jdbc.extract: TRACE
-      org.springframework.transaction.interceptor: TRACE
+      org:
+        hibernate:
+          SQL: DEBUG
+          orm:
+            jdbc:
+              bind: TRACE
+              extract: TRACE
+        springframework:
+          transaction:
+            interceptor: TRACE
+          web:
+            socket: DEBUG
 
   data:
     redis:
