@@ -461,8 +461,8 @@ const ClientPage = () => {
   };
 
   const handleSubcriptionList = () => {
-    router.push('/payment');
-  }
+    router.push("/payment");
+  };
 
   const handleMemoCategorySelect = (category: string) => {
     setSelectedMemoCategory(category);
@@ -849,17 +849,6 @@ const ClientPage = () => {
                 내 글
               </button>
 
-              <button
-                  className={`px-4 py-3 rounded-lg transition-colors text-left ${
-                      showPostList
-                          ? "bg-indigo-600 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                  onClick={handleSubcriptionList}
-              >
-                구독 현황
-              </button>
-
               <div className="relative">
                 <button
                   className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg flex justify-between items-center text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
@@ -913,6 +902,13 @@ const ClientPage = () => {
                   </div>
                 )}
               </div>
+
+              <button
+                className="px-4 py-3 rounded-lg transition-colors text-left bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                onClick={handleSubcriptionList}
+              >
+                구독 현황
+              </button>
             </div>
           </div>
 

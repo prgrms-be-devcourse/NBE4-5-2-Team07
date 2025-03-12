@@ -43,6 +43,8 @@ const SubscriptionPayment = () => {
 
   const [selectedPlan, setSelectedPlan] = useState(plans[1]); // 기본값: PREMIUM
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showCancelSuccessModal, setShowCancelSuccessModal] = useState(false);
 
   // 결제 요청 함수: 선택한 pg 값을 인자로 받음
   const requestPay = (pgValue: string) => {
@@ -95,7 +97,7 @@ const SubscriptionPayment = () => {
   };
 
   // 결제 취소 요청 함수
-  const cancelPayment = async () => {
+  const cancelSubscription = async () => {
     try {
       const response = await fetch(
         "http://localhost:8080/api/v1/payments/cancel",
@@ -109,13 +111,14 @@ const SubscriptionPayment = () => {
       const data = await response.json();
 
       if (data) {
-        alert("결제가 취소되었습니다.");
+        setShowCancelModal(false);
+        setShowCancelSuccessModal(true);
       } else {
-        alert("결제 취소 실패: " + data.message);
+        alert("구독 취소 실패: " + data.message);
       }
     } catch (error) {
-      console.error("결제 취소 실패:", error);
-      alert("서버 오류로 결제 취소에 실패했습니다.");
+      console.error("구독 취소 실패:", error);
+      alert("서버 오류로 구독 취소에 실패했습니다.");
     }
   };
 
@@ -211,7 +214,27 @@ const SubscriptionPayment = () => {
                       alert("무료 플랜은 결제가 필요하지 않습니다.");
                       return;
                     }
-                    setShowPaymentModal(true);
+                    // 백엔드에 회원 정보 요청
+                    fetch("http://localhost:8080/member/me", {
+                      method: "GET",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                    })
+                      .then((res) => res.json())
+                      .then((result) => {
+                        // 응답 결과에서 RsData 내부의 MemberDto 추출 (예: result.data)
+                        if (
+                          result.data &&
+                          result.data.subscriptPlan === "PREMIUM"
+                        ) {
+                          alert("이미 프리미엄 구독 중 입니다");
+                        } else {
+                          setShowPaymentModal(true);
+                        }
+                      })
+                      .catch((error) => {
+                        console.error("회원 정보 요청 실패:", error);
+                      });
                   }}
                   className={`w-full rounded-full py-3 px-6 font-medium transition-all shadow-lg ${
                     plan.price === 0
@@ -228,10 +251,29 @@ const SubscriptionPayment = () => {
 
         <div className="text-center mt-6">
           <button
-            onClick={cancelPayment}
-            className="py-2 px-4 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
+            onClick={(e) => {
+              // 백엔드에 회원 정보 요청
+              fetch("http://localhost:8080/member/me", {
+                method: "GET",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+              })
+                .then((res) => res.json())
+                .then((result) => {
+                  // 응답 결과에서 RsData 내부의 MemberDto 추출 (예: result.data)
+                  if (result.data && result.data.subscriptPlan === "FREE") {
+                    alert("프리미엄 플랜 구독자가 아닙니다.");
+                  } else {
+                    setShowCancelModal(true);
+                  }
+                })
+                .catch((error) => {
+                  console.error("회원 정보 요청 실패:", error);
+                });
+            }}
+            className="py-3 px-6 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium transition-colors border border-red-200 dark:border-red-800 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
           >
-            결제 취소
+            구독 취소
           </button>
         </div>
       </div>
@@ -297,6 +339,104 @@ const SubscriptionPayment = () => {
                   className="px-6 py-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
                 >
                   취소
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 구독 취소 확인 모달 */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-fade-in">
+            <div className="relative p-6">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-red-600 dark:text-red-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold text-center text-gray-800 dark:text-white mb-4">
+                정말 구독을 취소하시겠습니까?
+              </h3>
+
+              <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+                취소 버튼을 선택하시면 현재 이용중인 프리미엄 플랜 혜택을 더이상
+                받지 못합니다.
+              </p>
+
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button
+                  onClick={cancelSubscription}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full shadow-lg transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  className="px-6 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-full hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  구독 유지하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 구독 취소 완료 모달 */}
+      {showCancelSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-fade-in">
+            <div className="relative p-6">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-green-600 dark:text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold text-center text-gray-800 dark:text-white mb-4">
+                프리미엄 플랜 구독 취소 되었습니다
+              </h3>
+
+              <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+                구독 기간이 종료될 때까지 프리미엄 혜택을 계속 이용하실 수
+                있습니다.
+              </p>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowCancelSuccessModal(false)}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full shadow-lg transition-colors"
+                >
+                  확인
                 </button>
               </div>
             </div>

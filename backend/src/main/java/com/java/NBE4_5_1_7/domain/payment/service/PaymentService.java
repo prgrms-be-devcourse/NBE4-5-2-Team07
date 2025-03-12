@@ -9,8 +9,10 @@ import com.java.NBE4_5_1_7.domain.payment.entity.Order;
 import com.java.NBE4_5_1_7.domain.payment.repository.OrderRepository;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import com.siot.IamportRestClient.response.Prepare;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +52,7 @@ public class PaymentService {
         Member member = memberService.getMemberFromRq();
         try {
             String impUid = requestDto.getImp_uid();
-
+            IamportResponse<Prepare> prepareIamportResponse = iamportClient.postPrepare(new PrepareData(impUid, BigDecimal.valueOf(100)));
             IamportResponse<Payment> paymentResponse = iamportClient.paymentByImpUid(impUid);
 
             if (paymentResponse == null || paymentResponse.getResponse() == null) {
