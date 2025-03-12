@@ -195,7 +195,7 @@ export default function TechInterviewChat() {
               className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 md:p-10 mx-auto"
               style={{ maxWidth: "800px" }}
             >
-              <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-8 text-center">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-8 text-center">
                 안녕하세요! <br />
                 기술 면접을 담당하는 AI 면접관입니다.
               </h1>

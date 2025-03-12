@@ -146,7 +146,8 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950 p-4 sm:p-6 lg:p-8 relative">
+    // 이 div에서 배경 gradient 제거
+    <div className="min-h-screen w-full p-4 sm:p-6 lg:p-8 relative">
       {/* Background decoration elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
         <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
@@ -185,30 +186,30 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
           </div>
         ) : error ? (
-          <div className="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded mb-6">
+          <div className="border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded mb-6">
             <p>{error}</p>
           </div>
         ) : (
           <>
             {/* Content Header */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <div className="mb-6 border-b border-indigo-100 dark:border-indigo-800 pb-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                 <div>
                   <div className="text-sm text-indigo-600 dark:text-indigo-400 font-medium mb-1">
                     {category.firstCategory}
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text">
+                  <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text">
                     {category.secondCategory}
                   </h2>
                 </div>
-                <div className="flex items-center mt-4 sm:mt-0 self-end sm:self-auto bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                <div className="flex items-center mt-4 sm:mt-0 self-end sm:self-auto rounded-lg p-1">
                   <button
                     onClick={handlePreviousPage}
                     disabled={page === 0}
                     className={`px-3 py-1 rounded-md text-sm font-medium mr-2 ${
                       page === 0
                         ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-indigo-100/50 dark:hover:bg-indigo-800/50"
                     }`}
                   >
                     이전
@@ -222,7 +223,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                     className={`px-3 py-1 rounded-md text-sm font-medium ml-2 ${
                       page === totalPages - 1 || totalPages === 0
                         ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-indigo-100/50 dark:hover:bg-indigo-800/50"
                     }`}
                   >
                     다음
@@ -232,10 +233,10 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
             </div>
 
             {/* Study Contents */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <div className="mb-8">
               {studyContents.length > 0 ? (
                 studyContents.map((content: any, index: number) => (
-                  <div key={index}>
+                  <div key={index} className="mb-8">
                     <input type="hidden" value={content.id} />
                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                       {content.title}
@@ -270,8 +271,8 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
             </div>
 
             {/* Memo Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-              <div className="flex justify-between items-center px-6 py-4 bg-gray-50 dark:bg-gray-700">
+            <div className="border border-indigo-100 dark:border-indigo-800 rounded-xl">
+              <div className="flex justify-between items-center px-6 py-4 border-b border-indigo-100 dark:border-indigo-800 rounded-t-xl">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                   나의 메모
                 </h3>
@@ -294,7 +295,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
               </div>
               <div className="p-6">
                 <textarea
-                  className="w-full px-3 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[150px]"
+                  className="w-full px-3 py-2 text-gray-700 dark:text-gray-200 border border-indigo-100 dark:border-indigo-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[150px]"
                   placeholder="메모를 입력하세요..."
                   value={memo}
                   onChange={handleMemoChange}
@@ -302,19 +303,19 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
                 <div className="flex flex-wrap gap-2 justify-end mt-4">
                   <button
                     onClick={handleMemoCreate}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-medium text-sm shadow-lg shadow-indigo-500/20 transition-colors"
                   >
                     저장
                   </button>
                   <button
                     onClick={handleMemoCheck}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
                   >
                     나의 메모 조회
                   </button>
                   <button
                     onClick={handleGetMemoList}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
                   >
                     메모 참고하기
                   </button>
