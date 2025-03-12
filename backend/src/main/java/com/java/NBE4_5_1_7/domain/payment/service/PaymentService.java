@@ -12,12 +12,14 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,6 +43,7 @@ public class PaymentService {
     }
 
     // 결제 검증 (DB 저장은 하지 않음)
+    @Transactional
     public PaymentResponseDto verifyPayment(PaymentRequestDto requestDto) {
         Member member = memberService.getMemberFromRq();
         try {
@@ -62,13 +65,22 @@ public class PaymentService {
         }
     }
 
+    @Transactional
     public void saveOrder(PaymentResponseDto paymentResponseDto, Member member) {
-        Order order = new Order(paymentResponseDto, member);
-        orderRepository.save(order);
+        Optional<Order> order = orderRepository.findByMemberAndStatus(member, "cancelled");
+        if (order.isPresent()) {
+            order.get().setCreatedAt(LocalDateTime.now());  // 결제 검증 시간
+            order.get().setMerchantUid(paymentResponseDto.getMerchantUid());
+            order.get().setImpUid(paymentResponseDto.getImpUid());
+            orderRepository.save(order.get());
+        } else {
+            orderRepository.save(new Order(paymentResponseDto, member));
+        }
     }
 
     // 웹훅에서 결제 상태 처리
-    public void handleWebhook(Map<String, Object> payload) {
+    public void handleWebhook(Map<String, Object> payload) throws InterruptedException {
+        Thread.sleep(3000);
         String impUid = (String) payload.get("imp_uid");  // 웹훅에서 imp_uid 가져오기
         if (impUid == null) {
             throw new IllegalArgumentException("존재하지 않는 imp 번호 입니다.");
@@ -114,6 +126,37 @@ public class PaymentService {
         } catch (IamportResponseException | IOException e) {
             log.error("아임포트 API 호출 실패: " + e.getMessage());
             return null;
+        }
+    }
+
+    // 구독 취소 기능
+    public void cancelSubscription() {
+        // 1. 회원 정보 조회
+        Member member = memberService.getMemberFromRq();
+
+        if (member == null) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+
+        // 2. 회원의 현재 구독 플랜 상태 확인
+        if (SubscriptionPlan.FREE.equals(member.getSubscriptionPlan())) {
+            throw new IllegalArgumentException("무료 플랜은 취소할 수 없습니다.");
+        }
+
+        // 3. 구독 플랜을 취소 처리
+        member.setSubscriptionPlan(SubscriptionPlan.FREE);  // FREE로 설정 (구독 취소)
+        memberService.saveMember(member); // 회원 정보 업데이트
+
+        // 4. 회원이 결제한 주문을 찾아서 취소 처리
+        Optional<Order> orderOptional = orderRepository.findByMemberAndStatus(member, "paid");  // 결제 완료된 주문을 조회
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.setStatus("cancelled");  // 주문 상태를 '취소'로 업데이트
+            orderRepository.save(order);  // 취소된 주문 저장
+            log.info("회원 {} 의 PREMIUM 구독 취소 처리 완료", member.getUsername());
+
+        } else {
+            log.error("결제된 주문을 찾을 수 없습니다. 회원: {}", member.getUsername());
         }
     }
 }

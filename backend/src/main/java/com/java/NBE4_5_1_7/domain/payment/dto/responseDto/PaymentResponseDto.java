@@ -25,7 +25,7 @@ public class PaymentResponseDto {
         this.impUid = payment.getImpUid();
         this.merchantUid = payment.getMerchantUid();
         this.buyerName = member.getNickname();
-//        this.buyerEmail = payment.getBuyerEmail();
+        this.buyerEmail = payment.getBuyerEmail();
         this.amount = payment.getAmount();
         this.status = payment.getStatus();
         this.pay_method = payment.getPayMethod();

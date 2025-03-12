@@ -1,0 +1,112 @@
+/* payment.module.css */
+
+.subscriptionPlans {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.planCard {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.planCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.planCard h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.planCard p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #e94e77;
+}
+
+.planButton {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.planButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.planButton:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.selected {
+    background-color: #1e8e3e !important; /* 선택된 플랜에 대한 스타일 */
+    color: #fff;
+}
+
+.h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #333;
+    font-weight: bold;
+}
+
+/* cancelButtonContainer 스타일 */
+.cancelButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* 버튼과 다른 요소들 사이에 여백을 추가 */
+}
+
+/* cancelButton 스타일 */
+.cancelButton {
+    background-color: #ff4d4f; /* 빨간색 배경 */
+    color: white; /* 흰색 글씨 */
+    padding: 12px 24px; /* 버튼 안쪽 여백 */
+    font-size: 16px; /* 글자 크기 */
+    border: none;
+    border-radius: 8px; /* 둥근 모서리 */
+    cursor: pointer; /* 마우스 커서가 손 모양으로 변함 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 추가 */
+}
+
+.cancelButton:hover {
+    background-color: #ff7875; /* 마우스 hover 시 배경색 변경 */
+    transform: scale(1.05); /* 마우스 hover 시 버튼 크기 살짝 커짐 */
+}
+
+.cancelButton:active {
+    background-color: #ff4d4f; /* 클릭 시 배경색 변하지 않게 유지 */
+    transform: scale(0.98); /* 클릭 시 버튼이 살짝 작아짐 */
+}
+
+.cancelButton:focus {
+    outline: none; /* 포커스 시 기본 외곽선 제거 */
+}
+

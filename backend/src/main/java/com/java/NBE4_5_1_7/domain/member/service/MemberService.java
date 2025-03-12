@@ -119,4 +119,8 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
         return member.isAdmin();
     }
+
+    public void saveMember(Member member) {
+        memberRepository.save(member);
+    }
 }
