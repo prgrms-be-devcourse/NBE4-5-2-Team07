@@ -54,7 +54,7 @@ export default function ClientLayout({
         <LoginMemberContext.Provider value={loginMemberContextValue}>
           <Header />
           <div className="flex-grow">{children}</div>
-          <footer className="relative overflow-hidden py-10 bg-white dark:bg-gray-800 shadow-lg mt-12">
+          <footer className="relative overflow-hidden py-10 bg-white dark:bg-gray-800 shadow-lg">
             {/* 배경 장식 요소 */}
             <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none">
               <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-2xl"></div>
