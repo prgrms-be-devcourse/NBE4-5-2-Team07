@@ -1,7 +1,8 @@
 package com.java.NBE4_5_1_7.global.security;
 
-import java.util.Arrays;
-
+import com.java.NBE4_5_1_7.global.app.AppConfig;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,10 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.java.NBE4_5_1_7.global.app.AppConfig;
-
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -33,7 +31,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/member/**", "/api/v1/study/**", "/api/interview/**", "/ws/chat/**", "/chat/messages/**").permitAll()
+                                .requestMatchers("/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/member/**",
+                                        "/api/v1/study/**",
+                                        "/api/interview/**",
+                                        "/ws/chat/**",
+                                        "/chat/messages/**",
+                                        "/api/v1/payments/webhook").permitAll()
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
