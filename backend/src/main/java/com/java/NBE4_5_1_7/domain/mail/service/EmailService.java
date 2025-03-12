@@ -25,23 +25,25 @@ public class EmailService {
 	private String adminEmail; // 관리자의 이메일 주소
 
 	public void sendChatNotification(String sender, String messageContent, String timestamp) {
-		try {
-			Context context = new Context();
-			context.setVariable("sender", sender);
-			context.setVariable("content", messageContent);
-			context.setVariable("timestamp", timestamp);
-			String htmlBody = templateEngine.process("email-template", context);
+		if ("USER".equals(sender)) {
+			try {
+				Context context = new Context();
+				context.setVariable("sender", sender);
+				context.setVariable("content", messageContent);
+				context.setVariable("timestamp", timestamp);
+				String htmlBody = templateEngine.process("email-template", context);
 
-			MimeMessage mimeMessage = mailSender.createMimeMessage();
-			MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
-			messageHelper.setFrom(fromEmail);
-			messageHelper.setTo(adminEmail);
-			messageHelper.setSubject("[알림] 새로운 사용자 채팅이 도착했습니다");
-			messageHelper.setText(htmlBody, true); // HTML 텍스트로 설정
-			// 메일 전송
-			mailSender.send(mimeMessage);
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+				MimeMessage mimeMessage = mailSender.createMimeMessage();
+				MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+				messageHelper.setFrom(fromEmail);
+				messageHelper.setTo(adminEmail);
+				messageHelper.setSubject("[알림] 새로운 사용자 채팅이 도착했습니다");
+				messageHelper.setText(htmlBody, true); // HTML 텍스트로 설정
+				// 메일 전송
+				mailSender.send(mimeMessage);
+			} catch (MessagingException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

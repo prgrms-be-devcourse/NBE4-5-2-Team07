@@ -4,11 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            color: #fff;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .message-content {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+        }
+        .timestamp {
+            color: #777;
+        }
+        .btn {
+            background-color: #006aff;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #2e56bc;
+        }
+    </style>
 </head>
 <body>
-<h3>새로운 채팅 메시지</h3>
-<p>보낸 사람: <strong th:text="${sender}"></strong></p>
-<p>메시지 내용: <strong th:text="${content}"></strong></p>
-<p>보낸 시간: <strong th:text="${timestamp}"></strong></p>
+<div class="container">
+    <h3>새로운 채팅 메시지가 도착했습니다!</h3>
+    <p>메시지 내용: <span class="message-content" th:text="${content}"></span></p>
+    <p class="timestamp">보낸 시간: <span th:text="${timestamp}"></span></p>
+
+    <a href="http://localhost:3000/admin" class="btn">관리자 페이지로 이동</a>
+</div>
 </body>
 </html>

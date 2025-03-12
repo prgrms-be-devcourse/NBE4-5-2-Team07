@@ -1337,8 +1337,8 @@ export interface components {
         };
         SortObject: {
             empty?: boolean;
-            unsorted?: boolean;
             sorted?: boolean;
+            unsorted?: boolean;
         };
         PageStudyContentDetailDto: {
             /** Format: int32 */

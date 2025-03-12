@@ -39,8 +39,6 @@ public class ChatController {
 	/// 시스템 메시지 처리
 	@MessageMapping("/chat/system/{roomId}")
 	public void sendSystemMessage(@DestinationVariable Long roomId, Message message) {
-		System.out.println("📩 시스템 메시지 수신됨! Room ID: " + roomId + ", Message: " + message);
-
 		chatService.saveMessage(roomId, message.getSender(), message.getContent(), message.getTimestamp());
 
 		messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
