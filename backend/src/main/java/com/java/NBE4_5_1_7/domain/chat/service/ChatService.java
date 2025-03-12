@@ -13,8 +13,6 @@ import com.java.NBE4_5_1_7.domain.mail.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class ChatService {
