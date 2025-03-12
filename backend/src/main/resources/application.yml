@@ -63,6 +63,22 @@ spring:
       host: localhost
       port: 6379
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    properties:
+      mail:
+        smtp:
+          # 사용자 인증
+          auth: true
+          # 메일 전송시 상황, 로그 확인
+          debug: true
+          # SSL/TLS 기반의 SMTPS 기능
+          starttls:
+            enable: true
+
 redisson:
   # 단일 노드 Redis 환경 설정 (SSL이 필요한 경우 rediss:// 사용)
   address: "redis://localhost:6379"
@@ -85,3 +101,4 @@ springdoc:
           request.credentials = 'include';
           return request;
       }
+      
