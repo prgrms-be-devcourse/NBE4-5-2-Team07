@@ -4,6 +4,7 @@ import React, { useEffect, useState, CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { components } from "@/lib/backend/apiV1/schema";
+import { useRouter } from "next/navigation";
 
 type Note = components["schemas"]["BookmarkResponseDto"];
 type Comment = components["schemas"]["MyPageInterviewCommentResponseDto"];
@@ -51,6 +52,7 @@ const ClientPage = () => {
   const [isPublic, setIsPublic] = useState(false);
   const [memoData, setMemoData] = useState<MemoData>({});
   const [updatedMemo, setUpdatedMemo] = useState("");
+  const router = useRouter();
 
   // New states for My Posts functionality
   const [myPosts, setMyPosts] = useState<PostListResponseDto[]>([]);
@@ -425,6 +427,10 @@ const ClientPage = () => {
       console.error(error);
     }
   };
+
+  const handleSubcription = () => {
+    router.push('/payment')
+  }
 
   // Event handlers remain unchanged
   const handleNoteItemSelect = (note: Note) => {
@@ -828,6 +834,13 @@ const ClientPage = () => {
         >
           작성한 기술 면접 답변 {answerDropdownOpen ? "▲" : "▼"}
         </button>
+        <button style={{
+          ...styles.button,
+          ...(showNoteList ? styles.selectedButton : {}),}}
+                onClick={handleSubcription}>
+          구독 현황
+        </button>
+
         {answerDropdownOpen && (
           <ul style={styles.dropdownList}>
             {answerCategory.map((category, index) => (
