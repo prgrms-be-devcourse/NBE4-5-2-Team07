@@ -4,7 +4,7 @@ import ClientLayout from "./ClientLayout";
 import localFont from "next/font/local";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import ChatWidget from "./chat/ChatWidget";
+import ChatWidget from "./chat/FlotingChat";
 
 config.autoAddCss = false;
 
