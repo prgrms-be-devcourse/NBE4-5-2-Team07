@@ -6,7 +6,6 @@ import SockJS from "sockjs-client";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
     { sender: string; content: string; timestamp: string }[]
@@ -20,11 +19,14 @@ const FloatingChat = () => {
   const [isSessionEnded, setIsSessionEnded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const clientRef = useRef<Client | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const systemMessageSentRef = useRef(false);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
 
+  // textArea 높이 자동 증가
   const resizeTextarea = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -56,15 +58,17 @@ const FloatingChat = () => {
         stompClient.subscribe(`/topic/chat/${roomId}`, (messageOutput) => {
           const newMessage = JSON.parse(messageOutput.body);
 
-          // 서버에서 메시지를 보내는 경우만 상태 업데이트
-          if (newMessage.sender === "ADMIN") {
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
-            ]);
-            setLastUserMessageTime(new Date());
-          }
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { ...newMessage, timestamp: new Date().toLocaleString("sv-SE") },
+          ]);
+          setLastUserMessageTime(new Date());
         });
+
+        sendSystemMessage(
+          "안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?"
+        );
+        systemMessageSentRef.current = true; // 한 번만 실행되도록 설정
 
         // 60초 후 상담원이 연결되지 않으면 메시지 출력
         setTimeout(() => {
@@ -92,11 +96,12 @@ const FloatingChat = () => {
   }, [isOpen, roomId]);
 
   useEffect(() => {
-    if (!isOpen || !isConnected || systemMessageSent) return;
-
-    sendSystemMessage("안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?");
-    setSystemMessageSent(true);
-  }, [isOpen, isConnected, systemMessageSent]);
+    if (isConnected && !systemMessageSentRef.current) {
+      console.log("1");
+      sendSystemMessage("안녕하세요! 😊 고객센터입니다. 무엇을 도와드릴까요?");
+      systemMessageSentRef.current = true; // 한 번만 실행되도록 설정
+    }
+  }, [isOpen, isConnected]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -168,13 +173,6 @@ const FloatingChat = () => {
       timestamp: new Date().toLocaleString("sv-SE"),
     };
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { ...messageObj, timestamp: new Date().toLocaleString("sv-SE") },
-    ]);
-
-    console.log("send Message");
-
     setMessage("");
     setLastUserMessageTime(new Date());
     setIsSessionEnded(false);
@@ -224,7 +222,7 @@ const FloatingChat = () => {
   };
 
   useEffect(() => {
-    if (messagesEndRef.current) {
+    if (messages.length > 0 && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
