@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.payment.service;
 
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
+import com.java.NBE4_5_1_7.domain.member.entity.SubscriptionPlan;
 import com.java.NBE4_5_1_7.domain.member.service.MemberService;
 import com.java.NBE4_5_1_7.domain.payment.dto.reqestDto.PaymentRequestDto;
 import com.java.NBE4_5_1_7.domain.payment.dto.responseDto.PaymentResponseDto;
@@ -89,13 +90,23 @@ public class PaymentService {
     // 결제 상태 업데이트
     @Transactional
     public void updatePaymentStatus(Payment payment) {
-        Optional<Order> paymentEntityOptional = orderRepository.findByImpUid(payment.getImpUid());
+        Optional<Order> orderOptional = orderRepository.findByImpUid(payment.getImpUid());
 
-        if (paymentEntityOptional.isPresent()) {
-            Order paymentEntity = paymentEntityOptional.get();
-            paymentEntity.setStatus(payment.getStatus());  // 결제 상태 업데이트
-            paymentEntity.setAmount(payment.getAmount());
-            orderRepository.save(paymentEntity);
+        if (orderOptional.isPresent()) {
+            Order orderEntity = orderOptional.get();
+            Member member = orderEntity.getMember();
+
+            // 주문 상태 업데이트
+            orderEntity.setStatus(payment.getStatus());
+            orderEntity.setAmount(payment.getAmount());
+
+            // 결제 상품이 "PREMIUM"이면 Member의 구독 플랜 변경
+            if ("PREMIUM".equals(payment.getName())) {
+                log.info("PREMIUM 상품 결제 확인됨. 회원 {} 의 구독 상태를 PREMIUM으로 변경합니다.", member.getUsername());
+                member.setSubscriptionPlan(SubscriptionPlan.PREMIUM);
+            }
+
+            orderRepository.save(orderEntity);
         } else {
             log.error("결제 정보가 존재하지 않음: " + payment.getImpUid());
         }

@@ -19,6 +19,7 @@ public class PaymentResponseDto {
     private String pay_method;
     private boolean success;
     private String card_name;
+    private String item_name;
 
     public PaymentResponseDto(Payment payment, Member member) {
         this.impUid = payment.getImpUid();
@@ -30,6 +31,7 @@ public class PaymentResponseDto {
         this.pay_method = payment.getPayMethod();
         this.success = true;
         this.card_name = payment.getCardName();
+        this.item_name = payment.getName();
     }
 }
 

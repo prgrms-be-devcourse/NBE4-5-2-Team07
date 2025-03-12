@@ -27,6 +27,9 @@ public class Order {
     @Column(nullable = false, name = "imp_uid")
     private String impUid; // 결제 고유번호
 
+    @Column(nullable = false, name = "item_name")
+    private String itemName;
+
     @JoinColumn(name = "member_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Member member;
@@ -46,5 +49,6 @@ public class Order {
         this.member = member;
         this.impUid = paymentResponseDto.getImpUid();
         this.merchantUid = paymentResponseDto.getMerchantUid();
+        this.itemName = paymentResponseDto.getItem_name();
     }
 }
