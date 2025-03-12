@@ -54,12 +54,17 @@ public class PaymentService {
 
             Payment payment = paymentResponse.getResponse();
             PaymentResponseDto responseDto = new PaymentResponseDto(payment, member);
+            saveOrder(responseDto, member);
 
-            // 결제 상태가 'paid'이면 DB에 저장은 하지 않음, 검증만
             return responseDto;
         } catch (Exception e) {
             throw new RuntimeException("결제 검증 중 오류 발생: " + e.getMessage());
         }
+    }
+
+    public void saveOrder(PaymentResponseDto paymentResponseDto, Member member) {
+        Order order = new Order(paymentResponseDto, member);
+        orderRepository.save(order);
     }
 
     // 웹훅에서 결제 상태 처리
