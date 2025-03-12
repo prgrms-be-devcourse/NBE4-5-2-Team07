@@ -31,7 +31,7 @@ const SubscriptionPayment = () => {
             {
                 pg: "html5_inicis",
                 pay_method: "card",
-                merchant_uid: "order_1", // 고유 주문번호
+                merchant_uid: "order_" + new Date().getTime(), // 고유 주문번호
                 name: selectedPlan.name, // 선택한 구독 플랜 이름
                 amount: selectedPlan.price, // 선택한 플랜 가격
                 buyer_email: "user@example.com",
@@ -47,7 +47,7 @@ const SubscriptionPayment = () => {
                             method: "POST",
                             credentials: "include",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ imp_uid: rsp.imp_uid, plan: selectedPlan.name }),
+                            body: JSON.stringify({ imp_uid: rsp.imp_uid }),
                         });
 
                         const data = await response.json();

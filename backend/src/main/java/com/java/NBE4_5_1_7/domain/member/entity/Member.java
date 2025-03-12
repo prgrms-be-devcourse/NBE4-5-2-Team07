@@ -43,7 +43,6 @@ public class Member extends BaseEntity{
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InterviewContentBookmark> bookmarks = new ArrayList<>();
 
-
     public boolean isAdmin() {
         return Role.ADMIN.equals(role);
     }

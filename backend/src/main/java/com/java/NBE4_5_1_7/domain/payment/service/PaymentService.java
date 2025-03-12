@@ -12,7 +12,6 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,7 +68,6 @@ public class PaymentService {
     }
 
     // 웹훅에서 결제 상태 처리
-    @Transactional
     public void handleWebhook(Map<String, Object> payload) {
         String impUid = (String) payload.get("imp_uid");  // 웹훅에서 imp_uid 가져오기
         if (impUid == null) {
@@ -82,13 +80,10 @@ public class PaymentService {
         if (paymentResponse == null || paymentResponse.getResponse() == null) {
             throw new RuntimeException("결제 정보 조회 실패");
         }
-
-        Payment payment = paymentResponse.getResponse();
-        updatePaymentStatus(payment);  // 결제 상태 업데이트
+        updatePaymentStatus(paymentResponse.getResponse());
     }
 
     // 결제 상태 업데이트
-    @Transactional
     public void updatePaymentStatus(Payment payment) {
         Optional<Order> orderOptional = orderRepository.findByImpUid(payment.getImpUid());
 
