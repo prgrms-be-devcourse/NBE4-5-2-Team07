@@ -3,7 +3,10 @@ package com.java.NBE4_5_1_7.domain.member.entity;
 import com.java.NBE4_5_1_7.domain.interview.entity.InterviewContentBookmark;
 import com.java.NBE4_5_1_7.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +35,10 @@ public class Member extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionPlan subscriptionPlan;
+
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InterviewContentBookmark> bookmarks = new ArrayList<>();
