@@ -39,7 +39,7 @@ public class SecurityConfig {
                                         "/ws/chat/**",
                                         "/chat/messages/**",
                                         "/api/v1/payments/webhook",
-                                        "api/v1/news").permitAll()
+                                        "api/v1/news/**").permitAll()
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
