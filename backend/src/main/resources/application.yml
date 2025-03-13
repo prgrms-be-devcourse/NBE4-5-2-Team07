@@ -122,3 +122,7 @@ imp:
   code: ${imp.code}
   key: ${imp.api-key}
   secret_key: ${imp.secret-key}
+
+naver:
+  key: ${naver.client-id}
+  secret: ${naver.client-secret}
