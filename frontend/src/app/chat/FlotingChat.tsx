@@ -162,7 +162,7 @@ const FloatingChat = () => {
     return () => clearInterval(interval);
   }, [lastUserMessageTime, isSessionEnded]);
 
-  // 사용자 메시지 보내기
+  // 사용자 메세지 보내기
   const sendMessage = () => {
     if (!clientRef.current || message.trim() === "") return;
 

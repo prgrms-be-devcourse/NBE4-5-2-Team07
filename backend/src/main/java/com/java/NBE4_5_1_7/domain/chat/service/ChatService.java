@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.java.NBE4_5_1_7.domain.chat.model.Message;
-import com.java.NBE4_5_1_7.domain.mail.service.EmailService;
+import com.java.NBE4_5_1_7.domain.mail.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
