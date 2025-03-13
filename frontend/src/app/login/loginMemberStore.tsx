@@ -15,12 +15,12 @@ export const LoginMemberContext = createContext<{
   setNoLoginMember: () => void;
 }>({
   loginMember: createEmptyMember(),
-  setLoginMember: () => {},
-  removeLoginMember: () => {},
+  setLoginMember: () => { },
+  removeLoginMember: () => { },
   isLogin: false,
   isLoginMemberPending: true,
   isAdmin: false,
-  setNoLoginMember: () => {},
+  setNoLoginMember: () => { },
 });
 
 function createEmptyMember(): Member {
