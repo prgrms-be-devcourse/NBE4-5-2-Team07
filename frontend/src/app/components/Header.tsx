@@ -188,6 +188,16 @@ export default function Header() {
                   >
                     면접 경험 공유하기
                   </Link>
+                  <Link
+                      href="/news"
+                      className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${
+                          pathname.startsWith("/news")
+                              ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                              : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                  >
+                    뉴스
+                  </Link>
 
                   {isLogin && (
                     <Link
