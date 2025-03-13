@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.java.NBE4_5_1_7.domain.chat.model.Message;
 import com.java.NBE4_5_1_7.domain.mail.EmailService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
