@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Message {
 	private Long roomId;
-	private String sender;   // 발신자 (시스템/사용자/관리자)
+	private String sender;   // ( ADMIN / USER / GUEST / SYSTEM )
 	private String content;
 	private String timestamp;
 }
