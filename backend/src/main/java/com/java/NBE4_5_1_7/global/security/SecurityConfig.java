@@ -38,7 +38,8 @@ public class SecurityConfig {
                                         "/api/v1/study/**",
                                         "/ws/chat/**",
                                         "/chat/messages/**",
-                                        "/api/v1/payments/webhook").permitAll()
+                                        "/api/v1/payments/webhook",
+                                        "api/v1/news").permitAll()
                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
