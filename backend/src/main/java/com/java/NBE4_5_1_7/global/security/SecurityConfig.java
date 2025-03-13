@@ -41,7 +41,8 @@ public class SecurityConfig {
                                         "/ws/**",
                                         "/chat/**",
                                         "/app/**",
-                                        "/api/v1/payments/webhook").permitAll()
+                                        "/api/v1/payments/webhook",
+                                        "/api/v1/news/**").permitAll()
                                 .requestMatchers(
                                         "/api/v1/admin/**",
                                         "/app/chat/admin/**",
