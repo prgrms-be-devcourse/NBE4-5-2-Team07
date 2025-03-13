@@ -28,6 +28,7 @@ function createEmptyMember(): Member {
     id: 0,
     nickname: "",
     profileImgUrl: "",
+    subscriptPlan: "",
   };
 }
 

@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: frontend_container
+    ports:
+      - "3000:3000"
+    networks:
+      - devprep_network
+
+networks:
+  devprep_network:
+    external: true
