@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_7.domain.news.controller;
 
+import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobResponseDto;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.NewResponseDto;
 import com.java.NBE4_5_1_7.domain.news.service.NewsService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,10 @@ public class NewsController {
             @RequestParam(defaultValue = "1") int page
     ) {
         return ResponseEntity.ok(newsService.getNaverNews(keyWord, page));
+    }
+
+    @GetMapping("/jobs")
+    public ResponseEntity<JobResponseDto> getJobs(@RequestParam("ncsCdLst") String ncsCdLst) {
+        return ResponseEntity.ok(newsService.getJobList(ncsCdLst));
     }
 }

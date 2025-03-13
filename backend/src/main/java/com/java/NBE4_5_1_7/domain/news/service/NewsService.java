@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_7.domain.news.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobResponseDto;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.NewResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -20,7 +22,10 @@ public class NewsService {
     @Value("${naver.secret}")
     private String client_secret;
 
-    public NewResponseDto getNaverNews(String keyWord, int page){
+    @Value("${publicData.Key}")
+    private String public_data_key;
+
+    public NewResponseDto getNaverNews(String keyWord, int page) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", client_key);
@@ -48,5 +53,35 @@ public class NewsService {
         }
 
         return naverNewsResponse;
+    }
+
+    public JobResponseDto getJobList(String ncsCdLst) {
+        String url = "https://apis.data.go.kr/1051000/recruitment/list" +
+                "?serviceKey=" + public_data_key +
+                "&acbgCondLst=R7010" +
+                "&ncsCdLst=" + ncsCdLst +
+                "&numOfRows=5" +
+                "&ongoingYn=Y" +
+                "&pageNo=1" +
+                "&pbancBgngYmd=2025-01-01" +
+                "&recrutSe=R2030" +
+                "&resultType=json";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            String responseBody = response.getBody();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(responseBody, JobResponseDto.class); // 수정된 부분
+        } catch (HttpClientErrorException e) {
+            System.out.println("HTTP 오류: " + e.getStatusCode());
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
