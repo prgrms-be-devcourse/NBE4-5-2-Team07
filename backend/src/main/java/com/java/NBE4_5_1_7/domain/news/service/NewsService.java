@@ -1,9 +1,14 @@
 package com.java.NBE4_5_1_7.domain.news.service;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobResponseDto;
+import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobsDetailDto;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.NewResponseDto;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +29,7 @@ public class NewsService {
     @Value("${naver.secret}")
     private String client_secret;
 
-    @Value("${publicData.Key}")
+    @Value("${publicData.key}")
     private String public_data_key;
 
     public NewResponseDto getNaverNews(String keyWord, int page) {
@@ -44,18 +51,22 @@ public class NewsService {
         String response = responseEntity.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        NewResponseDto naverNewsResponse = null;
+        NewResponseDto newsResponse = null;
 
         try {
-            naverNewsResponse = objectMapper.readValue(response, NewResponseDto.class);
+            newsResponse = objectMapper.readValue(response, NewResponseDto.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return naverNewsResponse;
+        return newsResponse;
     }
 
     public JobResponseDto getJobList(String ncsCdLst) {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JobResponseDto jobResponseDto = new JobResponseDto();
+
         String url = "https://apis.data.go.kr/1051000/recruitment/list" +
                 "?serviceKey=" + public_data_key +
                 "&acbgCondLst=R7010" +
@@ -67,15 +78,18 @@ public class NewsService {
                 "&recrutSe=R2030" +
                 "&resultType=json";
 
-        RestTemplate restTemplate = new RestTemplate();
-
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
-            String responseBody = response.getBody();
+            jobResponseDto.setTotalCount(jsonNode.get("totalCount").asInt());
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(responseBody, JobResponseDto.class); // 수정된 부분
+            List<JobsDetailDto> jobsDetailDtoList = objectMapper.readValue(
+                    jsonNode.get("result").toString(), new TypeReference<List<JobsDetailDto>>() {}
+            );
+            jobResponseDto.setResult(jobsDetailDtoList);
+
+            return jobResponseDto;
         } catch (HttpClientErrorException e) {
             System.out.println("HTTP 오류: " + e.getStatusCode());
             return null;
