@@ -26,7 +26,7 @@ public class ChatController {
     }
 
     /// 관리자 메시지 전송
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @MessageMapping("/chat/admin/{roomId}")
     public void sendAdminMessage(@DestinationVariable Long roomId, Message message) {
         chatService.saveMessage(roomId, message.getSender(), message.getContent(), message.getTimestamp());
@@ -50,7 +50,7 @@ public class ChatController {
         return chatService.getMessage(roomId);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/chat/messages/{roomId}")
     public void deleteChatRoomMessages(@PathVariable Long roomId) {
         chatService.deleteChatRoomMessages(roomId);

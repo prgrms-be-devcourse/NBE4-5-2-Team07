@@ -44,6 +44,7 @@ public class SecurityConfig {
                                         "/api/v1/payments/webhook").permitAll()
                                 .requestMatchers(
                                         "/api/v1/admin/**",
+                                        "/app/chat/admin/**",
                                         "/chat/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
