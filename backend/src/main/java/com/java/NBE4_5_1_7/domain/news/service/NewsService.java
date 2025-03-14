@@ -77,14 +77,11 @@ public class NewsService {
                 "&resultType=json";
 
         try {
-            // API 호출
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
-            // 전체 데이터 개수 (페이지네이션을 위해 사용)
             jobResponseDto.setTotalCount(jsonNode.get("totalCount").asInt());
 
-            // 결과 데이터 리스트 (현재 페이지의 채용 공고들)
             List<JobResponseDto.Job> jobList = objectMapper.readValue(
                     jsonNode.get("result").toString(), new TypeReference<List<JobResponseDto.Job>>() {}
             );
@@ -115,7 +112,6 @@ public class NewsService {
 
             JsonNode filesNode = resultNode.get("files");
             if (filesNode != null && filesNode.isArray()) {
-                // JsonNode를 List로 변환하기 전에 JSON을 다시 String으로 변환
                 List<JobsDetailDto.Files> files = objectMapper.readValue(filesNode.toString(), new TypeReference<List<JobsDetailDto.Files>>() {});
                 jobsDetailDto.setFiles(files);
             }
@@ -124,7 +120,7 @@ public class NewsService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;  // 또는 사용자 정의 에러 응답을 반환할 수도 있음
+            return null;
         }
     }
 }
