@@ -1,9 +1,8 @@
 package com.java.NBE4_5_1_7.domain.chat.controller;
 
-import com.java.NBE4_5_1_7.domain.chat.model.ChatRoom;
-import com.java.NBE4_5_1_7.domain.chat.model.Message;
-import com.java.NBE4_5_1_7.domain.chat.service.ChatService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
+import com.java.NBE4_5_1_7.domain.chat.model.ChatRoom;
+import com.java.NBE4_5_1_7.domain.chat.model.Message;
+import com.java.NBE4_5_1_7.domain.chat.service.ChatService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
