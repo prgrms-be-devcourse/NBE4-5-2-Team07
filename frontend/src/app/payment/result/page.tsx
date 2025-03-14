@@ -53,6 +53,26 @@ export default function PaymentResultPage() {
   const router = useRouter();
   const paymentData = usePaymentStore().paymentData;
 
+  // 만약 paymentData가 null이라면 간단한 fallback UI를 렌더링합니다.
+  if (!paymentData) {
+    return (
+      <div className="fixed inset-0 h-screen w-screen flex flex-col items-center justify-center">
+        <Background />
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 z-10">
+          <h1 className="text-3xl font-bold mb-4 text-gray-800 dark:text-white">
+            결제 정보가 없습니다.
+          </h1>
+          <button
+            onClick={() => router.push("/")}
+            className="rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-3 px-8 font-medium text-lg transition-all"
+          >
+            홈으로 이동
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 h-screen w-screen flex items-center justify-center">
       {/* 배경 컴포넌트 */}

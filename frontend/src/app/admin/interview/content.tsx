@@ -26,15 +26,23 @@ interface ContentProps {
   selectedKeyword: string | null;
 }
 
-export default function Content({ selectedCategory, selectedKeyword }: ContentProps) {
-  const [interviewContents, setInterviewContents] = useState<InterviewContentDetail[]>([]);
+export default function Content({
+  selectedCategory,
+  selectedKeyword,
+}: ContentProps) {
+  const [interviewContents, setInterviewContents] = useState<
+    InterviewContentDetail[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedInterview, setSelectedInterview] = useState<InterviewContentDetail | null>(null);
-  const [editInterview, setEditInterview] = useState<InterviewContentDetail | null>(null);
-  const [deleteInterview, setDeleteInterview] = useState<InterviewContentDetail | null>(null);
+  const [selectedInterview, setSelectedInterview] =
+    useState<InterviewContentDetail | null>(null);
+  const [editInterview, setEditInterview] =
+    useState<InterviewContentDetail | null>(null);
+  const [deleteInterview, setDeleteInterview] =
+    useState<InterviewContentDetail | null>(null);
 
   useEffect(() => {
     if (!selectedCategory) return;
@@ -75,7 +83,9 @@ export default function Content({ selectedCategory, selectedKeyword }: ContentPr
   };
 
   const handleDeleteInterview = (interviewId: number) => {
-    setInterviewContents((prevContents) => prevContents.filter((content) => content.id !== interviewId));
+    setInterviewContents((prevContents) =>
+      prevContents.filter((content) => content.id !== interviewId)
+    );
     setDeleteInterview(null);
   };
 
@@ -92,13 +102,22 @@ export default function Content({ selectedCategory, selectedKeyword }: ContentPr
               </div>
 
               <div className={styles.buttonGroup}>
-                <button className={styles.detailButton} onClick={() => setSelectedInterview(content)}>
+                <button
+                  className={styles.detailButton}
+                  onClick={() => setSelectedInterview(content)}
+                >
                   상세 보기
                 </button>
-                <button className={styles.editButton} onClick={() => setEditInterview(content)}>
+                <button
+                  className={styles.editButton}
+                  onClick={() => setEditInterview(content)}
+                >
                   수정
                 </button>
-                <button className={styles.deleteButton} onClick={() => setDeleteInterview(content)}>
+                <button
+                  className={styles.deleteButton}
+                  onClick={() => setDeleteInterview(content)}
+                >
                   삭제
                 </button>
               </div>
@@ -110,11 +129,21 @@ export default function Content({ selectedCategory, selectedKeyword }: ContentPr
       </ul>
 
       <div className={styles.pagination}>
-        <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))} disabled={currentPage === 0}>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+          disabled={currentPage === 0}
+        >
           ⬅
         </button>
-        <span>{currentPage + 1} / {totalPages}</span>
-        <button onClick={() => setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : prev))} disabled={currentPage === totalPages - 1}>
+        <span>
+          {currentPage + 1} / {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : prev))
+          }
+          disabled={currentPage === totalPages - 1}
+        >
           ➡
         </button>
       </div>
@@ -142,7 +171,6 @@ export default function Content({ selectedCategory, selectedKeyword }: ContentPr
 
             setSelectedInterview(formattedInterview);
           }}
-
         />
       )}
 
@@ -155,7 +183,11 @@ export default function Content({ selectedCategory, selectedKeyword }: ContentPr
       )}
 
       {deleteInterview && (
-        <InterviewDeleteModal interview={deleteInterview} onClose={() => setDeleteInterview(null)} onDelete={handleDeleteInterview} />
+        <InterviewDeleteModal
+          interview={deleteInterview}
+          onClose={() => setDeleteInterview(null)}
+          onDelete={handleDeleteInterview}
+        />
       )}
     </main>
   );

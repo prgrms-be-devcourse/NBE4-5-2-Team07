@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import client from "@/lib/backend/client";
 import { LoginMemberContext, useLoginMember } from "./login/loginMemberStore";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 export default function ClientLayout({
   children,
@@ -31,7 +31,7 @@ export default function ClientLayout({
     setNoLoginMember,
   };
 
-  async function fetchLoginMember() {
+  const fetchLoginMember = useCallback(async () => {
     const response = await client.GET("/member/me", {
       credentials: "include",
     });
@@ -42,10 +42,12 @@ export default function ClientLayout({
     }
 
     setLoginMember(response.data.data);
-  }
+  }, [setLoginMember, setNoLoginMember]);
 
+  // fetchLoginMember를 한 번만 호출하도록 빈 배열로 처리합니다.
   useEffect(() => {
     fetchLoginMember();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

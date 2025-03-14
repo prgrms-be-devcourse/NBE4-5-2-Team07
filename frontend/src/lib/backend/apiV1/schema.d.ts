@@ -987,6 +987,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/news/jobs/{recrutPblntSn}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getJobsDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/interview/comment/public/{interviewContentId}": {
         parameters: {
             query?: never;
@@ -1483,21 +1499,21 @@ export interface components {
             message?: string;
         };
         PagePostListResponseDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            first?: boolean;
+            last?: boolean;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["PostListResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            first?: boolean;
-            last?: boolean;
             empty?: boolean;
         };
         PageableObject: {
@@ -1533,21 +1549,21 @@ export interface components {
             guestId?: number;
         };
         PageStudyContentDetailDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            first?: boolean;
+            last?: boolean;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["StudyContentDetailDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            first?: boolean;
-            last?: boolean;
             empty?: boolean;
         };
         NewResponseDto: {
@@ -1567,12 +1583,7 @@ export interface components {
             description?: string;
             pubDate?: string;
         };
-        JobResponseDto: {
-            /** Format: int32 */
-            totalCount?: number;
-            result?: components["schemas"]["JobsDetailDto"][];
-        };
-        JobsDetailDto: {
+        Job: {
             /** Format: int64 */
             recrutPblntSn?: number;
             pblntInstCd?: string;
@@ -1605,6 +1616,71 @@ export interface components {
             /** Format: int32 */
             decimalDay?: number;
         };
+        JobResponseDto: {
+            /** Format: int32 */
+            totalCount?: number;
+            result?: components["schemas"]["Job"][];
+        };
+        Files: {
+            /** Format: int32 */
+            recrutAtchFileNo?: number;
+            /** Format: int32 */
+            sortNo?: number;
+            atchFileNm?: string;
+            atchFileType?: string;
+            url?: string;
+        };
+        JobsDetailDto: {
+            recrutPblntSn?: string;
+            pblntInstCd?: string;
+            pbadmsStdInstCd?: string;
+            instNm?: string;
+            ncsCdLst?: string;
+            ncsCdNmLst?: string;
+            hireTypeLst?: string;
+            hireTypeNmLst?: string;
+            workRgnLst?: string;
+            workRgnNmLst?: string;
+            recrutSe?: string;
+            recrutSeNm?: string;
+            prefCondCn?: string;
+            /** Format: int32 */
+            recrutNope?: number;
+            pbancBgngYmd?: string;
+            pbancEndYmd?: string;
+            recrutPbancTtl?: string;
+            srcUrl?: string;
+            replmprYn?: string;
+            aplyQlfcCn?: string;
+            disqlfcRsn?: string;
+            scrnprcdrMthdExpln?: string;
+            prefCn?: string;
+            acbgCondLst?: string;
+            acbgCondNmLst?: string;
+            nonatchRsn?: string;
+            ongoingYn?: string;
+            /** Format: int32 */
+            decimalDay?: number;
+            files?: components["schemas"]["Files"][];
+            steps?: components["schemas"]["Steps"][];
+        };
+        Steps: {
+            /** Format: int32 */
+            recrutStepSn?: number;
+            /** Format: int32 */
+            recrutPblntSn?: number;
+            recrutPbancTtl?: string;
+            recrutNope?: string;
+            aplyNope?: string;
+            cmpttRt?: string;
+            rsnOcrnYmd?: string;
+            /** Format: int32 */
+            sortNo?: number;
+            /** Format: int32 */
+            minStepSn?: number;
+            /** Format: int32 */
+            maxStepSn?: number;
+        };
         InterviewCommentResponseDto: {
             /** Format: int64 */
             commentId?: number;
@@ -1614,21 +1690,21 @@ export interface components {
             public?: boolean;
         };
         PageInterviewContentAdminResponseDto: {
-            /** Format: int64 */
-            totalElements?: number;
             /** Format: int32 */
             totalPages?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            first?: boolean;
+            last?: boolean;
             /** Format: int32 */
             size?: number;
             content?: components["schemas"]["InterviewContentAdminResponseDto"][];
             /** Format: int32 */
             number?: number;
             sort?: components["schemas"]["SortObject"];
+            pageable?: components["schemas"]["PageableObject"];
             /** Format: int32 */
             numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            first?: boolean;
-            last?: boolean;
             empty?: boolean;
         };
         Empty: Record<string, never>;
@@ -3789,6 +3865,37 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["JobResponseDto"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RsDataVoid"];
+                };
+            };
+        };
+    };
+    getJobsDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recrutPblntSn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["JobsDetailDto"];
                 };
             };
             /** @description Internal Server Error */
