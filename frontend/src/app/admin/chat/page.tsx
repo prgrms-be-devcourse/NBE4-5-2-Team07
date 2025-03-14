@@ -95,22 +95,17 @@ const AdminChatDashboard = () => {
     if (!roomToDelete) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:8080/chat/messages/${roomToDelete}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`http://localhost:8080/chat/messages/${roomToDelete}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       if (!response.ok) {
-        throw new Error("채팅방 삭제에 실패했습니다.");
+        throw new Error('채팅방 삭제에 실패했습니다.');
       }
 
       // Update UI after successful deletion
-      setChatRooms((prevRooms) =>
-        prevRooms.filter((room) => room.roomId !== roomToDelete)
-      );
+      setChatRooms((prevRooms) => prevRooms.filter(room => room.roomId !== roomToDelete));
 
       // If the deleted room was the selected room, clear the selection
       if (selectedRoomId === roomToDelete) {
@@ -125,6 +120,7 @@ const AdminChatDashboard = () => {
       // Optionally show a success message
       setError("채팅방이 삭제되었습니다.");
       setTimeout(() => setError(null), 3000);
+
     } catch (error) {
       console.error("Error deleting chat room:", error);
       setError("채팅방 삭제에 실패했습니다.");
@@ -203,12 +199,12 @@ const AdminChatDashboard = () => {
         prevRooms.map((room) =>
           room.roomId === roomId
             ? {
-                ...room,
-                lastMessage: newMessage.content,
-                lastMessageTime: newMessage.timestamp,
-                unreadCount:
-                  selectedRoomId === roomId ? 0 : room.unreadCount + 1,
-              }
+              ...room,
+              lastMessage: newMessage.content,
+              lastMessageTime: newMessage.timestamp,
+              unreadCount:
+                selectedRoomId === roomId ? 0 : room.unreadCount + 1,
+            }
             : room
         )
       );
@@ -239,6 +235,7 @@ const AdminChatDashboard = () => {
           room.roomId === roomId ? { ...room, unreadCount: 0 } : room
         )
       );
+
     } catch (error) {
       console.error("Error fetching messages:", error);
       setError("메시지를 불러오는데 실패했습니다.");
@@ -267,7 +264,7 @@ const AdminChatDashboard = () => {
       roomId: selectedRoomId,
       sender: "ADMIN",
       content: message,
-      timestamp: new Date().toISOString().split(".")[0].replace("T", " "), // Format to match server format
+      timestamp: new Date().toISOString(), // Format to match server format
     };
 
     try {
@@ -312,12 +309,14 @@ const AdminChatDashboard = () => {
   const formatTimestamp = (timestamp: string) => {
     try {
       const date = new Date(timestamp);
-      return new Intl.DateTimeFormat("default", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
+      return new Intl.DateTimeFormat('default', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZone: 'Asia/Seoul'
       }).format(date);
     } catch (_) {
       return timestamp;
@@ -342,15 +341,6 @@ const AdminChatDashboard = () => {
 
   return (
     <div className="flex flex-col h-[80vh] bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-950">
-      {/* Admin header */}
-      {/* <div className="bg-white dark:bg-gray-800 shadow-lg py-4 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text">
-                        관리자 채팅 시스템
-                    </h1>
-                </div>
-            </div> */}
-
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden max-h-[calc(100vh-80px)]">
         {/* Chat rooms sidebar */}
@@ -418,11 +408,10 @@ const AdminChatDashboard = () => {
               <div
                 key={room.roomId}
                 onClick={() => selectRoom(room.roomId)}
-                className={`p-4 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                  selectedRoomId === room.roomId
-                    ? "bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-l-indigo-500"
-                    : ""
-                }`}
+                className={`p-4 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${selectedRoomId === room.roomId
+                  ? "bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-l-indigo-500"
+                  : ""
+                  }`}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex items-center">
@@ -444,11 +433,6 @@ const AdminChatDashboard = () => {
                     <span className="text-xs text-gray-400 dark:text-gray-500">
                       {getRelativeTime(room.lastMessageTime)}
                     </span>
-                    {/* {room.unreadCount > 0 && (
-                                            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full mt-1">
-                                                {room.unreadCount}
-                                            </span>
-                                        )} */}
                   </div>
                 </div>
               </div>
@@ -538,30 +522,28 @@ const AdminChatDashboard = () => {
                   {messages.map((msg, index) => (
                     <div
                       key={index}
-                      className={`max-w-[80%] ${
-                        msg.sender === "ADMIN"
-                          ? "self-end ml-auto"
-                          : "self-start"
-                      }`}
+                      className={`max-w-[80%] ${msg.sender === "ADMIN"
+                        ? "self-end ml-auto"
+                        : "self-start"
+                        }`}
                     >
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                           {msg.sender === "ADMIN"
                             ? "상담원"
                             : msg.sender === "USER"
-                            ? "회원"
-                            : msg.sender === "GUEST"
-                            ? "게스트"
-                            : "시스템"}
+                              ? "회원"
+                              : msg.sender === "GUEST"
+                                ? "게스트"
+                                : "시스템"}
                         </span>
                         <div
-                          className={`p-3 rounded-lg whitespace-pre-wrap break-words shadow-sm ${
-                            msg.sender === "ADMIN"
-                              ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none"
-                              : msg.sender === "SYSTEM"
+                          className={`p-3 rounded-lg whitespace-pre-wrap break-words shadow-sm ${msg.sender === "ADMIN"
+                            ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none"
+                            : msg.sender === "SYSTEM"
                               ? "bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                               : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none"
-                          }`}
+                            }`}
                         >
                           {msg.content}
                         </div>
@@ -590,11 +572,10 @@ const AdminChatDashboard = () => {
                   <button
                     onClick={sendAdminMessage}
                     disabled={!isConnected || message.trim() === ""}
-                    className={`p-3 rounded-full ml-2 flex items-center justify-center transition-all ${
-                      isConnected && message.trim() !== ""
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md shadow-indigo-500/20"
-                        : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
-                    }`}
+                    className={`p-3 rounded-full ml-2 flex items-center justify-center transition-all ${isConnected && message.trim() !== ""
+                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md shadow-indigo-500/20"
+                      : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
+                      }`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -610,6 +591,7 @@ const AdminChatDashboard = () => {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center bg-gray-100 dark:bg-gray-900 relative">
+
               {/* Background decoration elements */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                 <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
