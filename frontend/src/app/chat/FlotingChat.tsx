@@ -279,13 +279,13 @@ const FloatingChat = () => {
     <>
       <button
         onClick={toggleChat}
-        className="fixed bottom-10 right-10 p-4 bg-blue-600 text-white rounded-full shadow-lg"
+        className="fixed bottom-10 right-10 p-4 bg-blue-600 text-white rounded-full shadow-lg z-50"
       >
         💬
       </button>
 
       {isOpen && roomId !== null && (
-        <div className="fixed bottom-10 right-40 w-96 h-[600px] bg-white shadow-lg rounded-lg flex flex-col">
+        <div className="fixed bottom-10 right-40 w-96 h-[600px] bg-white shadow-lg rounded-lg flex flex-col z-50">
           {/* 헤더 */}
           <div className="flex items-center justify-between p-3 bg-blue-500 text-white rounded-t-lg">
             <h1 className="text-lg font-bold">
