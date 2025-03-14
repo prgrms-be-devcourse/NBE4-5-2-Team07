@@ -59,28 +59,32 @@ public class NewsService {
         return newsResponse;
     }
 
-    public JobResponseDto getJobList(String ncsCdLst) {
+    public JobResponseDto getJobList(String ncsCdLst, int page) {
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
         JobResponseDto jobResponseDto = new JobResponseDto();
+        int size = 5;
 
         String url = "https://apis.data.go.kr/1051000/recruitment/list" +
                 "?serviceKey=" + public_data_key +
                 "&acbgCondLst=R7010" +
                 "&ncsCdLst=" + ncsCdLst +
-                "&numOfRows=5" +
+                "&numOfRows=" + size +
                 "&ongoingYn=Y" +
-                "&pageNo=1" +
+                "&pageNo=" + page +
                 "&pbancBgngYmd=2025-01-01" +
                 "&recrutSe=R2030" +
                 "&resultType=json";
 
         try {
+            // API 호출
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
+            // 전체 데이터 개수 (페이지네이션을 위해 사용)
             jobResponseDto.setTotalCount(jsonNode.get("totalCount").asInt());
 
+            // 결과 데이터 리스트 (현재 페이지의 채용 공고들)
             List<JobResponseDto.Job> jobList = objectMapper.readValue(
                     jsonNode.get("result").toString(), new TypeReference<List<JobResponseDto.Job>>() {}
             );
@@ -92,6 +96,7 @@ public class NewsService {
             return null;
         }
     }
+
 
     public JobsDetailDto getJobDetail(String recrutPblntSn) {
         RestTemplate restTemplate = new RestTemplate();

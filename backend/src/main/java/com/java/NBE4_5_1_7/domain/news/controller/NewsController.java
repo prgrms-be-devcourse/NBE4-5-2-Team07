@@ -25,11 +25,14 @@ public class NewsController {
     }
 
     @GetMapping("/jobs")
-    public ResponseEntity<JobResponseDto> getJobs(@RequestParam("ncsCdLst") String ncsCdLst) {
-        return ResponseEntity.ok(newsService.getJobList(ncsCdLst));
+    public ResponseEntity<JobResponseDto> getJobs(
+            @RequestParam String ncsCdLst,
+            @RequestParam(defaultValue = "1") int page) {
+
+        return ResponseEntity.ok(newsService.getJobList(ncsCdLst, page));
     }
 
-    @GetMapping("/jobs/{recrutPblntSn}")
+    @GetMapping("/jobs/detail/{recrutPblntSn}")
     public ResponseEntity<JobsDetailDto> getJobsDetails(@PathVariable String recrutPblntSn) {
         return ResponseEntity.ok(newsService.getJobDetail(recrutPblntSn));
     }
