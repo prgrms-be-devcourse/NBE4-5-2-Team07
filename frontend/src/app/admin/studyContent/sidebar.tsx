@@ -41,7 +41,7 @@ export default function Sidebar({
   }, []);
 
   return (
-    <aside className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 h-full">
+    <aside className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 h-full/2">
       <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text mb-6">
         카테고리
       </h3>
@@ -50,11 +50,10 @@ export default function Sidebar({
         {Object.keys(categories).map((firstCategory) => (
           <div key={firstCategory} className="mb-2">
             <button
-              className={`w-full text-left px-4 py-3 rounded-lg flex justify-between items-center transition-colors ${
-                firstCategory === selectedFirstCategory
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
-              }`}
+              className={`w-full text-left px-4 py-3 rounded-lg flex justify-between items-center transition-colors ${firstCategory === selectedFirstCategory
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
               onClick={() => {
                 if (openCategory === firstCategory) {
                   setOpenCategory(null);
@@ -66,36 +65,22 @@ export default function Sidebar({
               }}
             >
               <span className="font-medium">{firstCategory}</span>
-              <svg
-                className={`w-5 h-5 transition-transform duration-200 ${
-                  openCategory === firstCategory ? "rotate-180" : "rotate-0"
-                }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
+              <span className="text-xs">
+                {openCategory === firstCategory ? "▲" : "▼"}
+              </span>
             </button>
 
             {openCategory === firstCategory &&
               categories[firstCategory].length > 0 && (
-                <div className="mt-2 ml-4 space-y-1 animate-fadeIn">
+                <div className="mt-2 ml-4 space-y-1 animate-fadeIn max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
                   {categories[firstCategory].map((secondCategory) => (
                     <button
                       key={secondCategory}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                        secondCategory === selectedSecondCategory &&
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${secondCategory === selectedSecondCategory &&
                         firstCategory === selectedFirstCategory
-                          ? "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 font-medium"
-                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      }`}
+                        ? "bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 font-medium"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        }`}
                       onClick={() => setSelectedSecondCategory(secondCategory)}
                     >
                       {secondCategory}
