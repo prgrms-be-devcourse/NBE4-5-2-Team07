@@ -1,6 +1,5 @@
 package com.java.NBE4_5_1_7.domain.news.service;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,14 +7,12 @@ import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobResponseDto;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.JobsDetailDto;
 import com.java.NBE4_5_1_7.domain.news.dto.responseDto.NewResponseDto;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -84,18 +81,45 @@ public class NewsService {
 
             jobResponseDto.setTotalCount(jsonNode.get("totalCount").asInt());
 
-            List<JobsDetailDto> jobsDetailDtoList = objectMapper.readValue(
-                    jsonNode.get("result").toString(), new TypeReference<List<JobsDetailDto>>() {}
+            List<JobResponseDto.Job> jobList = objectMapper.readValue(
+                    jsonNode.get("result").toString(), new TypeReference<List<JobResponseDto.Job>>() {}
             );
-            jobResponseDto.setResult(jobsDetailDtoList);
+            jobResponseDto.setResult(jobList);
 
             return jobResponseDto;
-        } catch (HttpClientErrorException e) {
-            System.out.println("HTTP 오류: " + e.getStatusCode());
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public JobsDetailDto getJobDetail(String recrutPblntSn) {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JobsDetailDto jobsDetailDto;
+        String url = "https://apis.data.go.kr/1051000/recruitment/detail" +
+                "?serviceKey=" + public_data_key +
+                "&sn=" + recrutPblntSn;
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+            JsonNode resultNode = jsonNode.get("result");
+            jobsDetailDto = objectMapper.readValue(resultNode.toString(), JobsDetailDto.class);
+
+            JsonNode filesNode = resultNode.get("files");
+            if (filesNode != null && filesNode.isArray()) {
+                // JsonNode를 List로 변환하기 전에 JSON을 다시 String으로 변환
+                List<JobsDetailDto.Files> files = objectMapper.readValue(filesNode.toString(), new TypeReference<List<JobsDetailDto.Files>>() {});
+                jobsDetailDto.setFiles(files);
+            }
+
+            return jobsDetailDto;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;  // 또는 사용자 정의 에러 응답을 반환할 수도 있음
         }
     }
 }
