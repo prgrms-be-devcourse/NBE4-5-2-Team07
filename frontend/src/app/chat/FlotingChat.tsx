@@ -19,13 +19,14 @@ const FloatingChat = () => {
   const [displayName, setDisplayName] = useState<string>("");
   const [isConnected, setIsConnected] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const [isSessionEnded, setIsSessionEnded] = useState(false);
   const clientRef = useRef<Client | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const systemMessageSentRef = useRef(false);
   const subscriptionRef = useRef<any>(null);
+  const [lastUserMessageTime, setLastUserMessageTime] = useState<Date | null>(
+    null
+  );
 
   // 1) 사용자 정보 조회 (회원/비회원/관리자 구분) – /chat/auth/user 호출
   const fetchUserInfo = async () => {
@@ -95,7 +96,7 @@ const FloatingChat = () => {
     setIsOpen(!isOpen);
   };
 
-  // textArea 높이 자동 증가
+  // 3-1) textArea 높이 자동 증가
   const resizeTextarea = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -144,6 +145,14 @@ const FloatingChat = () => {
           systemMessageSentRef.current = true;
           sendSystemMessage("안녕하세요! 😊 무엇을 도와드릴까요?");
         }
+
+        setTimeout(() => {
+          if (!isConnected) {
+            sendSystemMessage(
+              "⚠️ 현재 상담원이 부재중입니다. 잠시만 기다려 주세요."
+            );
+          }
+        }, 60000);
       },
       onDisconnect: () => {
         console.log("WebSocket disconnected");
@@ -178,6 +187,13 @@ const FloatingChat = () => {
       })
       .then((data: ChatMessage[]) => {
         setMessages(data);
+
+        const lastMessageTime =
+          data?.length > 0
+            ? new Date(data[data.length - 1].timestamp)
+            : new Date();
+        console.log(lastMessageTime);
+        setLastUserMessageTime(lastMessageTime);
       })
       .catch((err) => console.error("Load messages error:", err));
   }, [isOpen, roomId, isAdmin]);
@@ -223,6 +239,33 @@ const FloatingChat = () => {
       console.error("Fail to send system message:", err);
     }
   };
+
+  //
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (lastUserMessageTime) {
+        const now = new Date();
+        const diff = (now.getTime() - lastUserMessageTime.getTime()) / 1000;
+
+        // 3분 후 대화 종료 예정 메시지 전송
+        if (diff > 180) {
+          sendSystemMessage(
+            "⏳ 대화가 종료될 예정입니다. 계속 상담을 원하시면 메시지를 입력해주세요."
+          );
+
+          setTimeout(() => {
+            sendSystemMessage(
+              "🔴 상담이 종료되었습니다. 상담을 원하시면 다시 입력해 주세요."
+            );
+          }, 30000); // 30초 후 종료 메시지 전송
+
+          setLastUserMessageTime(null);
+        }
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [lastUserMessageTime]);
 
   // 9) 자동 스크롤
   useEffect(() => {
