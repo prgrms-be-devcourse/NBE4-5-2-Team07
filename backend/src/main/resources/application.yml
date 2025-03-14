@@ -10,80 +10,64 @@ spring:
     ansi:
       enabled: always
 
-  profiles:
-    active: dev
-
   datasource:
-    url: ${db.url}
-    username: ${db.username}
-    password: ${db.password}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  config:
-    import:
-      - "classpath:application-secret.yml"
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: true
+      ddl-auto: create
+    show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
-        highlight_sql: true
-        use_sql_comments: true
+        format_sql: ${FORMAT_SQL:false}
+        highlight_sql: ${HIGHLIGHT_SQL:false}
+        use_sql_comments: ${USE_SQL_COMMENTS:false}
         default_batch_fetch_size: 10
 
   security:
-      oauth2:
-        client:
-          registration:
-            kakao:
-              client-id: ${security.kakao.client-id}
-              scope: profile_nickname, profile_image
-              client-name: Kakao
-              authorization-grant-type: authorization_code
-              redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            scope: profile_nickname, profile_image
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            redirect-uri: ${KAKAO_REDIRECT_URI}
 
-          provider:
-            kakao:
-              authorization-uri: https://kauth.kakao.com/oauth/authorize
-              token-uri: https://kauth.kakao.com/oauth/token
-              user-info-uri: https://kapi.kakao.com/v2/user/me
-              user-name-attribute: id
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
   logging:
     level:
-      org:
-        hibernate:
-          SQL: DEBUG
-          orm:
-            jdbc:
-              bind: TRACE
-              extract: TRACE
-        springframework:
-          transaction:
-            interceptor: TRACE
-          web:
-            socket: DEBUG
+      org.hibernate.SQL: ${LOG_LEVEL_SQL:ERROR}
+      org.hibernate.orm.jdbc.bind: ${LOG_LEVEL_BIND:ERROR}
+      org.hibernate.orm.jdbc.extract: ${LOG_LEVEL_EXTRACT:ERROR}
+      org.springframework.transaction.interceptor: ${LOG_LEVEL_TX:ERROR}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
-          # 사용자 인증
           auth: true
-          # 메일 전송시 상황, 로그 확인
           debug: true
-          # SSL/TLS 기반의 SMTPS 기능
           starttls:
             enable: true
 
@@ -94,38 +78,40 @@ spring:
     encoding: UTF-8
     cache: false
 
+
+
 redisson:
-  # 단일 노드 Redis 환경 설정 (SSL이 필요한 경우 rediss:// 사용)
-  address: "redis://localhost:6379"
-  # 비밀번호가 필요한 경우 아래와 같이 설정
-  # password: yourRedisPassword
-  # 추가 설정 예시
-  # connectionMinimumIdleSize: 10
-  # connectionPoolSize: 64
+  address: "redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}"
+
 custom:
   jwt:
-    secret-key: ${security.jwt.secret-key}
+    secret-key: ${JWT_SECRET_KEY}
     expire-seconds: "#{60}"
     refresh-expire-seconds: "#{3600}"
 
 springdoc:
   swagger-ui:
-    # swagger-ui에서 API 호출 시 쿠키를 전송하도록 하는 requestInterceptor 설정
     requestInterceptor: >
       function(request) {
           request.credentials = 'include';
           return request;
       }
-      
+
+uri:
+  frontend: https://chilldevprep.vercel.app
+  backend: http://ec2-43-200-5-35.ap-northeast-2.compute.amazonaws.com:8080
 
 imp:
-  code: ${imp.code}
-  key: ${imp.api-key}
-  secret_key: ${imp.secret-key}
+  code: ${IMP_CODE}
+  key: ${IMP_API_KEY}
+  secret_key: ${IMP_SECRET_KEY}
+
+admin:
+  email: ${ADMIN_EMAIL}
 
 naver:
-  key: ${naver.client-id}
-  secret: ${naver.client-secret}
+  key: ${NAVER_CLIENT_ID}
+  secret: ${NAVER_CLIENT_SECRET}
 
 publicData:
-  key: ${publicData.secret-key}
+  key: ${PUBLIC_DATA_KEY}

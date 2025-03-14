@@ -37,11 +37,9 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/member/**",
                                         "/api/v1/study/**",
-                                        "/ws/chat/**",
                                         "/ws/**",
                                         "/chat/**",
                                         "/app/**",
-                                        "/api/**",
                                         "/api/auth/user",
                                         "/api/v1/payments/webhook",
                                         "/api/v1/news/**").permitAll()
@@ -95,7 +93,10 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(AppConfig.getSiteFrontUrl()));
+        configuration.setAllowedOrigins(Arrays.asList(
+                AppConfig.getSiteFrontUrl(),
+                AppConfig.getSiteBackUrl()
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

@@ -17,14 +17,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-@Profile("dev")
-@Configuration
+//@Profile("dev")
+//@Configuration
 public class DevInitData {
 
     private static final String API_URL = "http://localhost:8080/v3/api-docs";
     private static final String API_JSON_FILE = "apiV1.json";
 
-    @Bean
+//    @Bean
     public ApplicationRunner devApplicationRunner() {
         return event -> {
             generateApiJsonFile();

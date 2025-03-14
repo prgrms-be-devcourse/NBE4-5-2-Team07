@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: backend-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - IMP_CODE=${IMP_CODE}
+      - IMP_API_KEY=${IMP_API_KEY}
+      - IMP_SECRET_KEY=${IMP_SECRET_KEY}
+      - SHOW_SQL=false
+      - FORMAT_SQL=false
+      - HIGHLIGHT_SQL=false
+      - USE_SQL_COMMENTS=false
+      - LOG_LEVEL_SQL=ERROR
+      - LOG_LEVEL_BIND=ERROR
+      - LOG_LEVEL_EXTRACT=ERROR
+      - LOG_LEVEL_TX=ERROR
+      - SPRING_PROFILES_ACTIVE=prod
+    volumes:
+      - ./application.yml:/app/application.yml
+      - ./data:/app/data
+    env_file:
+      - .env
+    networks:
+      - app-network
+    ##restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_DATABASE: devstudy
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:

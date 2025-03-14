@@ -79,11 +79,11 @@ public class Rq {
     public void addCookie(String name, String value) {
         Cookie accsessTokenCookie = new Cookie(name, value);
 
-        accsessTokenCookie.setDomain("localhost");
+        //accsessTokenCookie.setDomain("localhost");
         accsessTokenCookie.setPath("/");
         accsessTokenCookie.setHttpOnly(true);
         accsessTokenCookie.setSecure(true);
-        accsessTokenCookie.setAttribute("SameSite", "Strict");
+        accsessTokenCookie.setAttribute("SameSite", "None");
 
         response.addCookie(accsessTokenCookie);
     }

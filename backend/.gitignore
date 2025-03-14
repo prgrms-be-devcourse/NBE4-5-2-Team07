@@ -37,6 +37,4 @@ out/
 .vscode/
 
 ### custom ###
-application-secret.yml
-resources/application-secret.yml
-apiV1.json
+.env
