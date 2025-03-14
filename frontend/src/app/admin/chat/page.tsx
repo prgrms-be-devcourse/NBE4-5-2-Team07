@@ -262,7 +262,7 @@ const AdminChatDashboard = () => {
             roomId: selectedRoomId,
             sender: "ADMIN",
             content: message,
-            timestamp: new Date().toISOString().split('.')[0].replace('T', ' '), // Format to match server format
+            timestamp: new Date().toISOString(), // Format to match server format
         };
 
         try {
@@ -312,7 +312,9 @@ const AdminChatDashboard = () => {
                 month: 'short',
                 day: 'numeric',
                 hour: 'numeric',
-                minute: 'numeric'
+                minute: 'numeric',
+                hour12: true,
+                timeZone: 'Asia/Seoul'
             }).format(date);
         } catch (e) {
             return timestamp;

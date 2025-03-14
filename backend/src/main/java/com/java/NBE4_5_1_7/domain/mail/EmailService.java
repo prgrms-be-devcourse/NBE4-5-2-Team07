@@ -1,5 +1,9 @@
 package com.java.NBE4_5_1_7.domain.mail;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +39,9 @@ public class EmailService {
 		if ("ADMIN".equals(sender) || "SYSTEM".equals(sender)) {
 			return;
 		}
+
+		String formattedKSTTimestamp = convertToKST(timestamp);
+
 		// 스레드 블로킹 없이 동작
 		ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
 			try {
@@ -43,7 +50,7 @@ public class EmailService {
 				Context context = new Context();
 				context.setVariable("sender", sender);
 				context.setVariable("content", messageContent);
-				context.setVariable("timestamp", timestamp);
+				context.setVariable("timestamp", formattedKSTTimestamp);
 				String htmlBody = templateEngine.process("email-template", context);
 
 				MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -60,5 +67,17 @@ public class EmailService {
 				Thread.currentThread().interrupt();
 			}
 		}, new java.util.Date(System.currentTimeMillis() + 2000));
+	}
+
+	private String convertToKST(String isoTimestamp) {
+		try {
+			Instant instant = Instant.parse(isoTimestamp);
+			ZonedDateTime kstDateTime = instant.atZone(ZoneId.of("Asia/Seoul"));
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 a hh:mm")
+					.withZone(ZoneId.of("Asia/Seoul"));
+			return kstDateTime.format(formatter);
+		} catch (Exception e) {
+			return isoTimestamp; // 변환 실패 시 원본 반환
+		}
 	}
 }
