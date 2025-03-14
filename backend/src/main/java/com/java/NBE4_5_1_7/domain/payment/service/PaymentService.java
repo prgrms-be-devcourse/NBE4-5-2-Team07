@@ -97,16 +97,12 @@ public class PaymentService {
             throw new RuntimeException("결제 정보 조회 실패");
         }
         updatePaymentStatus(paymentResponse.getResponse());
-        System.out.println("webhook 처리 완료");
     }
 
     // 결제 상태 업데이트
     public void updatePaymentStatus(Payment payment) {
         Optional<Order> orderOptional = orderRepository.findByImpUid(payment.getImpUid());
 
-        if (!orderOptional.isPresent()) {
-            System.out.println("order 은 null 입니다.");
-        }
         if (orderOptional.isPresent()) {
             Order orderEntity = orderOptional.get();
             Member member = orderEntity.getMember();
@@ -116,7 +112,6 @@ public class PaymentService {
             orderEntity.setAmount(payment.getAmount());
 
             // 결제 상품이 "PREMIUM"이면 Member의 구독 플랜 변경
-            System.out.println("상품 이름 : " + payment.getName());
             if ("PREMIUM".equals(payment.getName())) {
                 log.info("PREMIUM 상품 결제 확인됨. 회원 {} 의 구독 상태를 PREMIUM으로 변경합니다.", member.getUsername());
                 member.setSubscriptionPlan(SubscriptionPlan.PREMIUM);
