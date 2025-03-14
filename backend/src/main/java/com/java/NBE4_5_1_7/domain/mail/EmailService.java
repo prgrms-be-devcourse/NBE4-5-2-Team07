@@ -27,7 +27,7 @@ public class EmailService {
 	private final SpringTemplateEngine templateEngine;
 	private final TaskScheduler taskScheduler;
 
-	@Value("${mail.username}")
+	@Value("${spring.mail.username}")
 	private String fromEmail; // 보내는 이메일 주소
 
 	@Value("${admin.email}")
