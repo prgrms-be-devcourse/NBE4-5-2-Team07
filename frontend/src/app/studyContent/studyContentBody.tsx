@@ -146,9 +146,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
   };
 
   return (
-    // 이 div에서 배경 gradient 제거
     <div className="min-h-screen w-full p-4 sm:p-6 lg:p-8 relative">
-      {/* Background decoration elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
         <div className="absolute top-10 right-20 w-64 h-64 rounded-full bg-blue-300 dark:bg-blue-600 blur-3xl"></div>
         <div className="absolute bottom-10 left-10 w-80 h-80 rounded-full bg-indigo-300 dark:bg-indigo-700 blur-3xl"></div>
@@ -236,17 +234,17 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
             <div className="mb-8">
               {studyContents.length > 0 ? (
                 studyContents.map((content: any, index: number) => (
-                  <div key={index} className="mb-8">
-                    <input type="hidden" value={content.id} />
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                      {content.title}
-                    </h3>
-                    <div className="prose prose-indigo dark:prose-invert max-w-none">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {content.body.replace(/<br\s*\/?>/gi, "")}
-                      </ReactMarkdown>
+                    <div key={index} className="mb-2" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                        <input type="hidden" value={content.id} />
+                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                            {content.title}
+                        </h3>
+                        <div className="prose prose-indigo dark:prose-invert max-w-none">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {content.body.replace(/<br\s*\/?>/gi, "")}
+                            </ReactMarkdown>
+                        </div>
                     </div>
-                  </div>
                 ))
               ) : (
                 <div className="text-center py-12">
@@ -270,56 +268,55 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
               )}
             </div>
 
-            {/* Memo Section */}
             <div className="border border-indigo-100 dark:border-indigo-800 rounded-xl">
               <div className="flex justify-between items-center px-6 py-4 border-b border-indigo-100 dark:border-indigo-800 rounded-t-xl">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                   나의 메모
                 </h3>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="shareMemo"
-                    name="shareMemo"
-                    checked={isPublished}
-                    onChange={handlePublishedChange}
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label
-                    htmlFor="shareMemo"
-                    className="ml-2 text-sm text-gray-700 dark:text-gray-200"
-                  >
-                    공개
-                  </label>
-                </div>
-              </div>
-              <div className="p-6">
-                <textarea
-                  className="w-full px-3 py-2 text-gray-700 dark:text-gray-200 border border-indigo-100 dark:border-indigo-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[150px]"
-                  placeholder="메모를 입력하세요..."
-                  value={memo}
-                  onChange={handleMemoChange}
-                ></textarea>
-                <div className="flex flex-wrap gap-2 justify-end mt-4">
+                <div className="flex items-center gap-4"> {/* 체크박스와 버튼들을 가로로 배치 */}
+                  <div className="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="shareMemo"
+                        name="shareMemo"
+                        checked={isPublished}
+                        onChange={handlePublishedChange}
+                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <label
+                        htmlFor="shareMemo"
+                        className="ml-2 text-sm text-gray-700 dark:text-gray-200"
+                    >
+                      공개
+                    </label>
+                  </div>
                   <button
-                    onClick={handleMemoCreate}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-medium text-sm shadow-lg shadow-indigo-500/20 transition-colors"
+                      onClick={handleMemoCreate}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-medium text-sm shadow-lg shadow-indigo-500/20 transition-colors"
                   >
                     저장
                   </button>
                   <button
-                    onClick={handleMemoCheck}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
+                      onClick={handleMemoCheck}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
                   >
                     나의 메모 조회
                   </button>
                   <button
-                    onClick={handleGetMemoList}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
+                      onClick={handleGetMemoList}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 font-medium text-sm shadow-lg transition-colors"
                   >
                     메모 참고하기
                   </button>
                 </div>
+              </div>
+              <div className="p-4">
+    <textarea
+        className="w-full px-3 py-2 text-gray-700 dark:text-gray-200 border border-indigo-100 dark:border-indigo-800 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[10px]"
+        placeholder="메모를 입력하세요..."
+        value={memo}
+        onChange={handleMemoChange}
+    ></textarea>
               </div>
             </div>
           </>
