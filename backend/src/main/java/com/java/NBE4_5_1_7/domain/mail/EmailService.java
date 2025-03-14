@@ -31,10 +31,10 @@ public class EmailService {
 
 	@Async("asyncExecutor")
 	public void sendChatNotification(String sender, String messageContent, String timestamp) {
-		if (!"USER".equals(sender)) {
-			return; // 사용자가 보낸 메시지만 처리
+		// ADMIN, SYSTEM 메시지 이메일 알림 제외
+		if ("ADMIN".equals(sender) || "SYSTEM".equals(sender)) {
+			return;
 		}
-
 		// 스레드 블로킹 없이 동작
 		ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
 			try {
