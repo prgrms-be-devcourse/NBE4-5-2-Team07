@@ -34,6 +34,8 @@ const CommunityListPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const size = 10;
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
 
   // 로그인 상태 확인 함수
   const checkAuth = async () => {
@@ -48,8 +50,11 @@ const CommunityListPage: React.FC = () => {
       if (!data.data || !data.data.id) {
         throw new Error("Unauthorized");
       }
+
+      setUserId(data.data.id);
+      setIsAdmin(data.data.role === "ADMIN"); // 관리자 여부 확인
     } catch (error) {
-      router.push("/login"); // 로그인되지 않으면 로그인 페이지로 이동
+      router.push("/login");
     }
   };
 

@@ -23,6 +23,7 @@ interface PostResponseDto {
   content: string;
   like: number;
   comments: CommentResponseDto[];
+  myPost?: boolean;
 }
 
 interface AddCommentRequestDto {
@@ -41,6 +42,8 @@ const CommunityDetailPage: React.FC = () => {
   const router = useRouter();
   const { postId } = params;
   const [post, setPost] = useState<PostResponseDto | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
   const [like, setLike] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [replyComment, setReplyComment] = useState<{ [key: number]: string }>(
@@ -87,9 +90,53 @@ const CommunityDetailPage: React.FC = () => {
     }
   };
 
+  const checkAuth = async () => {
+    try {
+      // 1) /member/me로 요청, 사용자 id 가져오기
+      const meResponse = await fetch("http://localhost:8080/member/me", {
+        credentials: "include",
+      });
+      if (!meResponse.ok) throw new Error("Unauthorized");
+      const meData = await meResponse.json();
+      // meData.data.id ← 사용자 PK
+
+      // 2) /member/{id}/isAdmin 으로 요청, 관리자 여부 확인
+      const isAdminResponse = await fetch(
+        `http://localhost:8080/member/${meData.data.id}/isAdmin`,
+        { credentials: "include" }
+      );
+      if (!isAdminResponse.ok) throw new Error("Unauthorized");
+      const isAdminData = await isAdminResponse.json();
+      // isAdminData.data ← true or false
+
+      // 상태 업데이트
+      setUserId(meData.data.id);
+      setIsAdmin(isAdminData.data === true);
+    } catch (error) {
+      router.push("/login");
+    }
+  };
+
   useEffect(() => {
     fetchPostDetail();
+    checkAuth();
   }, [postId, refresh]);
+
+  // 게시글 삭제
+  const handleDeletePost = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/community/article/delete?postId=${postId}`,
+        { method: "POST", credentials: "include" }
+      );
+      if (!response.ok) {
+        throw new Error("게시글 삭제에 실패했습니다.");
+      }
+      router.push("/community");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // 좋아요 기능
   const handleLike = async () => {
@@ -394,7 +441,7 @@ const CommunityDetailPage: React.FC = () => {
                     {comment.reCommentCount}개의 답글
                   </button>
 
-                  {comment.myComment &&
+                  {(isAdmin || comment.myComment) &&
                     editingCommentId !== comment.commentId && (
                       <>
                         <button
@@ -437,11 +484,10 @@ const CommunityDetailPage: React.FC = () => {
                       <button
                         onClick={() => handleAddReply(comment.commentId)}
                         disabled={!replyComment[comment.commentId]?.trim()}
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
-                          replyComment[comment.commentId]?.trim()
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
-                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                        }`}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${replyComment[comment.commentId]?.trim()
+                          ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                          : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                          }`}
                       >
                         게시
                       </button>
@@ -657,6 +703,18 @@ const CommunityDetailPage: React.FC = () => {
                 <div className="prose max-w-none text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
                   {post.content}
                 </div>
+
+                {/* 게시글  삭제 버튼 (관리자 또는 본인 게시글인 경우) */}
+                {(isAdmin || post.myPost) && (
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                      onClick={handleDeletePost}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -689,11 +747,10 @@ const CommunityDetailPage: React.FC = () => {
                       <button
                         onClick={handleAddComment}
                         disabled={!newComment.trim()}
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
-                          newComment.trim()
-                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
-                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                        }`}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${newComment.trim()
+                          ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                          : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                          }`}
                       >
                         게시
                       </button>

@@ -75,19 +75,22 @@ public class PostService {
     }
 
     public PostResponseDto editPost(Long memberId, EditPostRequestDto editPostRequestDto) {
-        Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        Member user = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
 
-        Post post = postRepository.findById(editPostRequestDto.getPostId()).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        Post post = postRepository.findById(editPostRequestDto.getPostId())
+                .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
 
-        if (!post.getAuthor().getId().equals(author.getId())) {
-            throw new RuntimeException("자신이 작성한 게시글만 수정이 가능합니다.");
+        // 본인이 작성한 게시글이거나 관리자인 경우 수정 가능
+        if (!user.isAdmin() && !post.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("수정 권한이 없습니다.");
         }
 
         post.update(editPostRequestDto);
 
         return PostResponseDto.builder()
                 .id(post.getPostId())
-                .authorName(maskLastCharacter(author.getNickname()))
+                .authorName(maskLastCharacter(user.getNickname()))
                 .postTime(post.getUpdatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -97,12 +100,15 @@ public class PostService {
     }
 
     public Long deletePost(Long memberId, Long postId) {
-        Member author = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
+        Member user = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
 
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
 
-        if (!post.getAuthor().getId().equals(author.getId())) {
-            throw new RuntimeException("자신이 작성한 게시글만 수정이 가능합니다.");
+        // 본인이 작성한 게시글이거나 관리자인 경우 삭제 가능
+        if (!user.isAdmin() && !post.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
         }
 
         postRepository.deleteById(postId);
@@ -195,12 +201,15 @@ public class PostService {
     }
 
     public CommentResponseDto editComment(Long memberId, EditCommentRequestDto dto) {
-        Comment comment = commentRepository.findById(dto.getCommentId())
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        Member user = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
 
-        // 본인 작성 댓글이 아닌 경우 수정 불가 처리
-        if (!comment.getAuthor().getId().equals(memberId)) {
-            throw new RuntimeException("Not authorized to edit comment");
+        Comment comment = commentRepository.findById(dto.getCommentId())
+                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+
+        // 본인이 작성한 댓글이거나 관리자인 경우 수정 가능
+        if (!user.isAdmin() && !comment.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("수정 권한이 없습니다.");
         }
 
         comment.update(dto.getComment());
@@ -219,12 +228,15 @@ public class PostService {
 
     @Transactional
     public void deleteComment(Long memberId, Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+        Member user = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 멤버를 찾을 수 없습니다."));
 
-        // 본인 작성 댓글이 아닌 경우 삭제 불가 처리
-        if (!comment.getAuthor().getId().equals(memberId)) {
-            throw new RuntimeException("Not authorized to delete comment");
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+
+        // 본인이 작성한 댓글이거나 관리자인 경우 삭제 가능
+        if (!user.isAdmin() && !comment.getAuthor().getId().equals(memberId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
         }
 
         if (comment.getParent() != null) {
