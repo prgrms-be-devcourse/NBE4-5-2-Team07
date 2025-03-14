@@ -654,7 +654,7 @@ const CommunityDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="prose max-w-none text-gray-800 dark:text-gray-200">
+                <div className="prose max-w-none text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
                   {post.content}
                 </div>
               </div>
