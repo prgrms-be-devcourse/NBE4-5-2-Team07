@@ -19,8 +19,7 @@ public class NewsController {
     @GetMapping
     public ResponseEntity<NewResponseDto> getNews(
             @RequestParam String keyWord,
-            @RequestParam(defaultValue = "1") int page
-    ) {
+            @RequestParam(defaultValue = "1") int page) {
         return ResponseEntity.ok(newsService.getNaverNews(keyWord, page));
     }
 
@@ -28,7 +27,6 @@ public class NewsController {
     public ResponseEntity<JobResponseDto> getJobs(
             @RequestParam String ncsCdLst,
             @RequestParam(defaultValue = "1") int page) {
-
         return ResponseEntity.ok(newsService.getJobList(ncsCdLst, page));
     }
 

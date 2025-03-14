@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 
 export interface JobResponseDto {
     totalCount: number;
@@ -40,11 +41,16 @@ interface Job {
 
 const JobsPage: React.FC = () => {
     const [jobs, setJobs] = useState<JobResponseDto | null>(null);
+    const router = useRouter();
     const [ncsCdLst] = useState<string>('R600020');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
+
+    const handleJobClick = (recrutPblntSn: string) => {
+        router.push(`/news/${recrutPblntSn}`); // 클릭 시 동적 경로로 이동
+    };
 
     useEffect(() => {
         const fetchJobs = async () => {
@@ -55,9 +61,9 @@ const JobsPage: React.FC = () => {
                 const response = await fetch(
                     `http://localhost:8080/api/v1/news/jobs?ncsCdLst=${ncsCdLst}&page=${currentPage}`,
                     {
-                        method: "GET",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
                     }
                 );
                 if (!response.ok) {
@@ -84,7 +90,7 @@ const JobsPage: React.FC = () => {
     };
 
     return (
-        <div >
+        <div>
             <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                 {loading ? (
                     <div className="flex justify-center py-12">
@@ -117,12 +123,13 @@ const JobsPage: React.FC = () => {
                         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                             {jobs && jobs.result ? (
                                 jobs.result.map((job) => (
-                                    <li key={job.recrutPblntSn} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                        <a
-                                            href={job.srcUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="block p-5"
+                                    <li
+                                        key={job.recrutPblntSn}
+                                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                                    >
+                                        <div
+                                            className="block p-5 cursor-pointer"
+                                            onClick={() => handleJobClick(job.recrutPblntSn.toString())}
                                         >
                                             <div className="flex justify-between items-start">
                                                 <div>
@@ -140,7 +147,7 @@ const JobsPage: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </div>
                                     </li>
                                 ))
                             ) : (
