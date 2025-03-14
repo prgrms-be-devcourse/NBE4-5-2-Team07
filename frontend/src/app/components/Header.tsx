@@ -47,19 +47,10 @@ export default function Header() {
               {isAdminPage ? (
                 <>
                   <Link
-                    href="/admin"
-                    className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname === "/admin"
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                      }`}
-                  >
-                    관리자 홈
-                  </Link>
-                  <Link
                     href="/admin/studyContent"
                     className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname === "/admin/studyContent"
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     학습 콘텐츠 관리
@@ -67,8 +58,8 @@ export default function Header() {
                   <Link
                     href="/admin/interview"
                     className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname === "/admin/interview"
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     면접 질문 관리
@@ -76,8 +67,8 @@ export default function Header() {
                   <Link
                     href="/admin/chat"
                     className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname === "/admin/chat"
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     고객센터
@@ -88,8 +79,8 @@ export default function Header() {
                   <Link
                     href="/studyContent"
                     className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname.startsWith("/studyContent")
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     CS 전공지식 학습하기
@@ -103,8 +94,8 @@ export default function Header() {
                   >
                     <button
                       className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname.startsWith("/interview")
-                          ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                          : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                         }`}
                       onClick={() => router.push("/interview/all")}
                     >
@@ -175,18 +166,17 @@ export default function Header() {
                   <Link
                     href="/community"
                     className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname.startsWith("/community")
-                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     면접 경험 공유하기
                   </Link>
                   <Link
-                      href="/news"
-                      className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${
-                          pathname.startsWith("/news")
-                              ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                              : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    href="/news"
+                    className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname.startsWith("/news")
+                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     뉴스
@@ -196,8 +186,8 @@ export default function Header() {
                     <Link
                       href="/mypage"
                       className={`flex items-center justify-center px-4 py-2 mx-1 rounded-md text-base font-medium ${pathname.startsWith("/mypage")
-                          ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                          : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                         }`}
                     >
                       마이페이지
@@ -237,7 +227,7 @@ export default function Header() {
 
                     {isAdmin && (
                       <Link
-                        href="/admin"
+                        href="/admin/studyContent"
                         className="flex items-center justify-center p-2 mx-1 rounded-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
                       >
                         <span className="sr-only">관리자 페이지</span>
@@ -304,19 +294,10 @@ export default function Header() {
           {isAdminPage ? (
             <>
               <Link
-                href="/admin"
-                className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname === "/admin"
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }`}
-              >
-                관리자 홈
-              </Link>
-              <Link
                 href="/admin/studyContent"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname === "/admin/studyContent"
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 학습 콘텐츠 관리
@@ -324,8 +305,8 @@ export default function Header() {
               <Link
                 href="/admin/interview"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname === "/admin/interview"
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 면접 질문 관리
@@ -333,8 +314,8 @@ export default function Header() {
               <Link
                 href="/admin/chat"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname === "/admin/chat"
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 고객센터
@@ -351,8 +332,8 @@ export default function Header() {
               <Link
                 href="/"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname === "/"
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 MAIN
@@ -360,8 +341,8 @@ export default function Header() {
               <Link
                 href="/studyContent"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname.startsWith("/studyContent")
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 CS 전공지식 학습하기
@@ -371,8 +352,8 @@ export default function Header() {
               <div>
                 <button
                   className={`w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium ${pathname.startsWith("/interview")
-                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   onClick={() =>
                     setInterviewDropdownOpen(!interviewDropdownOpen)
@@ -433,8 +414,8 @@ export default function Header() {
               <Link
                 href="/community"
                 className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname.startsWith("/community")
-                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                  : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
               >
                 면접 경험 공유하기
@@ -444,8 +425,8 @@ export default function Header() {
                 <Link
                   href="/mypage"
                   className={`flex items-center justify-center px-3 py-3 rounded-md text-base font-medium ${pathname.startsWith("/mypage")
-                      ? "text-white bg-indigo-600 dark:bg-indigo-500"
-                      : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "text-white bg-indigo-600 dark:bg-indigo-500"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                 >
                   마이페이지
@@ -472,7 +453,7 @@ export default function Header() {
 
                     {isAdmin && (
                       <Link
-                        href="/admin"
+                        href="/admin/studyContent"
                         className="flex items-center justify-center px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-200 text-base font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
                       >
                         관리자 페이지 ⚙️
