@@ -107,9 +107,8 @@ export default function ContentCreateModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-lg z-50 flex items-center justify-center">
       <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
-        {/* 배경 장식 요소 - 모달 내부에도 적용 */}
         <div className="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-indigo-300 dark:bg-indigo-800 opacity-20 blur-xl"></div>
         <div className="absolute bottom-0 left-0 -ml-4 -mb-4 w-32 h-32 rounded-full bg-purple-300 dark:bg-purple-800 opacity-20 blur-xl"></div>
 
@@ -199,9 +198,8 @@ export default function ContentCreateModal({
               <button
                 onClick={handleCreate}
                 disabled={loading}
-                className={`rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-2 px-6 font-medium transition-all flex-1 shadow-lg shadow-indigo-500/20 ${
-                  loading ? "opacity-70 cursor-not-allowed" : ""
-                }`}
+                className={`rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-2 px-6 font-medium transition-all flex-1 shadow-lg shadow-indigo-500/20 ${loading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
               >
                 {loading ? "등록 중..." : "등록"}
               </button>
