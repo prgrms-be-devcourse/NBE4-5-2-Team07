@@ -133,7 +133,7 @@ export default function Content({
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
         >
-          ⬅
+          &lt;
         </button>
         <span>
           {currentPage + 1} / {totalPages}
@@ -144,7 +144,7 @@ export default function Content({
           }
           disabled={currentPage === totalPages - 1}
         >
-          ➡
+          &gt;
         </button>
       </div>
 

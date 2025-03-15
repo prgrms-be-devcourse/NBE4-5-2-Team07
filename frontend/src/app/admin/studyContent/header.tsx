@@ -11,7 +11,7 @@ export default function Header({
   const [selectedCreate, setSelectedCreate] = useState<boolean>(false);
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 mb-8 flex justify-between items-center">
+    <div className="w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 mb-4 flex justify-between items-center">
       <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text">
         관리자 대시보드
       </h1>
@@ -32,7 +32,7 @@ export default function Header({
             clipRule="evenodd"
           />
         </svg>
-        콘텐츠 등록
+        등록
       </button>
 
       {selectedCreate && (

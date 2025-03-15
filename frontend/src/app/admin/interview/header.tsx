@@ -32,7 +32,7 @@ export default function Header({
                         clipRule="evenodd"
                     />
                 </svg>
-                면접 질문 등록
+                등록
             </button>
 
             {selectedCreate && (
