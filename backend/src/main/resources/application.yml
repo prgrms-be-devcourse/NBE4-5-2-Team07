@@ -99,7 +99,7 @@ springdoc:
 
 uri:
   frontend: https://chilldevprep.vercel.app
-  backend: http://ec2-43-200-5-35.ap-northeast-2.compute.amazonaws.com:8080
+  backend: https://devapi.store
 
 imp:
   code: ${IMP_CODE}
