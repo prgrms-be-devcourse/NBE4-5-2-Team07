@@ -97,7 +97,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 AppConfig.getSiteFrontUrl(),
-                AppConfig.getSiteBackUrl()
+                AppConfig.getSiteBackUrl(),
+                "https://chilldevprep.vercel.app",
+                "https://devapi.store"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
