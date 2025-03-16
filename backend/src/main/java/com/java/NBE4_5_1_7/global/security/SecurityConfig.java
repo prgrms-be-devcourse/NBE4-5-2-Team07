@@ -99,7 +99,9 @@ public class SecurityConfig {
                 AppConfig.getSiteFrontUrl(),
                 AppConfig.getSiteBackUrl(),
                 "https://chilldevprep.vercel.app",
+                "https://www.devapi.store",
                 "https://devapi.store"
+
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
