@@ -59,7 +59,7 @@ export default function Home() {
                 href="/studyContent"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -73,7 +73,7 @@ export default function Home() {
                 href="/interview/all"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -113,7 +113,7 @@ export default function Home() {
             <div className="absolute top-1/4 -left-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl rotate-3 animate-pulse">
               <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 flex items-center justify-center">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -132,7 +132,7 @@ export default function Home() {
             <div className="absolute bottom-1/4 -right-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl -rotate-6 animate-pulse delay-700">
               <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -155,7 +155,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
             <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg mb-4 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -181,7 +181,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg mb-4 flex items-center justify-center text-purple-600 dark:text-purple-400">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -207,7 +207,7 @@ export default function Home() {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg mb-4 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"

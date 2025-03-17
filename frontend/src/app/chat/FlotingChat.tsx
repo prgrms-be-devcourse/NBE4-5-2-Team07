@@ -31,7 +31,7 @@ const FloatingChat = () => {
   // 1) 사용자 정보 조회 (회원/비회원/관리자 구분) – /chat/auth/user 호출
   const fetchUserInfo = async () => {
     try {
-      const res = await fetch("http://localhost:8080/chat/auth/user", {
+      const res = await fetch("https://devapi.store/chat/auth/user", {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Not logged in");
@@ -58,12 +58,9 @@ const FloatingChat = () => {
   // 1-1) 회원 전용 채팅룸 조회/생성 API 호출
   const fetchChatRoomByUser = async (userId: number) => {
     try {
-      const res = await fetch(
-        `http://localhost:8080/chat/room/user/${userId}`,
-        {
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`https://devapi.store/chat/room/user/${userId}`, {
+        credentials: "include",
+      });
       if (!res.ok) throw new Error("Failed to get chat room for user");
       const data = await res.json();
       setRoomId(data.roomId);
@@ -75,7 +72,7 @@ const FloatingChat = () => {
   // 2) 비회원: /chat/rooms/guest 호출하여 사용 가능한 음수 ID 할당
   const assignGuestRoomId = async () => {
     try {
-      const res = await fetch("http://localhost:8080/chat/room/guest", {
+      const res = await fetch("https://devapi.store/chat/room/guest", {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Failed to get guest id");
@@ -117,7 +114,7 @@ const FloatingChat = () => {
       console.log("WebSocket already connected");
       return;
     }
-    const socket = new SockJS("http://localhost:8080/ws/chat");
+    const socket = new SockJS("https://devapi.store/ws/chat");
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
@@ -178,7 +175,7 @@ const FloatingChat = () => {
   useEffect(() => {
     if (isAdmin) return;
     if (!isOpen || roomId === null) return;
-    fetch(`http://localhost:8080/chat/messages/${roomId}`, {
+    fetch(`https://devapi.store/chat/messages/${roomId}`, {
       credentials: "include",
     })
       .then((res) => {

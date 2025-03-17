@@ -89,7 +89,7 @@ export default function PaymentResultPage() {
               {/* 성공 아이콘 */}
               <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-12 w-12 text-green-600 dark:text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -149,7 +149,7 @@ export default function PaymentResultPage() {
                   className="rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-3 px-8 font-medium text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
                 >
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -163,7 +163,7 @@ export default function PaymentResultPage() {
                   className="rounded-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 py-3 px-8 font-medium text-lg transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -188,7 +188,7 @@ export default function PaymentResultPage() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
               <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg mb-4 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -213,7 +213,7 @@ export default function PaymentResultPage() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
               <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg mb-4 flex items-center justify-center text-purple-600 dark:text-purple-400">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -238,7 +238,7 @@ export default function PaymentResultPage() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg mb-4 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-6 w-6"
                   fill="none"
                   viewBox="0 0 24 24"

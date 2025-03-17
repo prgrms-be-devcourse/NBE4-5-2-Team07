@@ -62,7 +62,7 @@ export default function Login() {
                 <div className="flex flex-col items-center space-y-4">
                   <button className="transition-transform hover:scale-105 focus:outline-none">
                     <a
-                      href="http://localhost:8080/oauth2/authorization/kakao?redirectUrl=http://localhost:3000"
+                      href="https://devapi.store/oauth2/authorization/kakao?redirectUrl=https://chilldevprep.vercel.app"
                       className="block"
                     >
                       <img
@@ -89,7 +89,7 @@ export default function Login() {
               <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md text-center">
                 <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-full mx-auto mb-3 flex items-center justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export default function Login() {
               <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md text-center">
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full mx-auto mb-3 flex items-center justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 text-purple-600 dark:text-purple-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ export default function Login() {
               <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md text-center">
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full mx-auto mb-3 flex items-center justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6 text-blue-600 dark:text-blue-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -168,7 +168,7 @@ export default function Login() {
             <div className="px-8 py-12">
               <div className="w-24 h-24 bg-indigo-100 dark:bg-indigo-900 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-12 w-12 text-indigo-600 dark:text-indigo-400"
                   fill="none"
                   viewBox="0 0 24 24"

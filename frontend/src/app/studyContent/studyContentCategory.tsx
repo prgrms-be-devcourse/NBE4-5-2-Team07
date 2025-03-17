@@ -15,7 +15,7 @@ const StudyContentCategory = ({
   // 카테고리 리스트 가져오기
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:8080/api/v1/study/all", {
+    fetch("https://devapi.store/api/v1/study/all", {
       method: "GET",
       credentials: "include",
     })
@@ -46,7 +46,7 @@ const StudyContentCategory = ({
       <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 text-transparent bg-clip-text flex items-center">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns="https://www.w3.org/2000/svg"
             className="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400"
             viewBox="0 0 20 20"
             fill="currentColor"

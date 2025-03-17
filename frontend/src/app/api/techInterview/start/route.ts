@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     const cookie = req.headers.get("cookie");
     const body = await req.json();
     const { interviewType } = body;
-    const response = await fetch("http://localhost:8080/api/interview/start", {
+    const response = await fetch("https://devapi.store/api/interview/start", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,10 +16,10 @@ export async function POST(req: NextRequest) {
     });
     if (!response.ok) {
       if (response.status === 401) {
-        return NextResponse.redirect("http://localhost:3000/login");
+        return NextResponse.redirect("https://chilldevprep.vercel.app/login");
       }
       if (response.status === 403) {
-        return NextResponse.redirect("http://localhost:3000/payment");
+        return NextResponse.redirect("https://chilldevprep.vercel.app/payment");
       }
       throw new Error("전체 질문 ID 리스트를 가져오는데 실패했습니다.");
     }

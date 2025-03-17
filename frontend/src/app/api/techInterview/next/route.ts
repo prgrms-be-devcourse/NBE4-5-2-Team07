@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     const cookie = req.headers.get("cookie");
     const body = await req.json();
     const { answer, interviewType } = body;
-    const response = await fetch("http://localhost:8080/api/interview/next", {
+    const response = await fetch("https://devapi.store/api/interview/next", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     });
     if (!response.ok) {
       if (response.status === 401) {
-        return NextResponse.redirect("http://localhost:3000/login");
+        return NextResponse.redirect("https://chilldevprep.vercel.app/login");
       }
       if (response.status === 403) {
         // 403 응답일 경우, 에러 메시지를 그대로 클라이언트에 전달

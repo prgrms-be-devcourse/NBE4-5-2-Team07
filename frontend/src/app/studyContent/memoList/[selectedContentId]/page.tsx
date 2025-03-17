@@ -20,7 +20,7 @@ const MemoList = () => {
     const fetchMemoList = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/v1/studyMemo/list/${selectedContentId}`,
+          `https://devapi.store/api/v1/studyMemo/list/${selectedContentId}`,
           {
             method: "GET",
             credentials: "include",
@@ -46,7 +46,7 @@ const MemoList = () => {
   const handleMemoLike = async (memoId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo/like/${memoId}`,
+        `https://devapi.store/api/v1/studyMemo/like/${memoId}`,
         {
           method: "POST",
           credentials: "include",
@@ -147,7 +147,7 @@ const MemoList = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
@@ -175,7 +175,7 @@ const MemoList = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"

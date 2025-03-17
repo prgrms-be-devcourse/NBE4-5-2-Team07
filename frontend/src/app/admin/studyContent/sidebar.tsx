@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080/api/v1/admin/study";
+const API_URL = "https://devapi.store/api/v1/admin/study";
 
 interface SidebarProps {
   selectedFirstCategory: string | null;
@@ -73,7 +73,7 @@ export default function Sidebar({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -113,7 +113,7 @@ export default function Sidebar({
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"

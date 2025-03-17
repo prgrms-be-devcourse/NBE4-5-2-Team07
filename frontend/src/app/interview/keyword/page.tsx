@@ -76,13 +76,13 @@ export default function KeywordStudyPage() {
   // (A) 키워드 목록 불러오기
   useEffect(() => {
     setKeywordsLoading(true);
-    fetch("http://localhost:8080/interview/keyword", {
+    fetch("https://devapi.store/interview/keyword", {
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) {
           if (res.status === 401) {
-            router.push("http://localhost:3000/login");
+            router.push("https://chilldevprep.vercel.app/login");
             return;
           }
           throw new Error("키워드 목록을 불러오는데 실패했습니다.");
@@ -113,7 +113,7 @@ export default function KeywordStudyPage() {
       return;
     }
     setHeadIdsLoading(true);
-    fetch("http://localhost:8080/interview/keyword/content", {
+    fetch("https://devapi.store/interview/keyword/content", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ export default function KeywordStudyPage() {
       .then((res) => {
         if (!res.ok) {
           if (res.status === 401) {
-            router.push("http://localhost:3000/login");
+            router.push("https://chilldevprep.vercel.app/login");
             return;
           }
           throw new Error("키워드를 포함한 질문 ID를 받아오는데 실패했습니다.");
@@ -159,12 +159,12 @@ export default function KeywordStudyPage() {
         }
         return prev;
       });
-      const res = await fetch(`http://localhost:8080/interview/${id}`, {
+      const res = await fetch(`https://devapi.store/interview/${id}`, {
         credentials: "include",
       });
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("면접 질문 상세 정보를 불러오는데 실패했습니다.");
@@ -192,7 +192,7 @@ export default function KeywordStudyPage() {
     if (!currentInterview) return;
     try {
       const res = await fetch(
-        `http://localhost:8080/interview/like?id=${currentInterview.id}`,
+        `https://devapi.store/interview/like?id=${currentInterview.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -200,7 +200,7 @@ export default function KeywordStudyPage() {
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("좋아요 요청에 실패했습니다.");
@@ -277,22 +277,19 @@ export default function KeywordStudyPage() {
       return;
     }
     try {
-      const res = await fetch(
-        "http://localhost:8080/api/v1/interview/comment",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            comment: commentText,
-            isPublic: isPublic, // API 요청 시에는 isPublic 필드명 유지 (백엔드 요구사항에 따름)
-            interviewContentId: currentInterview.id,
-          }),
-        }
-      );
+      const res = await fetch("https://devapi.store/api/v1/interview/comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          comment: commentText,
+          isPublic: isPublic, // API 요청 시에는 isPublic 필드명 유지 (백엔드 요구사항에 따름)
+          interviewContentId: currentInterview.id,
+        }),
+      });
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("댓글 저장에 실패했습니다.");
@@ -311,12 +308,12 @@ export default function KeywordStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
+        `https://devapi.store/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
@@ -338,12 +335,12 @@ export default function KeywordStudyPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
+        `https://devapi.store/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
@@ -363,7 +360,7 @@ export default function KeywordStudyPage() {
     if (!currentInterview) return;
     try {
       const res = await fetch(
-        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        `https://devapi.store/interview/bookmark?id=${currentInterview.id}`,
         {
           method: "POST",
           credentials: "include",
@@ -371,7 +368,7 @@ export default function KeywordStudyPage() {
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("북마크 요청에 실패했습니다.");
@@ -480,7 +477,7 @@ export default function KeywordStudyPage() {
               ) : (
                 <>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -538,7 +535,7 @@ export default function KeywordStudyPage() {
                       }`}
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill={
                           currentInterview.likedByUser ? "currentColor" : "none"
@@ -563,7 +560,7 @@ export default function KeywordStudyPage() {
                     className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-4 w-4 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -610,7 +607,7 @@ export default function KeywordStudyPage() {
                     {showAnswer ? (
                       <>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="https://www.w3.org/2000/svg"
                           className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -628,7 +625,7 @@ export default function KeywordStudyPage() {
                     ) : (
                       <>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="https://www.w3.org/2000/svg"
                           className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -675,7 +672,7 @@ export default function KeywordStudyPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -697,7 +694,7 @@ export default function KeywordStudyPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -719,7 +716,7 @@ export default function KeywordStudyPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -740,7 +737,7 @@ export default function KeywordStudyPage() {
                     className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-4 w-4 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -783,7 +780,7 @@ export default function KeywordStudyPage() {
                       className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"

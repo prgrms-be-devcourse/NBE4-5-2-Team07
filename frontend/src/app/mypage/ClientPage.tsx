@@ -76,7 +76,7 @@ const ClientPage = () => {
   // API functions remain unchanged
   const fetchNoteList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/interview/bookmark`, {
+      const response = await fetch(`https://devapi.store/interview/bookmark`, {
         method: "GET",
         credentials: "include",
       });
@@ -103,7 +103,7 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/interview/bookmark/${selectedNoteItem.contentId}`,
+        `https://devapi.store/interview/bookmark/${selectedNoteItem.contentId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -125,7 +125,7 @@ const ClientPage = () => {
   const fetchStudyMemo = async (category: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo?category=${category}`,
+        `https://devapi.store/api/v1/studyMemo?category=${category}`,
         {
           method: "GET",
           credentials: "include",
@@ -167,7 +167,7 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo/${selectedMemoItem.memoId}`,
+        `https://devapi.store/api/v1/studyMemo/${selectedMemoItem.memoId}`,
         {
           method: "PATCH",
           headers: {
@@ -209,7 +209,7 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo/${selectedMemoItem.memoId}`,
+        `https://devapi.store/api/v1/studyMemo/${selectedMemoItem.memoId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -239,7 +239,7 @@ const ClientPage = () => {
   const fetchInterviewComment = async (category: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment?category=${category}`,
+        `https://devapi.store/api/v1/interview/comment?category=${category}`,
         {
           method: "GET",
           credentials: "include",
@@ -275,7 +275,7 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
+        `https://devapi.store/api/v1/interview/comment/${selectedCommentItem.commentId}`,
         {
           method: "PATCH",
           headers: {
@@ -322,7 +322,7 @@ const ClientPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/${selectedCommentItem.commentId}`,
+        `https://devapi.store/api/v1/interview/comment/${selectedCommentItem.commentId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -353,7 +353,7 @@ const ClientPage = () => {
   const fetchMyPosts = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/community/post/my?page=0&size=10`,
+        `https://devapi.store/community/post/my?page=0&size=10`,
         {
           method: "GET",
           credentials: "include",
@@ -369,7 +369,7 @@ const ClientPage = () => {
   const fetchPostDetails = async (postId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/community/article?id=${postId}`,
+        `https://devapi.store/community/article?id=${postId}`,
         {
           credentials: "include",
         }
@@ -393,7 +393,7 @@ const ClientPage = () => {
     };
     try {
       const response = await fetch(
-        `http://localhost:8080/community/article/edit`,
+        `https://devapi.store/community/article/edit`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -414,7 +414,7 @@ const ClientPage = () => {
     if (!confirmed) return;
     try {
       const response = await fetch(
-        `http://localhost:8080/community/article/delete?postId=${postId}`,
+        `https://devapi.store/community/article/delete?postId=${postId}`,
         {
           method: "POST",
           credentials: "include",
@@ -1270,7 +1270,7 @@ const ClientPage = () => {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                     >
                       <path
                         strokeLinecap="round"

@@ -52,7 +52,7 @@ const AdminChatDashboard = () => {
       return;
     }
 
-    const socket = new SockJS("http://localhost:8080/ws/chat");
+    const socket = new SockJS("https://devapi.store/ws/chat");
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
@@ -96,7 +96,7 @@ const AdminChatDashboard = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/chat/messages/${roomToDelete}`,
+        `https://devapi.store/chat/messages/${roomToDelete}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -142,7 +142,7 @@ const AdminChatDashboard = () => {
     setLoading(true);
     try {
       // This endpoint needs to be implemented on the backend
-      const response = await fetch("http://localhost:8080/chat/rooms", {
+      const response = await fetch("https://devapi.store/chat/rooms", {
         method: "GET",
         credentials: "include",
       });
@@ -219,7 +219,7 @@ const AdminChatDashboard = () => {
   const loadRoomMessages = async (roomId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/chat/messages/${roomId}`,
+        `https://devapi.store/chat/messages/${roomId}`,
         {
           method: "GET",
           credentials: "include",
@@ -389,7 +389,7 @@ const AdminChatDashboard = () => {
               <div className="text-center">
                 <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-8 w-8 text-gray-500 dark:text-gray-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -461,7 +461,7 @@ const AdminChatDashboard = () => {
               className="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 className="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -503,7 +503,7 @@ const AdminChatDashboard = () => {
                     className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-md"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -597,7 +597,7 @@ const AdminChatDashboard = () => {
                     }`}
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -619,7 +619,7 @@ const AdminChatDashboard = () => {
               <div className="text-center relative z-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl max-w-md">
                 <div className="w-20 h-20 mx-auto bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mb-6">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-10 w-10 text-indigo-600 dark:text-indigo-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -645,7 +645,7 @@ const AdminChatDashboard = () => {
                     className="py-2 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full font-medium transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -688,7 +688,7 @@ const AdminChatDashboard = () => {
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"

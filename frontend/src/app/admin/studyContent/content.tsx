@@ -5,7 +5,7 @@ import ContentDetailModal from "./modal/contentDetailModal";
 import ContentEditModal from "./modal/contentEditModal";
 import ContentDeleteModal from "./modal/contentDeleteModal";
 
-const API_URL = "http://localhost:8080/api/v1/admin/study";
+const API_URL = "https://devapi.store/api/v1/admin/study";
 
 interface StudyContentDetailDto {
   id: number;
@@ -188,7 +188,7 @@ export default function Content({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -223,7 +223,7 @@ export default function Content({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -256,7 +256,7 @@ export default function Content({
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"

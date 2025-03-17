@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/admin/sidebar.module.css";
 
-const API_URL = "http://localhost:8080/api/v1/admin/interview";
+const API_URL = "https://devapi.store/api/v1/admin/interview";
 
 interface SidebarProps {
   selectedCategory: string | null;
@@ -48,8 +48,9 @@ export default function Sidebar({
           <div key={category} className={styles.categoryWrapper}>
             <li className={styles.categoryItem}>
               <button
-                className={`${styles.categoryButton} ${category === selectedCategory ? styles.active : ""
-                  }`}
+                className={`${styles.categoryButton} ${
+                  category === selectedCategory ? styles.active : ""
+                }`}
                 onClick={() => {
                   if (openCategory === category) {
                     setOpenCategory(null);

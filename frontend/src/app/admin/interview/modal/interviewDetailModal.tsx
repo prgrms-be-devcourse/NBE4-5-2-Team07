@@ -4,162 +4,170 @@ import React, { useEffect, useState } from "react";
 import styles from "../../../styles/admin/modal/contentDetailModal.module.css";
 import InterviewCreateModal from "./interviewCreateModal";
 
-const API_URL = "http://localhost:8080/api/v1/admin/interview";
+const API_URL = "https://devapi.store/api/v1/admin/interview";
 
 interface InterviewContent {
-    id: number;
-    question: string;
-    category: string;
-    keyword: string;
-    modelAnswer: string;
+  id: number;
+  question: string;
+  category: string;
+  keyword: string;
+  modelAnswer: string;
 }
 
 interface InterviewDetailModalProps {
-    interview: InterviewContent;
-    onClose: () => void;
-    onSelectInterview: (selectedInterview: InterviewContent) => void;
+  interview: InterviewContent;
+  onClose: () => void;
+  onSelectInterview: (selectedInterview: InterviewContent) => void;
 }
 
-const InterviewDetailModal: React.FC<InterviewDetailModalProps> = ({ interview, onClose, onSelectInterview }) => {
-    const [relatedQuestions, setRelatedQuestions] = useState<InterviewContent[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [historyStack, setHistoryStack] = useState<InterviewContent[]>([]);
-    const [showCreateModal, setShowCreateModal] = useState(false);
+const InterviewDetailModal: React.FC<InterviewDetailModalProps> = ({
+  interview,
+  onClose,
+  onSelectInterview,
+}) => {
+  const [relatedQuestions, setRelatedQuestions] = useState<InterviewContent[]>(
+    []
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [historyStack, setHistoryStack] = useState<InterviewContent[]>([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-    useEffect(() => {
-        const fetchRelatedQuestions = async () => {
-            try {
-                const response = await fetch(`${API_URL}/${interview.id}/related`, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                });
+  useEffect(() => {
+    const fetchRelatedQuestions = async () => {
+      try {
+        const response = await fetch(`${API_URL}/${interview.id}/related`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
 
-                if (!response.ok) {
-                    throw new Error("꼬리 질문을 불러오는 데 실패했습니다.");
-                }
-
-                const data: InterviewContent[] = await response.json();
-                console.log("Fetched Related Questions:", data);
-
-                const filteredQuestions = data.filter(q => q.id !== interview.id);
-                setRelatedQuestions(filteredQuestions);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchRelatedQuestions();
-    }, [interview.id]);
-
-    const handleRelatedQuestionClick = async (questionId: number) => {
-        try {
-            const response = await fetch(`${API_URL}/${questionId}`, {
-                method: "GET",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-            });
-
-            if (!response.ok) {
-                throw new Error("질문 데이터를 불러오는 데 실패했습니다.");
-            }
-
-            const newInterview: InterviewContent = await response.json();
-            console.log("New Selected Interview:", newInterview);
-
-            setHistoryStack((prevStack) => [...prevStack, interview]);
-            onSelectInterview(newInterview);
-        } catch (err) {
-            console.error("Error fetching new interview:", err);
+        if (!response.ok) {
+          throw new Error("꼬리 질문을 불러오는 데 실패했습니다.");
         }
+
+        const data: InterviewContent[] = await response.json();
+        console.log("Fetched Related Questions:", data);
+
+        const filteredQuestions = data.filter((q) => q.id !== interview.id);
+        setRelatedQuestions(filteredQuestions);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleGoBack = () => {
-        if (historyStack.length > 0) {
-            const previousInterview = historyStack[historyStack.length - 1];
-            setHistoryStack((prevStack) => prevStack.slice(0, -1));
-            onSelectInterview(previousInterview);
-        }
-    };
+    fetchRelatedQuestions();
+  }, [interview.id]);
 
-    return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-                <h2 className={styles.modalTitle}>{interview.question}</h2>
-                <p className={styles.modalCategory}>{interview.category} / {interview.keyword}</p>
-                <p className={styles.modalBody}>{interview.modelAnswer}</p>
+  const handleRelatedQuestionClick = async (questionId: number) => {
+    try {
+      const response = await fetch(`${API_URL}/${questionId}`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
 
-                <h3 className={styles.relatedTitle}>연관된 꼬리 질문</h3>
-                {loading ? (
-                    <p>로딩 중...</p>
-                ) : error ? (
-                    <p className={styles.error}>{error}</p>
-                ) : relatedQuestions.length > 0 ? (
-                    <ul className={styles.relatedList}>
-                        {relatedQuestions.map((q) => (
-                            <li
-                                key={q.id}
-                                className={styles.relatedItem}
-                                onClick={() => handleRelatedQuestionClick(q.id)}
-                            >
-                                {q.question}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <div className={styles.noRelatedQuestions}>
-                        <button
-                            className={styles.addTailButton}
-                            onClick={() => setShowCreateModal(true)}
-                        >
-                            꼬리 질문 생성
-                        </button>
-                    </div>
-                )}
+      if (!response.ok) {
+        throw new Error("질문 데이터를 불러오는 데 실패했습니다.");
+      }
 
-                <div className={styles.modalFooter}>
-                    <button
-                        className={styles.backButton}
-                        onClick={handleGoBack}
-                        disabled={historyStack.length === 0}
-                    >
-                        뒤로가기
-                    </button>
+      const newInterview: InterviewContent = await response.json();
+      console.log("New Selected Interview:", newInterview);
 
-                    <button className={styles.closeButton} onClick={onClose}>
-                        닫기
-                    </button>
-                </div>
-            </div>
+      setHistoryStack((prevStack) => [...prevStack, interview]);
+      onSelectInterview(newInterview);
+    } catch (err) {
+      console.error("Error fetching new interview:", err);
+    }
+  };
 
-            {showCreateModal && (
-                <InterviewCreateModal
-                    onClose={() => setShowCreateModal(false)}
-                    onCreate={(newInterview) => {
-                        setRelatedQuestions((prev) => [
-                            ...prev,
-                            {
-                                id: 0, // 임시 값
-                                headId: interview.id,
-                                tailId: null,
-                                isHead: false,
-                                hasTail: false,
-                                keyword: newInterview.keyword,
-                                category: newInterview.category,
-                                question: newInterview.question,
-                                modelAnswer: newInterview.modelAnswer,
-                                likeCount: 0,
-                            },
-                        ]);
-                    }}
-                    headId={interview.id}
-                />
-            )}
+  const handleGoBack = () => {
+    if (historyStack.length > 0) {
+      const previousInterview = historyStack[historyStack.length - 1];
+      setHistoryStack((prevStack) => prevStack.slice(0, -1));
+      onSelectInterview(previousInterview);
+    }
+  };
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <h2 className={styles.modalTitle}>{interview.question}</h2>
+        <p className={styles.modalCategory}>
+          {interview.category} / {interview.keyword}
+        </p>
+        <p className={styles.modalBody}>{interview.modelAnswer}</p>
+
+        <h3 className={styles.relatedTitle}>연관된 꼬리 질문</h3>
+        {loading ? (
+          <p>로딩 중...</p>
+        ) : error ? (
+          <p className={styles.error}>{error}</p>
+        ) : relatedQuestions.length > 0 ? (
+          <ul className={styles.relatedList}>
+            {relatedQuestions.map((q) => (
+              <li
+                key={q.id}
+                className={styles.relatedItem}
+                onClick={() => handleRelatedQuestionClick(q.id)}
+              >
+                {q.question}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className={styles.noRelatedQuestions}>
+            <button
+              className={styles.addTailButton}
+              onClick={() => setShowCreateModal(true)}
+            >
+              꼬리 질문 생성
+            </button>
+          </div>
+        )}
+
+        <div className={styles.modalFooter}>
+          <button
+            className={styles.backButton}
+            onClick={handleGoBack}
+            disabled={historyStack.length === 0}
+          >
+            뒤로가기
+          </button>
+
+          <button className={styles.closeButton} onClick={onClose}>
+            닫기
+          </button>
         </div>
-    );
+      </div>
+
+      {showCreateModal && (
+        <InterviewCreateModal
+          onClose={() => setShowCreateModal(false)}
+          onCreate={(newInterview) => {
+            setRelatedQuestions((prev) => [
+              ...prev,
+              {
+                id: 0, // 임시 값
+                headId: interview.id,
+                tailId: null,
+                isHead: false,
+                hasTail: false,
+                keyword: newInterview.keyword,
+                category: newInterview.category,
+                question: newInterview.question,
+                modelAnswer: newInterview.modelAnswer,
+                likeCount: 0,
+              },
+            ]);
+          }}
+          headId={interview.id}
+        />
+      )}
+    </div>
+  );
 };
 
 export default InterviewDetailModal;

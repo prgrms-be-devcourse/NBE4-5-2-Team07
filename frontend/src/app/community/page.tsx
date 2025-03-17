@@ -40,7 +40,7 @@ const CommunityListPage: React.FC = () => {
   // 로그인 상태 확인 함수
   const checkAuth = async () => {
     try {
-      const response = await fetch("http://localhost:8080/member/me", {
+      const response = await fetch("https://devapi.store/member/me", {
         credentials: "include",
       });
       if (!response.ok) {
@@ -66,7 +66,7 @@ const CommunityListPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/community${sortingEndpoints[sorting]}?page=${page}&size=${size}`,
+        `https://devapi.store/community${sortingEndpoints[sorting]}?page=${page}&size=${size}`,
         {
           credentials: "include",
         }
@@ -159,7 +159,7 @@ const CommunityListPage: React.FC = () => {
               className="rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-2 px-6 font-medium transition-all flex items-center justify-center gap-2 shadow-lg"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 className="h-5 w-5"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -211,7 +211,7 @@ const CommunityListPage: React.FC = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -248,7 +248,7 @@ const CommunityListPage: React.FC = () => {
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="https://www.w3.org/2000/svg"
                               >
                                 <path
                                   strokeLinecap="round"
@@ -265,7 +265,7 @@ const CommunityListPage: React.FC = () => {
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="https://www.w3.org/2000/svg"
                               >
                                 <path
                                   strokeLinecap="round"
@@ -288,10 +288,11 @@ const CommunityListPage: React.FC = () => {
 
           <div className="flex justify-between mt-6">
             <button
-              className={`px-5 py-2 flex items-center rounded-full border transition-colors duration-200 ${page > 0
-                ? "border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-700"
-                : "border-gray-300 text-gray-400 cursor-not-allowed"
-                }`}
+              className={`px-5 py-2 flex items-center rounded-full border transition-colors duration-200 ${
+                page > 0
+                  ? "border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-700"
+                  : "border-gray-300 text-gray-400 cursor-not-allowed"
+              }`}
               onClick={() => setPage(page - 1)}
               disabled={page === 0}
             >
@@ -300,7 +301,7 @@ const CommunityListPage: React.FC = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"
@@ -321,7 +322,7 @@ const CommunityListPage: React.FC = () => {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
               >
                 <path
                   strokeLinecap="round"

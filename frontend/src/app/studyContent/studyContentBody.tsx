@@ -42,7 +42,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8080/api/v1/study/${category.firstCategory}/${category.secondCategory}?page=${page}&size=1`
+          `https://devapi.store/api/v1/study/${category.firstCategory}/${category.secondCategory}?page=${page}&size=1`
         );
         const data = await response.json();
         setStudyContents(data.content);
@@ -82,7 +82,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
   const handleMemoCheck = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo/${selectedContentId}`,
+        `https://devapi.store/api/v1/studyMemo/${selectedContentId}`,
         {
           method: "GET",
           credentials: "include",
@@ -95,7 +95,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
       if (!response.ok) {
         if (response.status === 401) {
           alert("로그인 후 이용해주세요.");
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
       }
@@ -115,7 +115,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
   const handleMemoCreate = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/studyMemo/create/${selectedContentId}`,
+        `https://devapi.store/api/v1/studyMemo/create/${selectedContentId}`,
         {
           method: "POST",
           credentials: "include",
@@ -132,7 +132,7 @@ const StudyContentBody = ({ selectedCategory }: { selectedCategory: any }) => {
       if (!response.ok) {
         if (response.status === 401) {
           alert("로그인 후 이용해주세요.");
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
       }

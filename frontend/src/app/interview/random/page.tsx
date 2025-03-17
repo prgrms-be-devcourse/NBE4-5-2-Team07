@@ -72,13 +72,13 @@ export default function RandomInterviewPage() {
 
   // (1) 컴포넌트 마운트 시 전체 머리 질문 ID 가져오기
   useEffect(() => {
-    fetch("http://localhost:8080/interview/all", {
+    fetch("https://devapi.store/interview/all", {
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) {
           if (res.status === 401) {
-            router.push("http://localhost:3000/login");
+            router.push("https://chilldevprep.vercel.app/login");
             return;
           }
           throw new Error("전체 질문 ID 리스트를 가져오는데 실패했습니다.");
@@ -120,7 +120,7 @@ export default function RandomInterviewPage() {
       }
 
       const requestBody: RandomRequestDto = { indexList: indices };
-      const res = await fetch("http://localhost:8080/interview/random", {
+      const res = await fetch("https://devapi.store/interview/random", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ export default function RandomInterviewPage() {
       });
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("랜덤 면접 질문을 가져오는데 실패했습니다.");
@@ -175,12 +175,12 @@ export default function RandomInterviewPage() {
       if (currentInterview) {
         setHistory((prev) => [...prev, currentInterview]);
       }
-      const res = await fetch(`http://localhost:8080/interview/${id}`, {
+      const res = await fetch(`https://devapi.store/interview/${id}`, {
         credentials: "include",
       });
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("면접 질문을 가져오는데 실패했습니다.");
@@ -219,7 +219,7 @@ export default function RandomInterviewPage() {
     if (!currentInterview) return;
     try {
       const res = await fetch(
-        `http://localhost:8080/interview/like?id=${currentInterview.id}`,
+        `https://devapi.store/interview/like?id=${currentInterview.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -227,7 +227,7 @@ export default function RandomInterviewPage() {
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("좋아요 요청에 실패했습니다.");
@@ -247,22 +247,19 @@ export default function RandomInterviewPage() {
       return;
     }
     try {
-      const res = await fetch(
-        "http://localhost:8080/api/v1/interview/comment",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            comment: commentText,
-            isPublic: isPublic,
-            interviewContentId: currentInterview.id,
-          }),
-        }
-      );
+      const res = await fetch("https://devapi.store/api/v1/interview/comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          comment: commentText,
+          isPublic: isPublic,
+          interviewContentId: currentInterview.id,
+        }),
+      });
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("댓글 저장에 실패했습니다.");
@@ -281,12 +278,12 @@ export default function RandomInterviewPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/my/${currentInterview.id}`,
+        `https://devapi.store/api/v1/interview/comment/my/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("내 메모를 가져오는데 실패했습니다.");
@@ -308,12 +305,12 @@ export default function RandomInterviewPage() {
     setMemosError(null);
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/interview/comment/public/${currentInterview.id}`,
+        `https://devapi.store/api/v1/interview/comment/public/${currentInterview.id}`,
         { credentials: "include" }
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("공개 메모를 가져오는데 실패했습니다.");
@@ -333,7 +330,7 @@ export default function RandomInterviewPage() {
     if (!currentInterview) return;
     try {
       const res = await fetch(
-        `http://localhost:8080/interview/bookmark?id=${currentInterview.id}`,
+        `https://devapi.store/interview/bookmark?id=${currentInterview.id}`,
         {
           method: "POST",
           credentials: "include",
@@ -341,7 +338,7 @@ export default function RandomInterviewPage() {
       );
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("http://localhost:3000/login");
+          router.push("https://chilldevprep.vercel.app/login");
           return;
         }
         throw new Error("북마크 요청에 실패했습니다.");
@@ -445,7 +442,7 @@ export default function RandomInterviewPage() {
                       }`}
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill={
                           currentInterview.likedByUser ? "currentColor" : "none"
@@ -470,7 +467,7 @@ export default function RandomInterviewPage() {
                     className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-4 w-4 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -517,7 +514,7 @@ export default function RandomInterviewPage() {
                     {showAnswer ? (
                       <>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="https://www.w3.org/2000/svg"
                           className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -535,7 +532,7 @@ export default function RandomInterviewPage() {
                     ) : (
                       <>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="https://www.w3.org/2000/svg"
                           className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -580,7 +577,7 @@ export default function RandomInterviewPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -602,7 +599,7 @@ export default function RandomInterviewPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -624,7 +621,7 @@ export default function RandomInterviewPage() {
                       className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -645,7 +642,7 @@ export default function RandomInterviewPage() {
                     className="inline-flex items-center px-4 py-2 border border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors"
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                       className="h-4 w-4 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -688,7 +685,7 @@ export default function RandomInterviewPage() {
                       className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white transition-colors"
                     >
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                         className="h-4 w-4 mr-1"
                         fill="none"
                         viewBox="0 0 24 24"

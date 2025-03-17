@@ -11,7 +11,7 @@ const SubscriptionPayment = () => {
   // 아임포트 스크립트 로드
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://cdn.iamport.kr/v1/iamport.js";
+    script.src = "httpss://cdn.iamport.kr/v1/iamport.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -73,7 +73,7 @@ const SubscriptionPayment = () => {
         if (rsp.success) {
           try {
             const response = await fetch(
-              "http://localhost:8080/api/v1/payments/verify",
+              "https://devapi.store/api/v1/payments/verify",
               {
                 method: "POST",
                 credentials: "include",
@@ -100,7 +100,7 @@ const SubscriptionPayment = () => {
   const cancelSubscription = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/v1/payments/cancel",
+        "https://devapi.store/api/v1/payments/cancel",
         {
           method: "POST",
           credentials: "include",
@@ -189,7 +189,7 @@ const SubscriptionPayment = () => {
                       <li key={idx} className="flex items-start">
                         <svg
                           className="h-5 w-5 text-indigo-500 mr-2 mt-0.5"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="https://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -215,7 +215,7 @@ const SubscriptionPayment = () => {
                       return;
                     }
                     // 백엔드에 회원 정보 요청
-                    fetch("http://localhost:8080/member/me", {
+                    fetch("https://devapi.store/member/me", {
                       method: "GET",
                       credentials: "include",
                       headers: { "Content-Type": "application/json" },
@@ -253,7 +253,7 @@ const SubscriptionPayment = () => {
           <button
             onClick={(e) => {
               // 백엔드에 회원 정보 요청
-              fetch("http://localhost:8080/member/me", {
+              fetch("https://devapi.store/member/me", {
                 method: "GET",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -300,7 +300,7 @@ const SubscriptionPayment = () => {
                     신용/체크카드
                   </span>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5 text-indigo-600 dark:text-indigo-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -323,7 +323,7 @@ const SubscriptionPayment = () => {
                     카카오페이
                   </span>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5 text-yellow-500"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -354,7 +354,7 @@ const SubscriptionPayment = () => {
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-8 w-8 text-red-600 dark:text-red-400"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -406,7 +406,7 @@ const SubscriptionPayment = () => {
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-8 w-8 text-green-600 dark:text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"

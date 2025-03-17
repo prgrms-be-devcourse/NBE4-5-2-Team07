@@ -72,7 +72,7 @@ const CommunityDetailPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/community/article?id=${postId}`,
+        `https://devapi.store/community/article?id=${postId}`,
         {
           credentials: "include",
         }
@@ -93,7 +93,7 @@ const CommunityDetailPage: React.FC = () => {
   const checkAuth = async () => {
     try {
       // 1) /member/me로 요청, 사용자 id 가져오기
-      const meResponse = await fetch("http://localhost:8080/member/me", {
+      const meResponse = await fetch("https://devapi.store/member/me", {
         credentials: "include",
       });
       if (!meResponse.ok) throw new Error("Unauthorized");
@@ -102,7 +102,7 @@ const CommunityDetailPage: React.FC = () => {
 
       // 2) /member/{id}/isAdmin 으로 요청, 관리자 여부 확인
       const isAdminResponse = await fetch(
-        `http://localhost:8080/member/${meData.data.id}/isAdmin`,
+        `https://devapi.store/member/${meData.data.id}/isAdmin`,
         { credentials: "include" }
       );
       if (!isAdminResponse.ok) throw new Error("Unauthorized");
@@ -126,7 +126,7 @@ const CommunityDetailPage: React.FC = () => {
   const handleDeletePost = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/community/article/delete?postId=${postId}`,
+        `https://devapi.store/community/article/delete?postId=${postId}`,
         { method: "POST", credentials: "include" }
       );
       if (!response.ok) {
@@ -142,7 +142,7 @@ const CommunityDetailPage: React.FC = () => {
   const handleLike = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/community/post/like?postId=${postId}`,
+        `https://devapi.store/community/post/like?postId=${postId}`,
         {
           credentials: "include",
         }
@@ -169,7 +169,7 @@ const CommunityDetailPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/community/comment/add",
+        "https://devapi.store/community/comment/add",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -200,7 +200,7 @@ const CommunityDetailPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/community/comment/add",
+        "https://devapi.store/community/comment/add",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -231,7 +231,7 @@ const CommunityDetailPage: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/community/comment/edit",
+        "https://devapi.store/community/comment/edit",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -256,7 +256,7 @@ const CommunityDetailPage: React.FC = () => {
     setErrorMsg(null);
     try {
       const response = await fetch(
-        `http://localhost:8080/community/comment/delete?commentId=${commentId}`,
+        `https://devapi.store/community/comment/delete?commentId=${commentId}`,
         {
           method: "POST",
           credentials: "include",
@@ -280,7 +280,7 @@ const CommunityDetailPage: React.FC = () => {
       if (!replies[commentId]) {
         try {
           const response = await fetch(
-            `http://localhost:8080/community/comment/re?commentId=${commentId}`,
+            `https://devapi.store/community/comment/re?commentId=${commentId}`,
             {
               credentials: "include",
             }
@@ -321,7 +321,7 @@ const CommunityDetailPage: React.FC = () => {
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns="https://www.w3.org/2000/svg"
           >
             <path
               strokeLinecap="round"
@@ -399,7 +399,7 @@ const CommunityDetailPage: React.FC = () => {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                     >
                       <path
                         strokeLinecap="round"
@@ -420,7 +420,7 @@ const CommunityDetailPage: React.FC = () => {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="https://www.w3.org/2000/svg"
                     >
                       {showReplies[comment.commentId] ? (
                         <path
@@ -484,10 +484,11 @@ const CommunityDetailPage: React.FC = () => {
                       <button
                         onClick={() => handleAddReply(comment.commentId)}
                         disabled={!replyComment[comment.commentId]?.trim()}
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${replyComment[comment.commentId]?.trim()
-                          ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
-                          : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                          }`}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
+                          replyComment[comment.commentId]?.trim()
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        }`}
                       >
                         게시
                       </button>
@@ -634,7 +635,7 @@ const CommunityDetailPage: React.FC = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
@@ -684,7 +685,7 @@ const CommunityDetailPage: React.FC = () => {
                         fill={like > 0 ? "currentColor" : "none"}
                         stroke="currentColor"
                         viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns="https://www.w3.org/2000/svg"
                       >
                         <path
                           strokeLinecap="round"
@@ -747,10 +748,11 @@ const CommunityDetailPage: React.FC = () => {
                       <button
                         onClick={handleAddComment}
                         disabled={!newComment.trim()}
-                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${newComment.trim()
-                          ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
-                          : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                          }`}
+                        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 rounded-full font-medium text-sm ${
+                          newComment.trim()
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+                            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        }`}
                       >
                         게시
                       </button>
@@ -769,7 +771,7 @@ const CommunityDetailPage: React.FC = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"

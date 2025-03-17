@@ -32,7 +32,7 @@ const nextConfig = {
         open: true, // 서버 시작 시 브라우저 자동 열기
         client: {
           overlay: true, // 오류나 경고 시 화면에 오버레이 표시
-          webSocketURL: "ws://localhost:8080/ws", // WebSocket URL 설정
+          webSocketURL: "ws://devapi.store/ws", // WebSocket URL 설정
         },
         compress: true, // 압축 설정
       };

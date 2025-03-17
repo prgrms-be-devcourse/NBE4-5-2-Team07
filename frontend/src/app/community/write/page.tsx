@@ -26,7 +26,7 @@ const CommunityWritePage: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/community/article/post",
+        "https://devapi.store/community/article/post",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

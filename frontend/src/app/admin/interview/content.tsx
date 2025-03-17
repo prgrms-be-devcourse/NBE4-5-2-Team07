@@ -6,7 +6,7 @@ import InterviewDetailModal from "./modal/interviewDetailModal";
 import InterviewEditModal from "./modal/interviewEditModal";
 import InterviewDeleteModal from "./modal/interviewDeleteModal";
 
-const API_URL = "http://localhost:8080/api/v1/admin/interview";
+const API_URL = "https://devapi.store/api/v1/admin/interview";
 
 interface InterviewContentDetail {
   id: number;
