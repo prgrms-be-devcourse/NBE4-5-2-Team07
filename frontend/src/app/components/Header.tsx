@@ -16,15 +16,22 @@ export default function Header() {
 
   async function handleLogout(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const response = await client.DELETE("/member/logout", {
-      credentials: "include",
-    });
-    if (response.error) {
-      alert(response.error.msg);
-      return;
+    try {
+      const response = await fetch("https://devapi.store/member/logout", {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.msg || "로그아웃 실패");
+        return;
+      }
+      removeLoginMember();
+      router.replace("/");
+    } catch (error) {
+      console.error("로그아웃 오류:", error);
+      alert("로그아웃 중 오류가 발생했습니다.");
     }
-    removeLoginMember();
-    router.replace("/");
   }
 
   return (

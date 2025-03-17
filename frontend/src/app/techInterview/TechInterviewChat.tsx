@@ -84,7 +84,7 @@ export default function TechInterviewChat() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://localhost:8080/member/me", {
+        const res = await fetch("httpss://devapi.store/member/me", {
           method: "GET",
           credentials: "include",
         });
@@ -94,6 +94,7 @@ export default function TechInterviewChat() {
         }
         const json = (await res.json()) as RsData<MeResponseData>;
         setUser(json.data);
+        console.log(json);
       } catch (error) {
         router.push("/login");
       } finally {
@@ -223,7 +224,7 @@ export default function TechInterviewChat() {
                   className="rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white py-3 px-8 font-medium text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 w-full sm:w-auto"
                 >
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -237,7 +238,7 @@ export default function TechInterviewChat() {
                   className="rounded-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-300 py-3 px-8 font-medium text-lg transition-all flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto"
                 >
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-5 w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -261,7 +262,7 @@ export default function TechInterviewChat() {
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg mb-4 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -286,7 +287,7 @@ export default function TechInterviewChat() {
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg mb-4 flex items-center justify-center text-purple-600 dark:text-purple-400">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -311,7 +312,7 @@ export default function TechInterviewChat() {
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg mb-4 flex items-center justify-center text-blue-600 dark:text-blue-400">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns="https://www.w3.org/2000/svg"
                     className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -403,7 +404,7 @@ export default function TechInterviewChat() {
                 } text-white font-medium py-3 px-8 rounded-full shadow-lg shadow-indigo-500/20 mx-auto transition-all flex items-center justify-center gap-2 max-w-md w-full`}
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
