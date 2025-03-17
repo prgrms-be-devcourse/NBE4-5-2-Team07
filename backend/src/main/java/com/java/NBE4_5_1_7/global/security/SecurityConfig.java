@@ -30,27 +30,30 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authorizeHttpRequests) ->
-                        authorizeHttpRequests
-                                .requestMatchers(
-                                        "/",
-                                        "/info",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/member/**",
-                                        "/api/v1/study/**",
-                                        "/ws/**",
-                                        "/chat/**",
-                                        "/app/**",
-                                        "/api/auth/user",
-                                        "/api/v1/payments/webhook",
-                                        "/api/v1/news/**").permitAll()
-                                .requestMatchers(
-                                        "/api/v1/admin/**",
-                                        "/app/chat/admin/**",
-                                        "/chat/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
-                )
+//                .authorizeHttpRequests((authorizeHttpRequests) ->
+//                        authorizeHttpRequests
+//                                .requestMatchers(
+//                                        "/",
+//                                        "/info",
+//                                        "/swagger-ui/**",
+//                                        "/v3/api-docs/**",
+//                                        "/member/**",
+//                                        "/api/v1/study/**",
+//                                        "/ws/**",
+//                                        "/chat/**",
+//                                        "/app/**",
+//                                        "/api/auth/user",
+//                                        "/api/v1/payments/webhook",
+//                                        "/api/v1/news/**").permitAll()
+//                                .requestMatchers(
+//                                        "/api/v1/admin/**",
+//                                        "/app/chat/admin/**",
+//                                        "/chat/admin/**").hasRole("ADMIN")
+//                                .anyRequest().authenticated()
+//                )
+                  .authorizeHttpRequests((authorizeHttpRequests) ->
+                    authorizeHttpRequests.anyRequest().permitAll()
+                  )
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sessionManagement -> {
