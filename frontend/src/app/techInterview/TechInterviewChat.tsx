@@ -84,7 +84,7 @@ export default function TechInterviewChat() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("httpss://devapi.store/member/me", {
+        const res = await fetch("https://devapi.store/member/me", {
           method: "GET",
           credentials: "include",
         });

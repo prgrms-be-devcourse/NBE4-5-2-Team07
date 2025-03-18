@@ -11,7 +11,7 @@ const SubscriptionPayment = () => {
   // 아임포트 스크립트 로드
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "httpss://cdn.iamport.kr/v1/iamport.js";
+    script.src = "https://cdn.iamport.kr/v1/iamport.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -189,7 +189,7 @@ const SubscriptionPayment = () => {
                       <li key={idx} className="flex items-start">
                         <svg
                           className="h-5 w-5 text-indigo-500 mr-2 mt-0.5"
-                          xmlns="https://www.w3.org/2000/svg"
+                          xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
