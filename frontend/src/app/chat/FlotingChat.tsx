@@ -487,7 +487,7 @@ const FloatingChat = () => {
                   <textarea
                     ref={textareaRef}
                     rows={1}
-                    className="flex-1 p-3 border border-gray-200 rounded-l-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 text-sm"
+                    className="flex-1 p-3 border border-gray-200 rounded-l-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 text-sm overflow-hidden"
                     placeholder="메시지를 입력하세요..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
