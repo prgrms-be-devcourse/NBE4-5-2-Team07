@@ -5,9 +5,8 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class ChatRoom {
     private Long roomId;
     private String nickname;
+    private String role;
 }

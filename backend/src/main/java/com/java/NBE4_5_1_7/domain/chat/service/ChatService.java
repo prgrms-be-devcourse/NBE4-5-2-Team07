@@ -1,16 +1,16 @@
 package com.java.NBE4_5_1_7.domain.chat.service;
 
+import com.java.NBE4_5_1_7.domain.chat.model.ChatRoom;
 import com.java.NBE4_5_1_7.domain.chat.model.Message;
 import com.java.NBE4_5_1_7.domain.mail.EmailService;
 import com.java.NBE4_5_1_7.domain.member.entity.Member;
-import com.java.NBE4_5_1_7.domain.member.repository.MemberRepository;
+import com.java.NBE4_5_1_7.domain.member.service.MemberService;
+import com.java.NBE4_5_1_7.global.Rq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,7 +25,8 @@ public class ChatService {
 
     private final RedisTemplate<String, Message> redisTemplate;
     private final EmailService emailService;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
+    private final Rq rq;
 
     /// 메시지 저장
     @Transactional
@@ -75,42 +76,15 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    /// 회원 채팅룸 조회/생성 (회원 전용)
-    /// 사용안하는 쪽으로 구성하기
-//    @Transactional
-//    public ChatRoom getOrCreateChatRoomForUser(Long userId) {
-//        List<ChatRoom> all = new ArrayList<>();
-//        chatRoomRepository.findAll().forEach(all::add);
-//        Optional<ChatRoom> existing = all.stream()
-//                .filter(Objects::nonNull)
-//                .filter(room -> "USER".equals(room.getUserType()) &&
-//                        room.getUserIdentifier() != null &&
-//                        room.getUserIdentifier().equals(userId))
-//                .findFirst();
-//        if (existing.isPresent()) {
-//            return existing.get();
-//        } else {
-//            // 회원 채팅룸은 고정된 userId를 roomId로 사용 (삭제 후 재생성)
-//            long newRoomId = userId;
-//            ChatRoom newRoom = ChatRoom.builder()
-//                    .roomId(newRoomId)
-//                    .userType("USER")
-//                    .userIdentifier(userId)
-//                    .lastActivityTime(LocalDateTime.now())
-//                    .build();
-//            chatRoomRepository.save(newRoom);
-//            return newRoom;
-//        }
-//    }
-
-    //@Scheduled(cron = "0 0 0/1 * * ?") // 1시간마다 체크
-    @Scheduled(cron = "0 */1 * * * *") // 현재는 1분마다 실행
+    /// 30분 이상 메시지 없는 게스트 채팅방 자동 삭제
+    @Scheduled(cron = "0 0 * * * *")
     public void checkAndDeleteOldGuestRooms() {
         LocalDateTime now = LocalDateTime.now();
         List<Long> allRooms = getChatRooms();
 
+        // GUEST 채팅만 자동 제거
         for (Long roomId : allRooms) {
-            if (roomId >= 0) continue; // GUEST 채팅만 자동 제거
+            if (roomId >= 0) continue;
 
             List<Message> messages = getMessage(roomId);
             if (!messages.isEmpty()) {
@@ -119,7 +93,7 @@ public class ChatService {
                     Instant instant = Instant.parse(lastMessage.getTimestamp());
                     LocalDateTime lastMessageTime = instant.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
-                    if (Duration.between(lastMessageTime, now).toMinutes() >= 5) {
+                    if (Duration.between(lastMessageTime, now).toMinutes() >= 30) {
                         deleteChatRoomMessages(roomId);
                         System.out.println("⏰ 자동 삭제된 게스트 채팅방 - roomId=" + roomId);
                     }
@@ -131,33 +105,44 @@ public class ChatService {
         }
     }
 
-    /// 현재 사용자 정보 반환 ( ADMIN / USER / GUEST),
+    /// 현재 사용자 정보 반환 ( ADMIN / USER / GUEST)
     @Transactional(readOnly = true)
-    public Map<String, Object> getAuthUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
-            return Map.of("role", "GUEST");
-        }
+    public ChatRoom getChatRoomInfo() {
+        try {
+            Member actor = rq.getActor();
+            Member realActor = rq.getRealActor(actor);
 
-        String username = auth.getName(); // ex: "kakao_3959737193"
-        Optional<Member> opt = memberRepository.findByUsername(username);
-        if (opt.isEmpty()) {
-            return Map.of("role", "GUEST");
-        }
-        Member member = opt.get();
-        if ("ADMIN".equalsIgnoreCase(String.valueOf(member.getRole()))) {
-            return Map.of("role", "ADMIN");
-        } else {
-            String userApiKey = member.getApiKey();
-            String temp = userApiKey.startsWith("kakao_")
-                    ? userApiKey.substring("kakao_".length())
-                    : userApiKey;
-            long userId = Long.parseLong(temp);
+            boolean isAdmin = memberService.isAdmin(realActor.getId());
+            if (isAdmin) {
+                return new ChatRoom(null, null, "ADMIN");
+            }
 
-            return Map.of(
-                    "userId", userId,
-                    "role", "USER"
-            );
+            Long roomId = realActor.getId();
+            String nickname = realActor.getNickname();
+            return new ChatRoom(roomId, nickname, "USER");
+        } catch (Exception e) {
+            long guestId = generateUniqueGuestId();
+            return new ChatRoom(guestId, "게스트 " + (-guestId), "GUEST");
         }
+    }
+
+    private long generateUniqueGuestId() {
+        Set<String> keys = redisTemplate.keys("chat:*");
+        Set<Long> usedGuestIds = keys.stream()
+                .map(key -> {
+                    try {
+                        return Long.parseLong(key.replace("chat:", ""));
+                    } catch (NumberFormatException e) {
+                        return 0L;
+                    }
+                })
+                .filter(id -> id < 0)
+                .collect(Collectors.toSet());
+
+        long candidate = -1;
+        while (usedGuestIds.contains(candidate)) {
+            candidate--;
+        }
+        return candidate;
     }
 }
