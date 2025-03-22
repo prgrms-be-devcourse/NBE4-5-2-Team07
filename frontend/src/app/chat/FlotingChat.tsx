@@ -25,6 +25,7 @@ const FloatingChat = () => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const systemMessageSentRef = useRef(false);
   const [lastUserMessageTime, setLastUserMessageTime] = useState<Date | null>(null);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   // 사용자 정보 조회 (/chat/room/info API 호출) – 회원/게스트/관리자 구분
   useEffect(() => {
@@ -58,13 +59,21 @@ const FloatingChat = () => {
 
 
   // 채팅창 열기/닫기 토글
-  const toggleChat = () => setIsOpen(prev => !prev);
+  const toggleChat = () => {
+    setIsOpen(prev => !prev);
+    setIsMinimized(false); // 열 때 최소화 상태 해제
+  };
+
+  // 채팅창 최소화 토글
+  const toggleMinimize = () => {
+    setIsMinimized(prev => !prev);
+  };
 
   // 메시지 입력창 자동 높이 조절
   const resizeTextarea = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
     }
   };
 
@@ -108,7 +117,7 @@ const FloatingChat = () => {
         // 첫 연결 시 환영 시스템 메시지 전송 (한 번만)
         if (!systemMessageSentRef.current) {
           systemMessageSentRef.current = true;
-          sendSystemMessage("안녕하세요! 😊 무엇을 도와드릴까요?");
+          sendSystemMessage("안녕하세요! 😊 DevPrep 고객센터입니다. 무엇을 도와드릴까요?");
         }
 
         // 1분 후 상담원 부재중 안내 (상담사 응답 없을 경우)
@@ -164,6 +173,14 @@ const FloatingChat = () => {
       })
       .catch((err) => console.error("Error loading messages:", err));
   }, [isOpen, roomId, role]);
+
+  // 메시지 전송 (Enter 키)
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
   // 메시지 전송 시 sender에 사용자 role 사용 (내용과 timestamp 포함)
   // 채팅 메시지 전송 (WebSocket 경로: /app/chat/user/{roomId})
@@ -244,9 +261,6 @@ const FloatingChat = () => {
     try {
       const date = new Date(timestamp);
       return new Intl.DateTimeFormat("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
@@ -256,79 +270,183 @@ const FloatingChat = () => {
     }
   };
 
+  // 현재 시간에 기반한 인사말
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "좋은 아침입니다";
+    if (hour < 18) return "안녕하세요";
+    return "좋은 저녁입니다";
+  };
+
   return (
     <>
       {/* 채팅 열기 토글 버튼*/}
       {role !== "ADMIN" && (
         <button
           onClick={toggleChat}
-          className="fixed bottom-10 right-10 p-4 bg-blue-600 text-white rounded-full shadow-lg z-50"
+          className="fixed bottom-6 right-6 p-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg z-50 flex items-center justify-center transition-all duration-300 w-14 h-14"
+          aria-label="고객센터 채팅 열기"
         >
-          💬
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
         </button>
       )}
 
       {/* 채팅창 패널 */}
       {isOpen && roomId !== null && role !== "ADMIN" && (
-        <div className="fixed bottom-10 right-40 w-96 h-[600px] bg-white shadow-lg rounded-lg flex flex-col z-50">
+        <div
+          className={`fixed bottom-6 right-6 ${isMinimized ? 'w-80 h-12' : 'w-96 h-[540px]'} bg-white shadow-xl rounded-xl transition-all duration-300 flex flex-col z-50 overflow-hidden`}
+          style={{ boxShadow: "0 10px 25px -5px rgba(79, 70, 229, 0.2), 0 10px 10px -5px rgba(79, 70, 229, 0.1)" }}
+        >
           {/* 헤더 영역 */}
-          <div className="flex items-center justify-between p-3 bg-blue-500 text-white rounded-t-lg">
-            <h1 className="text-lg font-bold">
-              고객센터 {displayLabel && `(${displayLabel})`}
-            </h1>
-          </div>
-
-          {/* 메시지 표시 영역 */}
-          <div className="flex-1 overflow-y-auto p-3">
-            {messages.map((msg, index) => {
-              const isSystem = msg.sender === "SYSTEM";
-              const isMine = msg.sender === role && !isSystem;
-              // 메시지 정렬 클래스 결정
-              const alignmentClass = isSystem ? "justify-center" : isMine ? "justify-end" : "justify-start";
-              // 말풍선 스타일 클래스 결정
-              const bubbleClass = isSystem
-                ? "bg-gray-300 text-black"
-                : isMine
-                  ? "bg-blue-500 text-white"
-                  : "bg-green-500 text-white";
-              return (
-                <div key={index} className={`mb-2 flex ${alignmentClass}`}>
-                  <div className={`px-3 py-2 max-w-[70%] rounded-md ${bubbleClass}`}>
-                    {msg.content}
-                  </div>
-
-                  <span className="text-xs text-gray-400 mt-1 px-1">
-                    {formatTime(msg.timestamp)}
-                  </span>
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* 입력 영역 */}
-          <div className="p-3 bg-gray-100 rounded-b-lg">
+          <div
+            className={`flex items-center justify-between p-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-t-xl cursor-pointer`}
+            onClick={toggleMinimize}
+          >
+            <div className="flex items-center">
+              <div className="bg-white p-1 rounded-full mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-sm font-bold">DevPrep 고객센터</h1>
+              </div>
+            </div>
             <div className="flex">
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                className="flex-1 p-2 border rounded-md resize-none focus:outline-none"
-                placeholder="메시지를 입력하세요."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
+              {!isMinimized && (
+                <button
+                  className="text-white mr-1 hover:bg-white hover:bg-opacity-20 rounded p-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMinimize();
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" />
+                  </svg>
+                </button>
+              )}
               <button
-                onClick={sendMessage}
-                disabled={!isConnected || message.trim() === ""}
-                className={`ml-2 px-4 py-2 rounded-md ${isConnected && message.trim() !== ""
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-500"
-                  }`}
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded p-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleChat();
+                }}
               >
-                전송
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
+
+          {!isMinimized && (
+            <>
+              {/* 인사말 영역 */}
+              <div className="p-4 border-b border-gray-100 bg-indigo-50">
+                <p className="text-sm text-gray-700">{getGreeting()}, <span className="font-medium">{displayLabel}</span>님!</p>
+                <p className="text-xs text-gray-500 mt-1">DevPrep 고객센터입니다. 무엇을 도와드릴까요?</p>
+              </div>
+
+              {/* 메시지 표시 영역 */}
+              <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
+                {messages.map((msg, index) => {
+                  const isSystem = msg.sender === "SYSTEM";
+                  const isMine = msg.sender === role && !isSystem;
+                  const isAdmin = msg.sender === "ADMIN";
+
+                  // 메시지 정렬 클래스 결정
+                  const alignmentClass = isSystem
+                    ? "justify-center"
+                    : isMine
+                      ? "justify-end"
+                      : "justify-start";
+
+                  // 말풍선 스타일 클래스 결정
+                  const bubbleClass = isSystem
+                    ? "bg-gray-200 text-gray-700 rounded-lg px-3 py-2 max-w-[85%] text-xs"
+                    : isMine
+                      ? "bg-indigo-600 text-white rounded-lg rounded-tr-none px-3 py-2 max-w-[85%]"
+                      : isAdmin
+                        ? "bg-purple-600 text-white rounded-lg rounded-tl-none px-3 py-2 max-w-[85%]"
+                        : "bg-white border border-gray-200 text-gray-700 rounded-lg rounded-tl-none px-3 py-2 max-w-[85%]";
+
+                  return (
+                    <div key={index} className={`mb-3 flex ${alignmentClass}`}>
+                      <div className="flex flex-col">
+                        {!isMine && !isSystem && (
+                          <span className="text-xs text-gray-500 mb-1 ml-1">
+                            {isAdmin ? '상담원' : '시스템'}
+                          </span>
+                        )}
+                        <div className="flex items-end">
+                          {!isMine && !isSystem && (
+                            <div className="flex-shrink-0 mr-2">
+                              <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            </div>
+                          )}
+                          <div className={bubbleClass}>
+                            {msg.content}
+                          </div>
+                          {isMine && (
+                            <span className="text-xs text-gray-400 ml-2">
+                              {formatTime(msg.timestamp)}
+                            </span>
+                          )}
+                        </div>
+                        {!isMine && !isSystem && (
+                          <span className="text-xs text-gray-400 mt-1 ml-8">
+                            {formatTime(msg.timestamp)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* 입력 영역 */}
+              <div className="p-3 bg-white border-t border-gray-100">
+                <div className="flex">
+                  <textarea
+                    ref={textareaRef}
+                    rows={1}
+                    className="flex-1 p-3 border border-gray-200 rounded-l-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 text-sm"
+                    placeholder="메시지를 입력하세요..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                  <button
+                    onClick={sendMessage}
+                    disabled={!isConnected || message.trim() === ""}
+                    className={`px-4 rounded-r-lg flex items-center justify-center ${isConnected && message.trim() !== ""
+                      ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                      : "bg-gray-200 text-gray-400"
+                      } transition-colors duration-200`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
+                  <span>Shift + Enter로 줄바꿈</span>
+                  <div className="flex items-center">
+                    <span className={`w-2 h-2 rounded-full mr-1 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    <span>{isConnected ? '연결됨' : '연결 중...'}</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </>
