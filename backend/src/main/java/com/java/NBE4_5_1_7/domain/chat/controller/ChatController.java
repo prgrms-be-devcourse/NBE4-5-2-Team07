@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.java.NBE4_5_1_7.domain.chat.model.ChatRoom;
 import com.java.NBE4_5_1_7.domain.chat.model.Message;
 import com.java.NBE4_5_1_7.domain.chat.service.ChatService;
 
@@ -60,7 +59,7 @@ public class ChatController {
     /// 채팅방 목록 조회 (관리자)
     // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/chat/rooms")
-    public List<ChatRoom> getChatRooms() {
+    public List<Long> getChatRooms() {
         return chatService.getChatRooms();
     }
 
@@ -72,10 +71,10 @@ public class ChatController {
     }
 
     /// 회원 전용 채팅창 조회/생성
-    @GetMapping("/chat/room/user/{userId}")
-    public ChatRoom getOrCreateChatRoomForUser(@PathVariable Long userId) {
-        return chatService.getOrCreateChatRoomForUser(userId);
-    }
+//    @GetMapping("/chat/room/user/{userId}")
+//    public ChatRoom getOrCreateChatRoomForUser(@PathVariable Long userId) {
+//        return chatService.getOrCreateChatRoomForUser(userId);
+//    }
 
     /// 현재 사용자 정보 반환
     @GetMapping("/chat/auth/user")

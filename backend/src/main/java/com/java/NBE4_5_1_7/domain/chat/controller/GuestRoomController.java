@@ -1,34 +1,33 @@
 package com.java.NBE4_5_1_7.domain.chat.controller;
 
-import com.java.NBE4_5_1_7.domain.chat.model.ChatRoom;
-import com.java.NBE4_5_1_7.domain.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class GuestRoomController {
 
-    private final ChatRoomRepository chatRoomRepository;
+    private final RedisTemplate<String, ?> redisTemplate;
 
     /// 게스트 채팅룸 ID 할당
     @GetMapping("/chat/room/guest")
     public GuestIdResponse getGuestRoomId() {
-        Iterable<ChatRoom> rooms = chatRoomRepository.findAll();
-        Set<Long> usedGuestIds = new HashSet<>();
-        for (ChatRoom room : rooms) {
-            if (room != null && room.getRoomId() < 0) {
-                usedGuestIds.add(room.getRoomId());
-            }
-        }
+        Set<String> keys = redisTemplate.keys("chat:*");
+        Set<Long> usedGuestIds = keys.stream()
+                .map(key -> Long.parseLong(key.replace("chat:", "")))
+                .filter(id -> id < 0)
+                .collect(Collectors.toSet());
+
         long candidate = -1;
         while (usedGuestIds.contains(candidate)) {
             candidate--;
         }
+
         return new GuestIdResponse(candidate);
     }
 

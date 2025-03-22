@@ -47,42 +47,31 @@ const AdminChatDashboard = () => {
 
   // Connect to WebSocket
   useEffect(() => {
-    if (clientRef.current) {
-      console.log("WebSocket already connected");
-      return;
-    }
-
+    if (clientRef.current) return;
     const socket = new SockJS("http://localhost:8080/ws/chat");
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log("Admin WebSocket connected");
         setIsConnected(true);
         clientRef.current = stompClient;
-
-        // Subscribe to all chat rooms if admin
         fetchChatRooms();
       },
       onDisconnect: () => {
-        console.log("WebSocket disconnected");
         setIsConnected(false);
         clientRef.current = null;
       },
       onStompError: (frame) => {
-        console.error("STOMP error: ", frame);
         setError("WebSocket connection error");
+        console.error("STOMP error:", frame);
       },
     });
-
     stompClient.activate();
-
     return () => {
-      if (stompClient.active) {
-        stompClient.deactivate();
-      }
+      if (stompClient.active) stompClient.deactivate();
       clientRef.current = null;
     };
   }, []);
+
 
   // Handle delete room button click
   const handleDeleteRoom = (roomId: number) => {
@@ -137,18 +126,36 @@ const AdminChatDashboard = () => {
   const fetchChatRooms = async () => {
     setLoading(true);
     try {
-      // This endpoint needs to be implemented on the backend
       const response = await fetch("http://localhost:8080/chat/rooms", {
         method: "GET",
         credentials: "include",
       });
+      if (!response.ok) throw new Error("Failed to fetch chat rooms");
+      const roomIds: number[] = await response.json();
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch chat rooms");
-      }
+      const roomsWithPreview: ChatRoom[] = await Promise.all(
+        roomIds.map(async (roomId) => {
+          try {
+            const res = await fetch(`http://localhost:8080/chat/messages/${roomId}`, {
+              method: "GET",
+              credentials: "include",
+            });
+            if (!res.ok) throw new Error();
+            const messages: Message[] = await res.json();
+            const last = messages[messages.length - 1];
+            return {
+              roomId,
+              lastMessage: last?.content || "",
+              lastMessageTime: last?.timestamp || "",
+              unreadCount: 0,
+            };
+          } catch {
+            return { roomId, lastMessage: "", lastMessageTime: "", unreadCount: 0 };
+          }
+        })
+      );
 
-      const data = await response.json();
-      setChatRooms(data);
+      setChatRooms(roomsWithPreview);
     } catch (error) {
       console.error("Error fetching chat rooms:", error);
       setError("채팅방 목록을 불러오는데 실패했습니다.");
