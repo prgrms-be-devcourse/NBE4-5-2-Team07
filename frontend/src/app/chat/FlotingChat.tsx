@@ -420,13 +420,12 @@ const FloatingChat = () => {
 
                   // 말풍선 스타일 클래스
                   const bubbleClass = isSystem
-                    ? "bg-gray-100 text-gray-600 text-sm rounded-lg px-3 py-2 max-w-[85%] whitespace-pre-line"
+                    ? "bg-gray-100 text-gray-600 text-sm rounded-lg px-3 py-2 max-w-[100%] whitespace-pre-line"
                     : isMine
-                      ? "bg-indigo-100 text-indigo-800 text-sm rounded-lg px-3 py-2 max-w-[85%] whitespace-pre-line"
+                      ? "bg-indigo-100 text-indigo-800 text-sm rounded-lg px-3 py-2 max-w-[100%] whitespace-pre-line"
                       : isAdmin
-                        ? "bg-slate-100 text-gray-800 text-sm rounded-lg px-3 py-2 max-w-[85%] whitespace-pre-line"
-                        : "bg-slate-100 text-gray-800 text-sm rounded-lg px-3 py-2 max-w-[85%] whitespace-pre-line";
-
+                        ? "bg-slate-100 text-gray-800 text-sm rounded-lg px-3 py-2 max-w-[100%] whitespace-pre-line"
+                        : "bg-slate-100 text-gray-800 text-sm rounded-lg px-3 py-2 max-w-[100%] whitespace-pre-line";
 
                   // 현재 메시지와 이전 메시지의 날짜가 다르면 날짜 구분자 삽입
                   const showDateSeparator =
